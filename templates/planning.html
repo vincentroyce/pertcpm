@@ -2,25 +2,35 @@
 <title>{{ .Title }}</title>
 {{ end }}
 {{ define "content" }}
+<style>
+  table {
+    counter-reset: tableCount;
+  }
+
+  .counterCell:before {
+    content: counter(tableCount);
+    counter-increment: tableCount;
+  }
+</style>
 <h1>Planning Page</h1>
 
-  <div>
-    <label for="projName">Enter Project Name: </label>
-    <input id="projName" type="text" >
-  </div>
-  <div>
-    <label for="phaseName">Enter Activity Phase Name: </label>
-    <input id="phaseName" type="text" >
-  </div>
-  <div>
-    <label for="actName">Enter Activity Name: </label>
-    <input id="actName" type="text" >
-  </div>
-  <div>
-    <label for="subActName">Enter Sub-Activity Name: </label>
-    <input id="subActName" type="text" >
-  </div>
-  <input class="add-data" type="submit" value="Enter">
+<div>
+  <label for="projName">Enter Project Name: </label>
+  <input id="projName" type="text">
+</div>
+<div>
+  <label for="phaseName">Enter Activity Phase Name: </label>
+  <input id="phaseName" type="text">
+</div>
+<div>
+  <label for="actName">Enter Activity Name: </label>
+  <input id="actName" type="text">
+</div>
+<div>
+  <label for="subActName">Enter Sub-Activity Name: </label>
+  <input id="subActName" type="text">
+</div>
+<input class="add-data" type="submit" value="Enter">
 
 <table class="table-bordered container">
   <thead class="text-center">
@@ -31,17 +41,65 @@
       <th rowspan="2" scope="col">Expected Time</th>
     </tr>
     <tr>
+
       <th scope="col">Optimistic Time</th>
       <th scope="col">Most Likely Time</th>
       <th scope="col">Pessimistic Time</th>
-    </tr>    
+    </tr>
   </thead>
   <tbody class="text-center appendBody"></tbody>
 </table>
 <script>
-  let expectedTime = (a, m, b) => Math.floor((a + (4*m) + b) / 6)
-  $(".add-data").click(function() {
-    $(".appendBody").append($('<tr></tr>').append($('<td></td>').text("I"), $('<td></td>').text($("#projName").val()), $('<td></td>').text("10"), $('<td></td>').text("10"), $('<td></td>').text("10"), $('<td></td>').text("10")))
+  let expectedTime = (a, m, b) => Math.floor((a + (4 * m) + b) / 6)
+  $(".add-data").click(function () {
+    $("#projName").prop("readonly")
+    $(".appendBody").append($('<tr></tr>').append($('<td></td>').text(convertToRoman($('.appendBody').children().length + 1)), $('<td></td>').text($("#phaseName").val()), $('<td></td>').html($("<input>").prop("type", "number")).addClass("ot"),$('<td></td>').html($("<input>").prop("type", "number")).addClass("mlt"), $('<td></td>').html($("<input>").prop("type", "number")).addClass("pt"), $('<td></td>').addClass("et")))
+    
+    $(".appendBody input").on("change", function expectedTimeVal() {
+      let time_value = expectedTime(parseInt($(".ot input").val()), parseInt($(".mlt input").val()), parseInt($(".pt input").val()))
+      if (time_value != undefined && time_value != null && !isNaN(time_value)) {
+        $(".et").text(time_value)
+      } else {
+        $(".et").text("--")
+      }
+    }) 
   })
+
+  function convertToRoman(num) {
+    //values of the numbers
+    let numerals = {
+      M: 1000,
+      CM: 900,
+      D: 500,
+      CD: 400,
+      C: 100,
+      XC: 90,
+      L: 50,
+      XL: 40,
+      X: 10,
+      IX: 9,
+      V: 5,
+      IV: 4,
+      I: 1,
+    };
+    //passing the new values of the new numbers to convert into numerals
+    let newNumeral = "";
+    let numCopy = num;   //copy the num so it doesn't mutate and can used inside the for loop
+
+    //checking the values of numerals objects
+    for (let i in numerals) {
+      //using the j variable of num, if the num is still greater than the numerals index 
+      //it will increment the key to the variable newNumerals and stop the loop,
+      // it will subtract the num to the values of numerals .
+      for (let j = 0; j <= num; j++) {
+        if (numCopy >= numerals[i]) {
+          newNumeral += i;
+          numCopy -= numerals[i];
+        }
+      }
+    }
+    //return to newNumerals to see the new value.
+    return newNumeral;
+  }
 </script>
 {{ end }}
