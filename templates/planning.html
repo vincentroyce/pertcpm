@@ -1,0 +1,47 @@
+{{ define "title" }}
+<title>{{ .Title }}</title>
+{{ end }}
+{{ define "content" }}
+<h1>Planning Page</h1>
+
+  <div>
+    <label for="projName">Enter Project Name: </label>
+    <input id="projName" type="text" >
+  </div>
+  <div>
+    <label for="phaseName">Enter Activity Phase Name: </label>
+    <input id="phaseName" type="text" >
+  </div>
+  <div>
+    <label for="actName">Enter Activity Name: </label>
+    <input id="actName" type="text" >
+  </div>
+  <div>
+    <label for="subActName">Enter Sub-Activity Name: </label>
+    <input id="subActName" type="text" >
+  </div>
+  <input class="add-data" type="submit" value="Enter">
+
+<table class="table-bordered container">
+  <thead class="text-center">
+    <tr>
+      <th rowspan="2" scope="col">Item No.</th>
+      <th rowspan="2" scope="col">Activity</th>
+      <th colspan="3">Time Estimates</th>
+      <th rowspan="2" scope="col">Expected Time</th>
+    </tr>
+    <tr>
+      <th scope="col">Optimistic Time</th>
+      <th scope="col">Most Likely Time</th>
+      <th scope="col">Pessimistic Time</th>
+    </tr>    
+  </thead>
+  <tbody class="text-center appendBody"></tbody>
+</table>
+<script>
+  let expectedTime = (a, m, b) => Math.floor((a + (4*m) + b) / 6)
+  $(".add-data").click(function() {
+    $(".appendBody").append($('<tr></tr>').append($('<td></td>').text("I"), $('<td></td>').text($("#projName").val()), $('<td></td>').text("10"), $('<td></td>').text("10"), $('<td></td>').text("10"), $('<td></td>').text("10")))
+  })
+</script>
+{{ end }}

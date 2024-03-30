@@ -13,6 +13,7 @@ func main() {
 	uadmin.Register(
 		models.ClientUser{},
 	)
+	uadmin.Port = 1111
 	http.HandleFunc("/", uadmin.Handler(views.Main))
 	http.HandleFunc("/index/", uadmin.Handler(views.IndexHandler))
 	http.HandleFunc("/login/", uadmin.Handler(views.LoginHandler))
