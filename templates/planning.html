@@ -3,36 +3,97 @@
 {{ end }}
 {{ define "content" }}
 <style>
-  table {
-    counter-reset: tableCount;
+  .table-header {
+    place-items: center;
+    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
   }
+  .table-header div {
+    width: 100%;
+    border: 1px white solid;
+    height: 100%;
+    display: grid;
+    place-items: center;
+  }
+  .table-header > div:nth-child(1), .table-header > div:nth-child(2), .table-header > div:nth-child(4) {
+    grid-row: span 2;
 
-  .counterCell:before {
-    content: counter(tableCount);
-    counter-increment: tableCount;
+  }
+  .table-header > div:nth-child(3) {
+    grid-column: span 3;
+
+  }
+  .table-content {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    place-items: center;
+    width: 100%;
+  }
+  .content {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .table-content div {
+    width: 100%;
+    border: 1px white solid;
+    height: 100%;
+    display: grid;
+    place-items: center;
+  }
+  .table-body {
+    width: 100%;
   }
 </style>
 <h1>Planning Page</h1>
 
-<div>
+<div class="d-flex gap-1 mt-2 align-items-center">
   <label for="projName">Enter Project Name: </label>
   <input id="projName" type="text">
 </div>
-<div>
+<div class="d-flex gap-1 mt-2 align-items-center">
   <label for="phaseName">Enter Activity Phase Name: </label>
   <input id="phaseName" type="text">
+  <button class="add-phase btn btn-primary">Button</button>
 </div>
-<div>
+<div class="d-flex gap-1 mt-2 align-items-center">
   <label for="actName">Enter Activity Name: </label>
   <input id="actName" type="text">
+  <select name="" id="phaseOptions">
+    <option value="" disabled selected>Select your option</option>
+  </select>
+  <button class="btn btn-primary">Button</button>
 </div>
-<div>
-  <label for="subActName">Enter Sub-Activity Name: </label>
-  <input id="subActName" type="text">
+<div class="d-flex gap-1 mt-2 align-items-center">
+  <label for="actName">Enter Sub-Activity Name: </label>
+  <input id="actName" type="text">
+  <select name="" id="activityOptions">
+    <option value="" disabled selected>Select your option</option>
+  </select>
+  <button class="btn btn-primary">Button</button>
 </div>
-<input class="add-data" type="submit" value="Enter">
 
-<table class="table-bordered container">
+<div class="container mt-4">
+  <div class="table-header text-center  text-break">
+    <div>Item No.</div>
+    <div>Activity</div>
+    <div>Time Estimate</div>
+    <div>Expected Time</div>
+    <div>Optimistic Time</div>
+    <div>Most Likely Time</div>
+    <div>Pessimistic Time</div>
+  </div>
+  <div class="table-body">
+    
+    
+  </div>
+</div>
+</div>
+</div>
+<!-- <table class="table-bordered container main-table">
   <thead class="text-center">
     <tr>
       <th rowspan="2" scope="col">Item No.</th>
@@ -41,28 +102,34 @@
       <th rowspan="2" scope="col">Expected Time</th>
     </tr>
     <tr>
-
       <th scope="col">Optimistic Time</th>
       <th scope="col">Most Likely Time</th>
       <th scope="col">Pessimistic Time</th>
     </tr>
   </thead>
-  <tbody class="text-center appendBody"></tbody>
-</table>
+</table> -->
+
 <script>
-  let expectedTime = (a, m, b) => Math.floor((a + (4 * m) + b) / 6)
-  $(".add-data").click(function () {
-    $("#projName").prop("readonly")
-    $(".appendBody").append($('<tr></tr>').append($('<td></td>').text(convertToRoman($('.appendBody').children().length + 1)), $('<td></td>').text($("#phaseName").val()), $('<td></td>').html($("<input>").prop("type", "number")).addClass("ot"),$('<td></td>').html($("<input>").prop("type", "number")).addClass("mlt"), $('<td></td>').html($("<input>").prop("type", "number")).addClass("pt"), $('<td></td>').addClass("et")))
-    
-    $(".appendBody input").on("change", function expectedTimeVal() {
-      let time_value = expectedTime(parseInt($(".ot input").val()), parseInt($(".mlt input").val()), parseInt($(".pt input").val()))
-      if (time_value != undefined && time_value != null && !isNaN(time_value)) {
-        $(".et").text(time_value)
-      } else {
-        $(".et").text("--")
-      }
-    }) 
+  let expectedTime = (a, m, b) => Math.floor((a + (4 * m) + b) / 6);
+  let namePhases = []
+  $(".add-phase").click(function () {
+    let activityNo = convertToRoman($(".table-body > div").length + 1);
+    let addPhase = $("#phaseName").val()
+    namePhases.push(addPhase)
+    $("#phaseOptions").append($(`<option value=${addPhase}>${addPhase}</option>`))
+    console.log(namePhases)
+    let format = 
+    `<div class="phase-activity-container">
+      <div class="table-content text-center text-break">
+        <div>${activityNo}</div>
+        <div>${addPhase}</div>
+        <div>--</div>
+        <div>--</div>
+        <div>--</div>
+        <div>--</div>
+      </div>
+    </div>`
+    $(".table-body").append(format)
   })
 
   function convertToRoman(num) {
