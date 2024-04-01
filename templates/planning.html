@@ -110,14 +110,27 @@
 </table> -->
 
 <script>
+  let i = 1;
   let expectedTime = (a, m, b) => Math.floor((a + (4 * m) + b) / 6);
-  let namePhases = []
+  let projectObj = {};
+  function increment(i) { return `act${i++}` }
   $(".add-phase").click(function () {
     let activityNo = convertToRoman($(".table-body > div").length + 1);
     let addPhase = $("#phaseName").val()
-    namePhases.push(addPhase)
+    let addProj = $("#projName").val()
+    let addAct = $("#actName").val()
+    // if (addProj in projectObj) {
+    //   alert("Project Already Exists.")
+    //   return
+    // }
+    projectObj[addProj] = {...projectObj[addProj]}
+    projectObj[addProj][addPhase] = {...projectObj[addProj][addPhase]}
+    projectObj[addProj][addPhase][addAct] = addAct
+    
+    // projectObj[addProj][addPhase] = addPhase
+    console.log(projectObj)
     $("#phaseOptions").append($(`<option value=${addPhase}>${addPhase}</option>`))
-    console.log(namePhases)
+    // console.log(namePhases)
     let format = 
     `<div class="phase-activity-container">
       <div class="table-content text-center text-break">
