@@ -68,8 +68,8 @@
   <button class="btn btn-primary">Button</button>
 </div>
 <div class="d-flex gap-1 mt-2 align-items-center">
-  <label for="actName">Enter Sub-Activity Name: </label>
-  <input id="actName" type="text">
+  <label for="subactName">Enter Sub-Activity Name: </label>
+  <input id="subactName" type="text">
   <select name="" id="activityOptions">
     <option value="" disabled selected>Select your option</option>
   </select>
@@ -113,21 +113,26 @@
   let i = 1;
   let expectedTime = (a, m, b) => Math.floor((a + (4 * m) + b) / 6);
   let projectObj = {};
-  function increment(i) { return `act${i++}` }
   $(".add-phase").click(function () {
     let activityNo = convertToRoman($(".table-body > div").length + 1);
-    let addPhase = $("#phaseName").val()
-    let addProj = $("#projName").val()
-    let addAct = $("#actName").val()
+    let addPhase = ($("#phaseName").val()).trim()
+    let addProj = ($("#projName").val()).trim()
+    let addAct = ($("#actName").val()).trim()
+    let addSubAct = ($("#subactName").val()).trim()
     // if (addProj in projectObj) {
     //   alert("Project Already Exists.")
     //   return
     // }
+
+
     projectObj[addProj] = {...projectObj[addProj]}
     projectObj[addProj][addPhase] = {...projectObj[addProj][addPhase]}
-    projectObj[addProj][addPhase][addAct] = addAct
-    
-    // projectObj[addProj][addPhase] = addPhase
+    if (addAct == null || addAct == "" || addAct == undefined) {
+      projectObj[addProj][addPhase][addSubAct] = addSubAct
+      return
+    }
+    projectObj[addProj][addPhase][addAct] = {...projectObj[addProj][addPhase][addAct]}
+    projectObj[addProj][addPhase][addAct][addSubAct] = addSubAct
     console.log(projectObj)
     $("#phaseOptions").append($(`<option value=${addPhase}>${addPhase}</option>`))
     // console.log(namePhases)
