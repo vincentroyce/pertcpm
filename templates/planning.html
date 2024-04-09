@@ -9,6 +9,19 @@
     display: grid;
     grid-template-columns: repeat(6, 1fr);
   }
+
+  [class^="phase-activity-container-"] {
+    color: red;
+  }
+
+  [class^="activity-container-"] {
+    color: green;
+  }
+
+  [class^="sub-activity-container-"] {
+    color: blue;
+  }
+
   .table-header div {
     width: 100%;
     border: 1px white solid;
@@ -16,20 +29,26 @@
     display: grid;
     place-items: center;
   }
-  .table-header > div:nth-child(1), .table-header > div:nth-child(2), .table-header > div:nth-child(4) {
+
+  .table-header>div:nth-child(1),
+  .table-header>div:nth-child(2),
+  .table-header>div:nth-child(4) {
     grid-row: span 2;
 
   }
-  .table-header > div:nth-child(3) {
+
+  .table-header>div:nth-child(3) {
     grid-column: span 3;
 
   }
+
   .table-content {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     place-items: center;
     width: 100%;
   }
+
   .content {
     display: flex;
     gap: 1rem;
@@ -37,6 +56,7 @@
     align-items: center;
     flex-wrap: wrap;
   }
+
   .table-content div {
     width: 100%;
     border: 1px white solid;
@@ -44,6 +64,7 @@
     display: grid;
     place-items: center;
   }
+
   .table-body {
     width: 100%;
   }
@@ -57,24 +78,16 @@
 <div class="d-flex gap-1 mt-2 align-items-center">
   <label for="phaseName">Enter Activity Phase Name: </label>
   <input id="phaseName" type="text">
-  <button class="add-phase btn btn-primary">Button</button>
 </div>
 <div class="d-flex gap-1 mt-2 align-items-center">
   <label for="actName">Enter Activity Name: </label>
   <input id="actName" type="text">
-  <select name="" id="phaseOptions">
-    <option value="" disabled selected>Select your option</option>
-  </select>
-  <button class="btn btn-primary">Button</button>
 </div>
 <div class="d-flex gap-1 mt-2 align-items-center">
   <label for="subactName">Enter Sub-Activity Name: </label>
   <input id="subactName" type="text">
-  <select name="" id="activityOptions">
-    <option value="" disabled selected>Select your option</option>
-  </select>
-  <button class="btn btn-primary">Button</button>
 </div>
+<button class="add-phase btn btn-primary">Button</button>
 
 <div class="container mt-4">
   <div class="table-header text-center  text-break">
@@ -87,8 +100,8 @@
     <div>Pessimistic Time</div>
   </div>
   <div class="table-body">
-    
-    
+
+
   </div>
 </div>
 </div>
@@ -113,43 +126,117 @@
   let i = 1;
   let expectedTime = (a, m, b) => Math.floor((a + (4 * m) + b) / 6);
   let projectObj = {};
+  let alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
   $(".add-phase").click(function () {
     let activityNo = convertToRoman($(".table-body > div").length + 1);
     let addPhase = ($("#phaseName").val()).trim()
     let addProj = ($("#projName").val()).trim()
     let addAct = ($("#actName").val()).trim()
     let addSubAct = ($("#subactName").val()).trim()
-    // if (addProj in projectObj) {
-    //   alert("Project Already Exists.")
-    //   return
-    // }
 
 
-    projectObj[addProj] = {...projectObj[addProj]}
-    projectObj[addProj][addPhase] = {...projectObj[addProj][addPhase]}
-    if (addAct == null || addAct == "" || addAct == undefined) {
-      projectObj[addProj][addPhase][addSubAct] = addSubAct
+    // ! Object Creator (Done)
+    if (addProj == null || addProj == "" || addProj == undefined) {
+      alert("Please put a project name.");
       return
     }
-    projectObj[addProj][addPhase][addAct] = {...projectObj[addProj][addPhase][addAct]}
-    projectObj[addProj][addPhase][addAct][addSubAct] = addSubAct
+    projectObj[addProj] = { ...projectObj[addProj] };
+    if (addPhase == null || addPhase == "" || addPhase == undefined) {
+      alert("Please put a phase.");
+      return
+    }
+    projectObj[addProj][addPhase] = { ...projectObj[addProj][addPhase] };
+    if (addAct == null || addAct == "" || addAct == undefined) {
+      if (addSubAct != null && addSubAct != "" && addSubAct != undefined) {
+        projectObj[addProj][addPhase][addSubAct] = addSubAct
+      }
+    }
+    else {
+      projectObj[addProj][addPhase][addAct] = { ...projectObj[addProj][addPhase][addAct] };
+      if (addSubAct != null && addSubAct != "" && addSubAct != undefined) {
+        projectObj[addProj][addPhase][addAct][addSubAct] = addSubAct;
+      }
+    }
+    // Done
     console.log(projectObj)
-    $("#phaseOptions").append($(`<option value=${addPhase}>${addPhase}</option>`))
-    // console.log(namePhases)
-    let format = 
-    `<div class="phase-activity-container">
-      <div class="table-content text-center text-break">
-        <div>${activityNo}</div>
-        <div>${addPhase}</div>
-        <div>--</div>
-        <div>--</div>
-        <div>--</div>
-        <div>--</div>
-      </div>
-    </div>`
-    $(".table-body").append(format)
-  })
 
+    // Table Creator (Under Construction)
+    $(".table-body").empty();
+
+
+    projectLen = Object.keys(projectObj[addProj]).length
+    for (let i = 0; i < projectLen; i++) {
+      phaseKey = Object.keys(projectObj[addProj])[i]
+      var phaseFormat =
+        `<div class="phase-activity-container-${i + 1}">
+          <div class="table-content text-center text-break">
+            <div>${convertToRoman(i + 1)}.</div>
+            <div>${phaseKey}</div>
+            <div>--</div>
+            <div>--</div>
+            <div>--</div>
+            <div>--</div>
+          </div>
+        </div>`
+      $(".table-body").append(phaseFormat)
+      for (let j = 0; j < Object.keys(projectObj[addProj][phaseKey]).length; j++) {
+        //actKey = Object.keys(projectObj[addProj][phaseKey])[j]
+        actObj = Object.values(projectObj[addProj])[i]
+
+        actKey = Object.keys(actObj)[j]
+        var actFormat =
+          `<div class="activity-container-${j + 1}">
+          <div class="table-content text-center text-break">
+            <div>${convertToRoman(i + 1)}. ${alphabet[j]}.</div>
+            <div>${actKey}</div>
+            <div>--</div>
+            <div>--</div>
+            <div>--</div>
+            <div>--</div>
+          </div>
+        </div>`
+        $(`.phase-activity-container-${i + 1}`).append(actFormat)
+        for (let k = 0; k < Object.keys(projectObj[addProj][phaseKey][actKey]).length; k++) {
+          //actKey = Object.keys(projectObj[addProj][phaseKey])[j]
+          subActKey = Object.values(projectObj[addProj][phaseKey][actKey])
+          var subActFormat =
+            `<div class="sub-activity-container-${k + 1}">
+            <div class="table-content text-center text-break">
+            <div>${convertToRoman(i + 1)}. ${alphabet[j]}. ${convertToRoman(k + 1).toLowerCase()}.</div>
+            <div>${subActKey}</div>
+            <div>--</div>
+            <div>--</div>
+            <div>--</div>
+            <div>--</div>
+          </div>
+          </div>`
+          if (addAct && addAct !== "") {
+            $(`.activity-container-${j + 1}`).append(subActFormat);
+          }
+        }
+      }
+    }
+    $("#projName").prop("readonly", true)
+
+
+
+    // Append Format
+    //   `<div class="phase-activity-container-${i + 1}">
+    //     <div class="table-content text-center text-break">
+    //       <div>${convertToRoman(i + 1)}.</div>
+    //       <div>${phaseKey}</div>
+    //       <div>--</div>
+    //       <div>--</div>
+    //       <div>--</div>
+    //       <div>--</div>
+    //     </div>
+    //   </div>`
+    //     $(".table-body").append(phaseFormat)
+    //
+
+
+  })
+  // 
   function convertToRoman(num) {
     //values of the numbers
     let numerals = {
