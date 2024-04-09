@@ -160,10 +160,8 @@
     // Done
     console.log(projectObj)
 
-    // Table Creator (Under Construction)
+    // Table Creator (Under Construction) (DONE?)
     $(".table-body").empty();
-
-
     projectLen = Object.keys(projectObj[addProj]).length
     for (let i = 0; i < projectLen; i++) {
       phaseKey = Object.keys(projectObj[addProj])[i]
@@ -180,10 +178,10 @@
         </div>`
       $(".table-body").append(phaseFormat)
       for (let j = 0; j < Object.keys(projectObj[addProj][phaseKey]).length; j++) {
-        //actKey = Object.keys(projectObj[addProj][phaseKey])[j]
         actObj = Object.values(projectObj[addProj])[i]
 
         actKey = Object.keys(actObj)[j]
+        
         var actFormat =
           `<div class="activity-container-${j + 1}">
           <div class="table-content text-center text-break">
@@ -196,9 +194,14 @@
           </div>
         </div>`
         $(`.phase-activity-container-${i + 1}`).append(actFormat)
+        if (typeof Object.values(actObj)[j] === "string") {
+            console.log('this is a string')
+            continue
+        }
         for (let k = 0; k < Object.keys(projectObj[addProj][phaseKey][actKey]).length; k++) {
           //actKey = Object.keys(projectObj[addProj][phaseKey])[j]
-          subActKey = Object.values(projectObj[addProj][phaseKey][actKey])
+          subActKey = Object.values(projectObj[addProj][phaseKey][actKey])[k]
+          console.log(`act ${j+1}`, subActKey)
           var subActFormat =
             `<div class="sub-activity-container-${k + 1}">
             <div class="table-content text-center text-break">
@@ -210,31 +213,13 @@
             <div>--</div>
           </div>
           </div>`
-          if (addAct && addAct !== "") {
-            $(`.activity-container-${j + 1}`).append(subActFormat);
-          }
+          $(`.phase-activity-container-${i + 1} .activity-container-${j + 1}`).append(subActFormat);
+
         }
       }
     }
     $("#projName").prop("readonly", true)
-
-
-
-    // Append Format
-    //   `<div class="phase-activity-container-${i + 1}">
-    //     <div class="table-content text-center text-break">
-    //       <div>${convertToRoman(i + 1)}.</div>
-    //       <div>${phaseKey}</div>
-    //       <div>--</div>
-    //       <div>--</div>
-    //       <div>--</div>
-    //       <div>--</div>
-    //     </div>
-    //   </div>`
-    //     $(".table-body").append(phaseFormat)
-    //
-
-
+    // DONE?
   })
   // 
   function convertToRoman(num) {
