@@ -21,7 +21,21 @@
   [class^="sub-activity-container-"] {
     color: blue;
   }
+  [class^="sub-activity-container-"] div input[type="number"] {
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -moz-appearance: textfield;
+  }
 
+  [class^="sub-activity-container-"] div input[type="number"]::-webkit-outer-spin-button,
+  [class^="sub-activity-container-"] div input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+   margin: 0;
+  }
   .table-header div {
     width: 100%;
     border: 1px white solid;
@@ -100,7 +114,7 @@
     <div>Pessimistic Time</div>
   </div>
   <div class="table-body">
-
+    
 
   </div>
 </div>
@@ -159,7 +173,29 @@
     }
     // Done
     console.log(projectObj)
-
+    projectObj = {
+    "Project 1": {
+        "Phase 1": {
+            "Act 1": {
+                "Sub Act 1": "Sub Act 1"
+            },
+            "Act 2": {
+                "Sub Act 1": "Sub Act 1"
+            }
+        },
+        "Phase 2": {
+            "Act 1": {
+                "Sub Act 1": "Sub Act 1",
+                "Sub Act 2": "Sub Act 2",
+                "Sub Act 3": "Sub Act 3"
+            },
+            "Act 2": {
+                "Sub Act 1": "Sub Act 1",
+                "Sub Act 2": "Sub Act 2"
+            }
+        }
+    }
+  }
     // Table Creator (Under Construction) (DONE?)
     $(".table-body").empty();
     projectLen = Object.keys(projectObj[addProj]).length
@@ -201,15 +237,14 @@
         for (let k = 0; k < Object.keys(projectObj[addProj][phaseKey][actKey]).length; k++) {
           //actKey = Object.keys(projectObj[addProj][phaseKey])[j]
           subActKey = Object.values(projectObj[addProj][phaseKey][actKey])[k]
-          console.log(`act ${j+1}`, subActKey)
           var subActFormat =
             `<div class="sub-activity-container-${k + 1}">
             <div class="table-content text-center text-break">
             <div>${convertToRoman(i + 1)}. ${alphabet[j]}. ${convertToRoman(k + 1).toLowerCase()}.</div>
             <div>${subActKey}</div>
-            <div>--</div>
-            <div>--</div>
-            <div>--</div>
+            <div><input type="number" value="0" min="0" onchange="unexpectedTimeRow(this)"></div>
+            <div><input type="number" value="0" min="0" onchange="unexpectedTimeRow(this)"></div>
+            <div><input type="number" value="0" min="0" onchange="unexpectedTimeRow(this)"></div>
             <div>--</div>
           </div>
           </div>`
@@ -222,6 +257,40 @@
     // DONE?
   })
   // 
+
+  function unexpectedTimeRow(element) {
+    // Child Sub Act Container
+    var subActChild = element.parentNode.parentNode;
+    var ot = subActChild.children[2].children[0].value;
+    var mt = subActChild.children[3].children[0].value;
+    var pt =subActChild.children[4].children[0].value;
+    subActChild.children[5].textContent = expectedTime(Number(ot),Number(mt),Number(pt));
+
+    //Child of Act Container
+    var actChild = subActChild.parentNode.parentNode;
+    var otAct = 0;
+    var mtAct = 0;
+    var ptAct = 0;
+    var etAct = 0;
+    for (let i = 1; i < actChild.children.length; i++) {
+      otAct += Number(actChild.children[i].children[0].children[2].children[0].value);
+      mtAct += Number(actChild.children[i].children[0].children[3].children[0].value);
+      ptAct += Number(actChild.children[i].children[0].children[4].children[0].value);
+      etAct += Number(actChild.children[i].children[0].children[5].textContent);
+    }
+  
+    console.log(actChild)
+    actChild.children[0].children[2].textContent = otAct;
+    actChild.children[0].children[3].textContent = mtAct;
+    actChild.children[0].children[4].textContent = ptAct;
+    actChild.children[0].children[5].textContent = !isNaN(etAct) ? etAct : "--" ;
+    // actChild[0].children[2].textContent = otAct
+
+
+  }
+
+
+
   function convertToRoman(num) {
     //values of the numbers
     let numerals = {
