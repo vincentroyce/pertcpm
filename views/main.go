@@ -26,6 +26,8 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		context = PertHandler(w, r)
 	case "planning":
 		context = PlanningHandler(w, r)
+	case "schedule-completion":
+		context = ScheduleCompletionHandler(w, r)
 	default:
 		page = "home"
 	}
@@ -53,5 +55,12 @@ func PlanningHandler(w http.ResponseWriter, r *http.Request) map[string]interfac
 	r.URL.Path = strings.TrimPrefix(r.URL.Path, "/planning/")
 	return map[string]interface{}{
 		"Title": "Planning",
+	}
+}
+
+func ScheduleCompletionHandler(w http.ResponseWriter, r *http.Request) map[string]interface{} {
+	r.URL.Path = strings.TrimPrefix(r.URL.Path, "/schedule-completion/")
+	return map[string]interface{}{
+		"Title": "Schedule Completion",
 	}
 }
