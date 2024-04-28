@@ -2,3 +2,5 @@ pertcpm
 uadmin.db
 pertcpm.exe
 syslog.log
+media/otp/*
+static/i18n/models/*

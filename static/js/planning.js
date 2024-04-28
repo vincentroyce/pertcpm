@@ -1,14 +1,13 @@
 let expectedTime = (a, m, b) => Math.floor((a + (4 * m) + b) / 6);
 let projectObj = {};
 let alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+
 $(".add-phase").click(function () {
-  let activityNo = convertToRoman($(".table-body > div").length + 1);
   let addPhase = ($("#phaseName").val()).trim()
-  let addProj = ($("#projName").val()).trim()
-  let addAct = ($("#actName").val()).trim()
-  let addSubAct = ($("#subactName").val()).trim()
-
-
+let addProj = ($("#projName").val()).trim()
+let addAct = ($("#actName").val()).trim()
+let addSubAct = ($("#subactName").val()).trim()
+  let activityNo = convertToRoman($(".table-body > div").length + 1);
   // ! Object Creator (Done)
   if (addProj == null || addProj == "" || addProj == undefined) {
     alert("Please put a project name.");
@@ -159,7 +158,7 @@ $(".add-phase").click(function () {
                 </tr>
             </tbody>
         </table>
-        <button class="add-row-btn" onclick="addRow('laborTable')">Add Row</button>
+        <button class="add-row-btn" onclick="addRow(this)">Add Row</button>
     </div>
 
     <div class="container">
@@ -182,7 +181,7 @@ $(".add-phase").click(function () {
                 </tr>
             </tbody>
         </table>
-        <button class="add-row-btn" onclick="addRow('equipmentTable')">Add Row</button>
+        <button class="add-row-btn" onclick="addRow(this)">Add Row</button>
     </div>
   </div>`
     $(".content-from-table").append(format)
@@ -198,7 +197,6 @@ $(".add-phase").click(function () {
 // 
 
 //Total Price Table for each Activities
-
 
 //function to change values on input change for sub activity which are under phase and are not under activity 
 //or sub activity which is in a level of activity
@@ -230,8 +228,6 @@ function stringAct(element) {
   phase.children[0].children[3].textContent = !isNaN(mtPhase) ? mtPhase : "--";
   phase.children[0].children[4].textContent = !isNaN(ptPhase) ? ptPhase : "--";
 
-
-  console.log(phase)
   phase.children[0].children[5].textContent = !isNaN(expectedTime(otPhase, mtPhase, ptPhase)) ? expectedTime(otPhase, mtPhase, ptPhase) : "--";
 }
 
@@ -304,8 +300,8 @@ function calculateGrandTotal() {
   document.getElementById('totalAmount').textContent = grandTotal;
 }
 
-function addRow(tableId) {
-  const table = document.getElementById(tableId);
+function addRow(element) {
+  const table = element.parentNode;
   const tbody = table.querySelector('tbody');
   const newRow = document.createElement('tr');
   newRow.innerHTML = `
@@ -316,6 +312,7 @@ function addRow(tableId) {
     `;
   tbody.appendChild(newRow);
 }
+
 function convertToRoman(num) {
   //values of the numbers
   let numerals = {
@@ -354,40 +351,52 @@ function convertToRoman(num) {
 }
 
 // TODO: Schedule Completion
-// Save plan which is next page 
+// Save plan which is next page
+
 $(".save-plan").click(function () {
-
+  var completeSchedObj = {}
   let phases = $(".table-body").children()
-  let schedComp = []
-
-  for (let i = 0; i < phases.length; i++) {
+  for (var i = 0; i < phases.length; i++) {
     var phaseNum = $(phases[i].children[0].children[0]).text()
     var phaseVal = $(phases[i].children[0].children[1]).text()
     var phaseTime = !isNaN(Number($(phases[i].children[0].children[5]).text())) ? Number($(phases[i].children[0].children[5]).text()) : 0;
-    console.log(phaseNum + " " + phaseVal + " " + phaseTime)
+    var phaseobj = { [phaseNum]: { [phaseVal]: phaseTime } }
+    Object.assign(completeSchedObj, phaseobj)
     var activities = $(phases[i]).children()
     for (let j = 1; j < activities.length; j++) {
       var actNum = $(activities[j].children[0].children[0]).text()
       var actVal = $(activities[j].children[0].children[1]).text()
       var actTime = !isNaN(Number($(activities[j].children[0].children[5]).text())) ? Number($(activities[j].children[0].children[5]).text()) : 0;
-      console.log(actNum + " " + actVal + " " + actTime)
+      var actobj = { [actNum]: { [actVal]: actTime } }
+      Object.assign(phaseobj[phaseNum], actobj)
       var subActivities = $(activities[j]).children()
-      for (let k = 1; k < subActivities.length; k++) { 
+      for (let k = 1; k < subActivities.length; k++) {
         if (subActivities.length > 1) {
-          subActivitiesKey = $(subActivities[k].children[0].children[0]).text();
-          subActivitiesVal = $(subActivities[k].children[0].children[1]).text()
-          subActivitiesTime =  !isNaN(Number($(subActivities[k].children[0].children[5]).text())) ? Number($(subActivities[k].children[0].children[5]).text()) : 0;
+          var subActivitiesKey = $(subActivities[k].children[0].children[0]).text();
+          var subActivitiesVal = $(subActivities[k].children[0].children[1]).text()
+          var subActivitiesTime = !isNaN(Number($(subActivities[k].children[0].children[5]).text())) ? Number($(subActivities[k].children[0].children[5]).text()) : 0;
+          var subactobj = { [subActivitiesKey]: { [subActivitiesVal]: subActivitiesTime } }
+          Object.assign(phaseobj[phaseNum][actNum], subactobj)
         } else {
           continue
         }
-        console.log(subActivitiesKey + " " + subActivitiesVal + " " + subActivitiesTime)
       }
     }
-    console.log("===")
-
   }
-  // console.log(schedComp)
-
-
-  // location.href = "/user/schedule-completion/" 
+  $.ajax({
+    url:"/api/add-project",
+    method:"POST",
+    contentType: "application/json",
+    data: JSON.stringify({
+      projectName: ($("#projName").val()).trim(),
+      cost: Number($("#totalAmount").text()),
+      obj: completeSchedObj,
+    }),
+    success: function(response) {
+      console.log(response)
+    },
+    error: function(response) {
+      console.log(response["responseText"])
+    }
+  })
 })
