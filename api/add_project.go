@@ -66,15 +66,36 @@ func AddProject(w http.ResponseWriter, r *http.Request) {
 	project.Cost, _ = strconv.ParseInt(cost, 10, 0)
 	project.Save()
 
-	phaseObj := obj["obj"].(map[string]any)
-	for k, v := range phaseObj {
-		fmt.Println(k)
-		fmt.Println(v)
-
-		// activityObj := phaseObj[i].(map[string]any)
-		// for k := range activityObj {
-		// 	fmt.Println(activityObj[k])
-		// }
+	projectObj := obj["obj"].(map[string]any)
+	for _, v := range projectObj {
+		// fmt.Println(k)
+		// fmt.Println(v)
+		phaseObj := v.(map[string]any)
+		for k, v := range phaseObj {
+			phase := models.Phase{}
+			activity := models.Activity{}
+			if arr, ok := v.([]interface{}); ok {
+				phase.ProjectID = project.ID
+				phase.Name = k
+				phase.OptimisticTime = int(arr[0].(float64))
+				phase.MostLikelyTime = int(arr[1].(float64))
+				phase.PessimisticTime = int(arr[2].(float64))
+				phase.Save()
+			} else {
+				activityObj := v.(map[string]any)
+				for k, v := range activityObj {
+					if arr, ok := v.([]interface{}); ok {
+						activity.ProjectID = project.ID
+						activity.PhaseID = phase.ID
+						activity.Name = k
+						activity.OptimisticTime = int(arr[0].(float64))
+						activity.MostLikelyTime = int(arr[1].(float64))
+						activity.PessimisticTime = int(arr[2].(float64))
+						activity.Save()
+					}
+				}
+			}
+		}
 	}
 
 	uadmin.ReturnJSON(w, r, map[string]any{

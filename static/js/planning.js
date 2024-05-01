@@ -19,48 +19,51 @@ let addSubAct = ($("#subactName").val()).trim()
     return
   }
   projectObj[addProj][addPhase] = { ...projectObj[addProj][addPhase] };
-  if (addAct == null || addAct == "" || addAct == undefined) {
-    if (addSubAct != null && addSubAct != "" && addSubAct != undefined) {
-      projectObj[addProj][addPhase][addSubAct] = addSubAct
-    }
-  }
-  else {
-    projectObj[addProj][addPhase][addAct] = { ...projectObj[addProj][addPhase][addAct] };
-    if (addSubAct != null && addSubAct != "" && addSubAct != undefined) {
-      projectObj[addProj][addPhase][addAct][addSubAct] = addSubAct;
-    }
-  }
+  projectObj[addProj][addPhase][addAct] = { ...projectObj[addProj][addPhase][addAct] };
+  projectObj[addProj][addPhase][addAct][addSubAct] = addSubAct;
+  // projectObj[addProj][addPhase] = { ...projectObj[addProj][addPhase] };
+  // if (addAct == null || addAct == "" || addAct == undefined) {
+  //   if (addSubAct != null && addSubAct != "" && addSubAct != undefined) {
+  //     projectObj[addProj][addPhase][addSubAct] = addSubAct
+  //   }
+  // }
+  // else {
+  //   projectObj[addProj][addPhase][addAct] = { ...projectObj[addProj][addPhase][addAct] };
+  //   if (addSubAct != null && addSubAct != "" && addSubAct != undefined) {
+  //     projectObj[addProj][addPhase][addAct][addSubAct] = addSubAct;
+  //   }
+  // }
   // Done
-  // console.log(projectObj)
-  projectObj = {
-    "Project 1": {
-      "Phase 1": {
-        "Act 1": {
-          "Sub Act 1": "Sub Act 1"
-        },
-        "Sub Act 1": "Sub Act 1",
-        "Sub Act 2": "Sub Act 2",
-        "Sub Act 3": "Sub Act 3",
-        "Act 2": {
-          "Sub Act 1": "Sub Act 1"
-        },
-        "Sub Act 1": "Sub Act 1",
-        "Sub Act 2": "Sub Act 2",
-      },
-      "Phase 2": {
-        "Act 1": {
-          "Sub Act 1": "Sub Act 1",
-          "Sub Act 2": "Sub Act 2",
-          "Sub Act 3": "Sub Act 3"
-        },
-        "Sub Act 1": "Sub Act 1",
-        "Act 2": {
-          "Sub Act 1": "Sub Act 1",
-          "Sub Act 2": "Sub Act 2"
-        }
-      }
-    }
-  }
+  console.log(projectObj)
+  // projectObj = {
+  //   "Project 1": {
+  //     "Phase 1": {
+  //       "Act 1": {
+  //         "Sub Act 1": "Sub Act 1"
+  //       },
+  //       "Sub Act 1": "Sub Act 1",
+  //       "Sub Act 2": "Sub Act 2",
+  //       "Sub Act 3": "Sub Act 3",
+  //       "Act 2": {
+  //         "Sub Act 1": "Sub Act 1"
+  //       },
+  //       "Sub Act 1": "Sub Act 1",
+  //       "Sub Act 2": "Sub Act 2",
+  //     },
+  //     "Phase 2": {
+  //       "Act 1": {
+  //         "Sub Act 1": "Sub Act 1",
+  //         "Sub Act 2": "Sub Act 2",
+  //         "Sub Act 3": "Sub Act 3"
+  //       },
+  //       "Sub Act 1": "Sub Act 1",
+  //       "Act 2": {
+  //         "Sub Act 1": "Sub Act 1",
+  //         "Sub Act 2": "Sub Act 2"
+  //       }
+  //     }
+  //   }
+  // }
   // Table Creator (Under Construction) (DONE?)
   $(".table-body").empty();
   $(".content-from-table").empty();
@@ -96,12 +99,11 @@ let addSubAct = ($("#subactName").val()).trim()
       <div>--</div>
     </div>
   </div>`
-
-      if (typeof Object.values(actObj)[j] === "string") {
-        console.log('this is a string')
+ 
+      if (actKey == "") {
         var actFormat =
-          `<div class="activity-container-${j + 1}">
-    <div class="table-content text-center text-break" style="color:purple;">
+        `<div class="activity-container-${j + 1}">
+    <div class="d-none table-content text-center text-break">
       <div>${convertToRoman(i + 1)}. ${alphabet[j]}.</div>
       <div>${actKey}</div>
       <div><input type="number" value="0" min="0" onchange="stringAct(this)"></div>
@@ -110,9 +112,23 @@ let addSubAct = ($("#subactName").val()).trim()
       <div>--</div>
     </div>
   </div>`
-        $(`.phase-activity-container-${i + 1}`).append(actFormat)
-        continue
       }
+  //     if (typeof Object.values(actObj)[j] === "string") {
+  //       console.log('this is a string')
+  //       var phaseDirect =
+  //         `<div class="direct-sub-activity-container-${j + 1}">
+  //   <div class="table-content text-center text-break" style="color:purple;">
+  //     <div>${convertToRoman(i + 1)}. ${alphabet[j]}.</div>
+  //     <div>${actKey}</div>
+  //     <div><input type="number" value="0" min="0" onchange="stringAct(this)"></div>
+  //     <div><input type="number" value="0" min="0" onchange="stringAct(this)"></div>
+  //     <div><input type="number" value="0" min="0" onchange="stringAct(this)"></div>
+  //     <div>--</div>
+  //   </div>
+  // </div>`
+  //       $(`.phase-activity-container-${i + 1}`).append(phaseDirect)
+  //       continue
+  //     }
       $(`.phase-activity-container-${i + 1}`).append(actFormat)
       for (let k = 0; k < Object.keys(projectObj[addProj][phaseKey][actKey]).length; k++) {
         //actKey = Object.keys(projectObj[addProj][phaseKey])[j]
@@ -128,6 +144,19 @@ let addSubAct = ($("#subactName").val()).trim()
       <div>--</div>
     </div>
     </div>`
+    if (subActKey == "") {
+      var subActFormat =
+          `<div class="sub-activity-container-${k + 1}">
+      <div class="d-none table-content text-center text-break">
+      <div>${convertToRoman(i + 1)}. ${alphabet[j]}. ${convertToRoman(k + 1).toLowerCase()}.</div>
+      <div>${subActKey}</div>
+      <div><input type="number" value="0" min="0" onchange="unexpectedTimeRow(this)"></div>
+      <div><input type="number" value="0" min="0" onchange="unexpectedTimeRow(this)"></div>
+      <div><input type="number" value="0" min="0" onchange="unexpectedTimeRow(this)"></div>
+      <div>--</div>
+    </div>
+    </div>`
+    }
         $(`.phase-activity-container-${i + 1} .activity-container-${j + 1}`).append(subActFormat);
       }
     }
@@ -359,30 +388,38 @@ $(".save-plan").click(function () {
   for (var i = 0; i < phases.length; i++) {
     var phaseNum = $(phases[i].children[0].children[0]).text()
     var phaseVal = $(phases[i].children[0].children[1]).text()
-    var phaseTime = !isNaN(Number($(phases[i].children[0].children[5]).text())) ? Number($(phases[i].children[0].children[5]).text()) : 0;
-    var phaseobj = { [phaseNum]: { [phaseVal]: phaseTime } }
+    var phaseOt = !isNaN(Number($(phases[i].children[0].children[2]).text())) ? Number($(phases[i].children[0].children[2]).text()) : 0;
+    var phaseMt = !isNaN(Number($(phases[i].children[0].children[3]).text())) ? Number($(phases[i].children[0].children[3]).text()) : 0;
+    var phasePt = !isNaN(Number($(phases[i].children[0].children[4]).text())) ? Number($(phases[i].children[0].children[4]).text()) : 0;
+    var phaseobj = { [phaseNum]: { [phaseVal]: [phaseOt, phaseMt, phasePt] } }
     Object.assign(completeSchedObj, phaseobj)
     var activities = $(phases[i]).children()
     for (let j = 1; j < activities.length; j++) {
       var actNum = $(activities[j].children[0].children[0]).text()
       var actVal = $(activities[j].children[0].children[1]).text()
-      var actTime = !isNaN(Number($(activities[j].children[0].children[5]).text())) ? Number($(activities[j].children[0].children[5]).text()) : 0;
-      var actobj = { [actNum]: { [actVal]: actTime } }
+      var actOt = !isNaN(Number($(activities[j].children[0].children[2]).text())) ? Number($(activities[j].children[0].children[2]).text()) : 0;
+      var actMt = !isNaN(Number($(activities[j].children[0].children[3]).text())) ? Number($(activities[j].children[0].children[3]).text()) : 0;
+      var actPt = !isNaN(Number($(activities[j].children[0].children[4]).text())) ? Number($(activities[j].children[0].children[4]).text()) : 0;
+      var actobj = { [actNum]: { [actVal]: [actOt, actMt, actPt] } }
       Object.assign(phaseobj[phaseNum], actobj)
       var subActivities = $(activities[j]).children()
       for (let k = 1; k < subActivities.length; k++) {
         if (subActivities.length > 1) {
           var subActivitiesKey = $(subActivities[k].children[0].children[0]).text();
           var subActivitiesVal = $(subActivities[k].children[0].children[1]).text()
-          var subActivitiesTime = !isNaN(Number($(subActivities[k].children[0].children[5]).text())) ? Number($(subActivities[k].children[0].children[5]).text()) : 0;
-          var subactobj = { [subActivitiesKey]: { [subActivitiesVal]: subActivitiesTime } }
+          var subActOt = !isNaN(Number($(subActivities[k].children[0].children[2]).text())) ? Number($(subActivities[k].children[0].children[2]).text()) : 0;
+          var subActMt = !isNaN(Number($(subActivities[k].children[0].children[3]).text())) ? Number($(subActivities[k].children[0].children[3]).text()) : 0;
+          var subActPt = !isNaN(Number($(subActivities[k].children[0].children[4]).text())) ? Number($(subActivities[k].children[0].children[4]).text()) : 0;
+          var subactobj = { [subActivitiesKey]: { [subActivitiesVal]: [subActOt, subActMt, subActPt] } }
           Object.assign(phaseobj[phaseNum][actNum], subactobj)
         } else {
           continue
         }
       }
+
     }
   }
+  console.log(completeSchedObj)
   $.ajax({
     url:"/api/add-project",
     method:"POST",

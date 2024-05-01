@@ -4,6 +4,7 @@ import "github.com/uadmin/uadmin"
 
 type SubActivity struct {
 	uadmin.Model
+	Key             int
 	Project         Project
 	ProjectID       uint
 	Phase           Phase
@@ -17,10 +18,6 @@ type SubActivity struct {
 	ExpectedTime    int
 	Critical        bool
 	PhaseDirect     bool
-	CreatedBy       uadmin.User
-	CreatedByID     uint
-	ModifiedBy      uadmin.User
-	ModifiedByID    uint
 }
 
 func (s SubActivity) String() string {

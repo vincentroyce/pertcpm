@@ -11,10 +11,6 @@ type Phase struct {
 	MostLikelyTime  int
 	PessimisticTime int
 	ExpectedTime    int
-	CreatedBy       uadmin.User
-	CreatedByID     uint
-	ModifiedBy      uadmin.User
-	ModifiedByID    uint
 }
 
 func (p Phase) String() string {
