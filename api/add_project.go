@@ -84,9 +84,8 @@ func AddProject(w http.ResponseWriter, r *http.Request) {
 			} else {
 				activityObj := v.(map[string]any)
 				for k, v := range activityObj {
-					if arr, ok := v.([]interface{}); ok {
-						// activity.ProjectID = project.ID
-						// activity.PhaseID = phase.ID
+						activity.ProjectID = project.ID
+						activity.PhaseID = phase.ID
 						activity.Name = k
 						activity.OptimisticTime = int(arr[0].(float64))
 						activity.MostLikelyTime = int(arr[1].(float64))
