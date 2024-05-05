@@ -404,22 +404,17 @@ $(".save-plan").click(function () {
       Object.assign(phaseobj[phaseNum], actobj)
       var subActivities = $(activities[j]).children()
       for (let k = 1; k < subActivities.length; k++) {
-        if (subActivities.length > 1) {
           var subActivitiesKey = $(subActivities[k].children[0].children[0]).text();
-          var subActivitiesVal = $(subActivities[k].children[0].children[1]).text()
-          var subActOt = !isNaN(Number($(subActivities[k].children[0].children[2]).text())) ? Number($(subActivities[k].children[0].children[2]).text()) : 0;
-          var subActMt = !isNaN(Number($(subActivities[k].children[0].children[3]).text())) ? Number($(subActivities[k].children[0].children[3]).text()) : 0;
-          var subActPt = !isNaN(Number($(subActivities[k].children[0].children[4]).text())) ? Number($(subActivities[k].children[0].children[4]).text()) : 0;
+          var subActivitiesVal = $(subActivities[k].children[0].children[1]).text();
+          var subActOt = !isNaN(Number($(subActivities[k].children[0].children[2].children[0]).val())) ? Number($(subActivities[k].children[0].children[2].children[0]).val()) : 0;
+          var subActMt = !isNaN(Number($(subActivities[k].children[0].children[3].children[0]).val())) ? Number($(subActivities[k].children[0].children[3].children[0]).val()) : 0;
+          var subActPt = !isNaN(Number($(subActivities[k].children[0].children[4].children[0]).val())) ? Number($(subActivities[k].children[0].children[4].children[0]).val()) : 0;
           var subactobj = { [subActivitiesKey]: { [subActivitiesVal]: [subActOt, subActMt, subActPt] } }
           Object.assign(phaseobj[phaseNum][actNum], subactobj)
-        } else {
-          continue
-        }
-      }
-
+        } 
     }
   }
-  console.log(completeSchedObj)
+  // console.log(completeSchedObj)
   $.ajax({
     url:"/api/add-project",
     method:"POST",

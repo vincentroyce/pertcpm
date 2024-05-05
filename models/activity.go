@@ -21,4 +21,5 @@ func (a Activity) String() string {
 
 func (a *Activity) Save() {
 	a.ExpectedTime = GetExpectedTime(a.OptimisticTime, a.MostLikelyTime, a.PessimisticTime)
+	uadmin.Save(a)
 }

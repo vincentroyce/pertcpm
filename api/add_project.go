@@ -68,12 +68,10 @@ func AddProject(w http.ResponseWriter, r *http.Request) {
 
 	projectObj := obj["obj"].(map[string]any)
 	for _, v := range projectObj {
-		// fmt.Println(k)
-		// fmt.Println(v)
 		phaseObj := v.(map[string]any)
+		var phaseID uint
 		for k, v := range phaseObj {
 			phase := models.Phase{}
-			activity := models.Activity{}
 			if arr, ok := v.([]interface{}); ok {
 				phase.ProjectID = project.ID
 				phase.Name = k
@@ -81,16 +79,41 @@ func AddProject(w http.ResponseWriter, r *http.Request) {
 				phase.MostLikelyTime = int(arr[1].(float64))
 				phase.PessimisticTime = int(arr[2].(float64))
 				phase.Save()
-			} else {
-				activityObj := v.(map[string]any)
-				for k, v := range activityObj {
-						activity.ProjectID = project.ID
-						activity.PhaseID = phase.ID
-						activity.Name = k
-						activity.OptimisticTime = int(arr[0].(float64))
-						activity.MostLikelyTime = int(arr[1].(float64))
-						activity.PessimisticTime = int(arr[2].(float64))
-						activity.Save()
+				phaseID = phase.ID
+				continue
+			}
+			activityObj := v.(map[string]any)
+			var activityID uint
+			var name string
+			for k, v := range activityObj {
+				activity := models.Activity{}
+				if arr, ok := v.([]interface{}); ok {
+					activity.ProjectID = project.ID
+					activity.PhaseID = phaseID
+					activity.Name = k
+					activity.OptimisticTime = int(arr[0].(float64))
+					activity.MostLikelyTime = int(arr[1].(float64))
+					activity.PessimisticTime = int(arr[2].(float64))
+					activity.Save()
+					activityID = activity.ID
+					name = activity.Name
+					continue
+				}
+				subActivityObj := v.(map[string]any)
+				for k, v := range subActivityObj {
+					if arr, ok := v.([]interface{}); ok {
+						subActivity := models.SubActivity{}
+						subActivity.ProjectID = project.ID
+						subActivity.PhaseID = phaseID
+						subActivity.ActivityID = activityID
+						subActivity.Name = k
+						subActivity.OptimisticTime = int(arr[0].(float64))
+						subActivity.MostLikelyTime = int(arr[1].(float64))
+						subActivity.PessimisticTime = int(arr[2].(float64))
+						if name == "" {
+							subActivity.PhaseDirect = true
+						}
+						subActivity.Save()
 					}
 				}
 			}

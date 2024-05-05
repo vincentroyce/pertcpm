@@ -26,4 +26,5 @@ func (s SubActivity) String() string {
 
 func (s *SubActivity) Save() {
 	s.ExpectedTime = GetExpectedTime(s.OptimisticTime, s.MostLikelyTime, s.PessimisticTime)
+	uadmin.Save(s)
 }
