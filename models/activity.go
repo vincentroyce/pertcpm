@@ -8,6 +8,7 @@ type Activity struct {
 	ProjectID       uint
 	Phase           Phase
 	PhaseID         uint
+	No              string
 	Name            string
 	OptimisticTime  int
 	MostLikelyTime  int

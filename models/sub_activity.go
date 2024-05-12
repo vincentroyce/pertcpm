@@ -11,6 +11,7 @@ type SubActivity struct {
 	PhaseID         uint
 	Activity        Activity
 	ActivityID      uint
+	No              string
 	Name            string
 	OptimisticTime  int
 	MostLikelyTime  int

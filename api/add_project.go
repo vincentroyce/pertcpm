@@ -67,11 +67,13 @@ func AddProject(w http.ResponseWriter, r *http.Request) {
 	project.Save()
 
 	projectObj := obj["obj"].(map[string]any)
-	for _, v := range projectObj {
+	for k, v := range projectObj {
 		phaseObj := v.(map[string]any)
 		var phaseID uint
+		phaseNum := k
 		for k, v := range phaseObj {
 			phase := models.Phase{}
+			phase.No = phaseNum
 			if arr, ok := v.([]interface{}); ok {
 				phase.ProjectID = project.ID
 				phase.Name = k
@@ -85,9 +87,11 @@ func AddProject(w http.ResponseWriter, r *http.Request) {
 			activityObj := v.(map[string]any)
 			var activityID uint
 			var name string
+			actNum := k
 			for k, v := range activityObj {
-				activity := models.Activity{}
 				if arr, ok := v.([]interface{}); ok {
+					activity := models.Activity{}
+					activity.No = actNum
 					activity.ProjectID = project.ID
 					activity.PhaseID = phaseID
 					activity.Name = k
@@ -100,9 +104,12 @@ func AddProject(w http.ResponseWriter, r *http.Request) {
 					continue
 				}
 				subActivityObj := v.(map[string]any)
+				subActNum := k
 				for k, v := range subActivityObj {
+
 					if arr, ok := v.([]interface{}); ok {
 						subActivity := models.SubActivity{}
+						subActivity.No = subActNum
 						subActivity.ProjectID = project.ID
 						subActivity.PhaseID = phaseID
 						subActivity.ActivityID = activityID

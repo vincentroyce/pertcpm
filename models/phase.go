@@ -6,6 +6,7 @@ type Phase struct {
 	uadmin.Model
 	Project         Project
 	ProjectID       uint
+	No              string
 	Name            string
 	OptimisticTime  int
 	MostLikelyTime  int
