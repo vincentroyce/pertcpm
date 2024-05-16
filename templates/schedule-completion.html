@@ -5,16 +5,26 @@
 <h1>Schedule Completion</h1>
 <h2>Project Title: <span class="project-title">{{ .ProjectName }}</span></h2>
 
-{{ range $i, $a := .Phases }}
-<p>{{$a}}</p>
-{{ end }}
-
-{{ range $i, $a := .Activities }}
-<p>{{$a}}</p>
-{{ end }}
-
-{{ range $i, $a := .SubActivities }}
-<p>{{$a}}</p>
-{{ end }}
-
+<div>
+  <h2>Phases</h2>
+  {{range .Project.Phase}}
+  <div>
+    <h3>Phase: {{.Name}}</h3>
+    <div>
+      <h4>Activities</h4>
+      {{range .Activity}}
+      <div>
+        <h5>Activity: {{.Name}}</h5>
+        <div>
+          <h6>SubActivities</h6>
+          {{range .SubActivity}}
+          <p>SubActivity: {{.Name}}</p>
+          {{end}}
+        </div>
+      </div>
+      {{end}}
+    </div>
+  </div>
+  {{end}}
+</div>
 {{ end }}

@@ -1,16 +1,24 @@
 package models
 
-import "github.com/uadmin/uadmin"
+import (
+	"time"
+
+	"github.com/uadmin/uadmin"
+)
 
 type Project struct {
 	uadmin.Model
-	Name         string
-	Cost         int64
-	Phase        []Phase `uadmin:"list_exclude"`
-	CreatedBy    uadmin.User
-	CreatedByID  uint
-	ModifiedBy   uadmin.User
-	ModifiedByID uint
+	Name              string
+	Cost              int64
+	Phase             []Phase `uadmin:"list_exclude"`
+	DateStart         time.Time
+	DateEnd           time.Time
+	ExpiresAt         *time.Time
+	ScheduleCompleted bool
+	CreatedBy         uadmin.User
+	CreatedByID       uint
+	ModifiedBy        uadmin.User
+	ModifiedByID      uint
 }
 
 func (p Project) String() string {

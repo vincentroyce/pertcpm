@@ -20,28 +20,35 @@ func ScheduleCompletionHandler(w http.ResponseWriter, r *http.Request) map[strin
 	if err != nil {
 		http.Error(w, "Project not found", http.StatusNotFound)
 	}
-	name := project.Name
+
 	// Load related phases for the project
 	phases := []models.Phase{}
 	uadmin.Filter(&phases, "project_id = ?", project.ID)
-	// Load related activities and sub-activities for each phase
+
+	// Loop through each phase to load related activities and sub-activities
 	for i := range phases {
+		// Load activities for the phase
 		activities := []models.Activity{}
 		uadmin.Filter(&activities, "phase_id = ?", phases[i].ID)
-		phases[i].Activity = activities
-		for j := range phases[i].Activity {
+
+		// Loop through each activity to load related sub-activities
+		for j := range activities {
 			subActivities := []models.SubActivity{}
-			uadmin.Filter(&subActivities, "activity_id = ?", phases[i].Activity[j].ID)
-			phases[i].Activity[j].SubActivity = subActivities
+			uadmin.Filter(&subActivities, "activity_id = ?", activities[j].ID)
+			activities[j].SubActivity = subActivities
 		}
+
+		// Assign activities to the phase
+		phases[i].Activity = activities
 	}
 
+	// Assign phases to the project
+	project.Phase = phases
+
+	// Prepare the data to be sent to the template
 	return map[string]interface{}{
-		"Title":         "Schedule Completion",
-		"ProjectName":   name,
-		"Project":       project,
-		"Phases":        phases,
-		"Activities":    activities,
-		"SubActivities": subActivities,
+		"Title":       "Schedule Completion",
+		"ProjectName": project.Name,
+		"Project":     project,
 	}
 }
