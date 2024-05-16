@@ -1,0 +1,11 @@
+.login-div,
+.image {
+  min-height: 100vh;
+}
+
+.bg-image {
+  background-image: url('/static/media/440921056_3780621792183800_4943365504590121414_n-removebg-preview.png');
+  background-repeat: no-repeat;
+  background-size: auto;
+  background-position: center center;
+}

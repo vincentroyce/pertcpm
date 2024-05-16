@@ -9,7 +9,6 @@ import (
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	// Log out the user.
 	uadmin.Logout(r)
-
 	// Expire all cookies on logout by setting MaxAge to be less than 0.
 	for _, cookie := range r.Cookies() {
 		c := &http.Cookie{
