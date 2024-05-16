@@ -3,9 +3,18 @@
 {{ end }}
 {{ define "content" }}
 <h1>Schedule Completion</h1>
-<h2>Project Title: <span class="project-title"></span></h2>
+<h2>Project Title: <span class="project-title">{{ .ProjectName }}</span></h2>
 
-<script>
-  localStorage.get
-</script>
+{{ range $i, $a := .Phases }}
+<p>{{$a}}</p>
+{{ end }}
+
+{{ range $i, $a := .Activities }}
+<p>{{$a}}</p>
+{{ end }}
+
+{{ range $i, $a := .SubActivities }}
+<p>{{$a}}</p>
+{{ end }}
+
 {{ end }}

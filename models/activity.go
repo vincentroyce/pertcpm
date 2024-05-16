@@ -8,6 +8,7 @@ type Activity struct {
 	ProjectID       uint
 	Phase           Phase
 	PhaseID         uint
+	SubActivity     []SubActivity `uadmin:"list_exclude"`
 	No              string
 	Name            string
 	OptimisticTime  int

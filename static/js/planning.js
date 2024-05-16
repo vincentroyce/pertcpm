@@ -428,8 +428,9 @@ $(".save-plan").click(function () {
       cost: Number($("#totalAmount").text()),
       obj: completeSchedObj,
     }),
-    success: function(resp) {
+    success: function(resp) { 
       console.log(resp["response"])
+      location.href = location.origin + "/user/schedule-completion"
     },
     error: function(response) {
       console.log(response["responseText"])

@@ -6,6 +6,7 @@ type Project struct {
 	uadmin.Model
 	Name         string
 	Cost         int64
+	Phase        []Phase `uadmin:"list_exclude"`
 	CreatedBy    uadmin.User
 	CreatedByID  uint
 	ModifiedBy   uadmin.User

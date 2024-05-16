@@ -6,6 +6,7 @@ type Phase struct {
 	uadmin.Model
 	Project         Project
 	ProjectID       uint
+	Activity        []Activity `uadmin:"list_exclude"`
 	No              string
 	Name            string
 	OptimisticTime  int
