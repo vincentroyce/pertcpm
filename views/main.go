@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/uadmin/uadmin"
+	"github.com/vrsalazar/pertcpm/models"
 )
 
 func Main(w http.ResponseWriter, r *http.Request) {
@@ -60,7 +61,37 @@ func PlanningHandler(w http.ResponseWriter, r *http.Request) map[string]interfac
 
 func ScheduleCompletionHandler(w http.ResponseWriter, r *http.Request) map[string]interface{} {
 	r.URL.Path = strings.TrimPrefix(r.URL.Path, "/schedule-completion/")
+	projectID := r.URL.Query().Get("id")
+	if projectID == "" {
+		http.Error(w, "Project ID is required", http.StatusBadRequest)
+	}
+
+	project := models.Project{}
+	err := uadmin.Get(&project, "id = ?", projectID)
+	if err != nil {
+		http.Error(w, "Project not found", http.StatusNotFound)
+	}
+
+	// Load related Phases
+	var phases = []map[string]interface{}{}
+	uadmin.Filter(&phases, "project_id = ?", project.ID)
+
+	// Load related Activities and SubActivities
+	for i := range phases {
+		var activities []Activity
+		uadmin.Filter(&activities, "phase_id = ?", phases[i].ID)
+		phases[i].Activities = activities
+
+		for j := range phases[i].Activities {
+			var subActivities []SubActivity
+			uadmin.Filter(&subActivities, "activity_id = ?", phases[i].Activities[j].ID)
+			phases[i].Activities[j].SubActivities = subActivities
+		}
+	}
+
+	project.Phases = phases
 	return map[string]interface{}{
-		"Title": "Schedule Completion",
+		"Title":   "Schedule Completion",
+		"Project": "Schedule Completion",
 	}
 }

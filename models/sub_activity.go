@@ -18,7 +18,6 @@ type SubActivity struct {
 	PessimisticTime int
 	ExpectedTime    int
 	Critical        bool
-	PhaseDirect     bool
 }
 
 func (s SubActivity) String() string {

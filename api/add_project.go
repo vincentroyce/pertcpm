@@ -31,6 +31,16 @@ func AddProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err := r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		uadmin.ReturnJSON(w, r, map[string]any{
+			"status":  "error",
+			"err_msg": "unable to parse multipart. " + err.Error(),
+		})
+		return
+	}
+
 	buf, err := io.ReadAll(r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -60,6 +70,79 @@ func AddProject(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
+	if _, ok := obj["projectName"]; !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		uadmin.ReturnJSON(w, r, map[string]any{
+			"status":  "error",
+			"err_msg": "missing 'projectName' key in json body",
+		})
+		return
+	}
+
+	if obj["projectName"] == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		uadmin.ReturnJSON(w, r, map[string]any{
+			"status":  "error",
+			"err_msg": "empty project name",
+		})
+		return
+	}
+
+	if _, ok := obj["cost"]; !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		uadmin.ReturnJSON(w, r, map[string]any{
+			"status":  "error",
+			"err_msg": "missing 'cost' key in json body",
+		})
+		return
+	}
+
+	if _, ok := obj["obj"]; !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		uadmin.ReturnJSON(w, r, map[string]any{
+			"status":  "error",
+			"err_msg": "missing 'obj' key in json body",
+		})
+		return
+	}
+
+	if len(obj["obj"].(map[string]any)) == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		uadmin.ReturnJSON(w, r, map[string]any{
+			"status":  "error",
+			"err_msg": "empty project object",
+		})
+		return
+	}
+
+	if _, ok := obj["projectName"].(string); !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		uadmin.ReturnJSON(w, r, map[string]any{
+			"status":  "error",
+			"err_msg": "'projectName' json key is not a string",
+		})
+		return
+	}
+
+	if _, ok := obj["cost"].(float64); !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		uadmin.ReturnJSON(w, r, map[string]any{
+			"status":  "error",
+			"err_msg": "'cost' json key is not a float",
+		})
+		return
+	}
+
+	if _, ok := obj["obj"].(map[string]interface{}); !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		uadmin.ReturnJSON(w, r, map[string]any{
+			"status":  "error",
+			"err_msg": "'obj' json key is not a map",
+		})
+		return
+	}
+
 	project := models.Project{}
 	project.Name = fmt.Sprintf("%v", obj["projectName"])
 	cost := fmt.Sprintf("%v", obj["cost"])
@@ -67,60 +150,68 @@ func AddProject(w http.ResponseWriter, r *http.Request) {
 	project.Save()
 
 	projectObj := obj["obj"].(map[string]any)
+
+	// Step 1: Extract and save all phases first
+	phaseIDMap := make(map[string]uint)
 	for k, v := range projectObj {
 		phaseObj := v.(map[string]any)
-		var phaseID uint
-		phaseNum := k
+		phaseNum := k // phaseNum is a string
 		for k, v := range phaseObj {
-			phase := models.Phase{}
-			phase.No = phaseNum
 			if arr, ok := v.([]interface{}); ok {
-				phase.ProjectID = project.ID
-				phase.Name = k
-				phase.OptimisticTime = int(arr[0].(float64))
-				phase.MostLikelyTime = int(arr[1].(float64))
-				phase.PessimisticTime = int(arr[2].(float64))
-				phase.Save()
-				phaseID = phase.ID
-				continue
+				// Save phase and store its ID
+				phaseID := AddPhase(phaseNum, project.ID, k, int(arr[0].(float64)), int(arr[1].(float64)), int(arr[2].(float64)))
+				phaseIDMap[phaseNum] = phaseID
+				break // Exit the loop after finding the phase array
+			}
+		}
+	}
+
+	// Step 2: Extract and save all activities
+	activityIDMap := make(map[string]map[string]uint)
+	for k, v := range projectObj {
+		phaseObj := v.(map[string]any)
+		phaseNum := k // phaseNum is a string
+		phaseID := phaseIDMap[phaseNum]
+		activityIDMap[phaseNum] = make(map[string]uint)
+		for k, v := range phaseObj {
+			if _, ok := v.([]interface{}); ok {
+				continue // Skip the phase array as it is already processed
 			}
 			activityObj := v.(map[string]any)
-			var activityID uint
-			var name string
-			actNum := k
+			actNum := k // actNum is a string
 			for k, v := range activityObj {
 				if arr, ok := v.([]interface{}); ok {
-					activity := models.Activity{}
-					activity.No = actNum
-					activity.ProjectID = project.ID
-					activity.PhaseID = phaseID
-					activity.Name = k
-					activity.OptimisticTime = int(arr[0].(float64))
-					activity.MostLikelyTime = int(arr[1].(float64))
-					activity.PessimisticTime = int(arr[2].(float64))
-					activity.Save()
-					activityID = activity.ID
-					name = activity.Name
-					continue
+					// Save activity and store its ID
+					activityID := AddActivity(actNum, project.ID, phaseID, k, int(arr[0].(float64)), int(arr[1].(float64)), int(arr[2].(float64)))
+					activityIDMap[phaseNum][actNum] = activityID
+					break // Exit the loop after finding the activity array
+				}
+			}
+		}
+	}
+
+	// Step 3: Iterate again to add sub-activities
+	for k, v := range projectObj {
+		phaseObj := v.(map[string]any)
+		phaseNum := k // phaseNum is a string
+		phaseID := phaseIDMap[phaseNum]
+		for k, v := range phaseObj {
+			if _, ok := v.([]interface{}); ok {
+				continue // Skip the phase array as it is already processed
+			}
+			activityObj := v.(map[string]any)
+			actNum := k // actNum is a string
+			activityID := activityIDMap[phaseNum][actNum]
+			for k, v := range activityObj {
+				if _, ok := v.([]interface{}); ok {
+					continue // Skip the activity array as it is already processed
 				}
 				subActivityObj := v.(map[string]any)
-				subActNum := k
+				subActNum := k // subActNum is a string
 				for k, v := range subActivityObj {
-
 					if arr, ok := v.([]interface{}); ok {
-						subActivity := models.SubActivity{}
-						subActivity.No = subActNum
-						subActivity.ProjectID = project.ID
-						subActivity.PhaseID = phaseID
-						subActivity.ActivityID = activityID
-						subActivity.Name = k
-						subActivity.OptimisticTime = int(arr[0].(float64))
-						subActivity.MostLikelyTime = int(arr[1].(float64))
-						subActivity.PessimisticTime = int(arr[2].(float64))
-						if name == "" {
-							subActivity.PhaseDirect = true
-						}
-						subActivity.Save()
+						// Save sub-activity
+						AddSubActivity(subActNum, project.ID, activityID, phaseID, k, int(arr[0].(float64)), int(arr[1].(float64)), int(arr[2].(float64)))
 					}
 				}
 			}
@@ -129,6 +220,6 @@ func AddProject(w http.ResponseWriter, r *http.Request) {
 
 	uadmin.ReturnJSON(w, r, map[string]any{
 		"status":   "ok",
-		"response": obj,
+		"response": project,
 	})
 }

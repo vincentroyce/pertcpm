@@ -15,7 +15,15 @@ let addSubAct = ($("#subactName").val()).trim()
   }
   projectObj[addProj] = { ...projectObj[addProj] };
   if (addPhase == null || addPhase == "" || addPhase == undefined) {
-    alert("Please put a phase.");
+    alert("Please put a phase name.");
+    return
+  }
+  if (addAct == null || addAct == "" || addAct == undefined) {
+    alert("Please put a activity name.");
+    return
+  }
+  if (addSubAct == null || addSubAct == "" || addSubAct == undefined) {
+    alert("Please put a sub-activity name.");
     return
   }
   projectObj[addProj][addPhase] = { ...projectObj[addProj][addPhase] };
