@@ -2,29 +2,48 @@
 <title>{{ .Title }}</title>
 {{ end }}
 {{ define "content" }}
-<h1>Schedule Completion</h1>
-<h2>Project Title: <span class="project-title">{{ .ProjectName }}</span></h2>
-
-<div>
-  <h2>Phases</h2>
-  {{range .Project.Phase}}
-  <div>
-    <h3>Phase: {{.Name}}</h3>
-    <div>
-      <h4>Activities</h4>
-      {{range .Activity}}
-      <div>
-        <h5>Activity: {{.Name}}</h5>
-        <div>
-          <h6>SubActivities</h6>
-          {{range .SubActivity}}
-          <p>SubActivity: {{.Name}}</p>
-          {{end}}
-        </div>
-      </div>
-      {{end}}
-    </div>
-  </div>
-  {{end}}
+<div class="container">
+  <h1>Schedule Completion</h1>
+  <h2>Project Title: <span class="project-title">{{ .ProjectName }}</span></h2>
 </div>
+<div class="container">
+  <table class="table table-bordered table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Item No.</th>
+        <th scope="col">Activity</th>
+        <th scope="col">Immediate Predecessors</th>
+        <th scope="col">Expected Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Project.Phase}}
+      <tr>
+        <th scope="row">{{ .No }}</th>
+        <td>{{ .Name }}</td>
+        <td></td>
+        <td></td>
+      </tr>
+      {{range .Activity}}
+      <tr>
+        <th scope="row">{{ .No }}</th>
+        <td>{{ .Name }}</td>
+        <td></td>
+        <td></td>
+      </tr>
+      {{range .SubActivity}}
+      <tr>
+        <th scope="row">{{ .No }}</th>
+        <td>{{ .Name }}</td>
+        <td></td>
+        <td>{{ .ExpectedTime }}</td>
+      </tr>
+      {{end}}
+      {{end}}
+      {{end}}
+
+    </tbody>
+  </table>
+</div>
+
 {{ end }}
