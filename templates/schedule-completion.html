@@ -7,7 +7,7 @@
   <h2>Project Title: <span class="project-title">{{ .ProjectName }}</span></h2>
 </div>
 <div class="container">
-  <table class="table table-bordered table-hover">
+  <table class="table table-bordered table-collapsed table-hover">
     <thead class="thead-dark text-center ">
       <tr>
         <th class="text-light" scope="col">Item No.</th>
@@ -19,24 +19,24 @@
     <tbody class="text-center">
       {{range .Project.Phase}}
       <tr>
-        <th scope="row">{{ .No }}</th>
-        <td>{{ .Name }}</td>
+        <th class="fs-6" scope="row">{{ .No }}</th>
+        <td class="fs-6">{{ .Name }}</td>
         <td colspan="2"></td>
       </tr>
       {{range .Activity}}
       {{$activity := .}}
       <tr>
-        <th scope="row">{{ .No }}</th>
-        <td>{{ .Name }}</td>
+        <th class="fs-6" scope="row">{{ .No }}</th>
+        <td class="fs-6">{{ .Name }}</td>
         <td colspan="2"></td>
       </tr>
       {{range .SubActivity}}
       {{$subActivity := .}}
       <tr>
-        <th scope="row">{{ .No }}</th>
-        <td>{{ .Name }}</td>
-        <td>
-          <select role="button" name="predecessors" id="predecessors">
+        <th class="fs-6" scope="row">{{ .No }}</th>
+        <td class="fs-6">{{ .Name }}</td>
+        <td class="p-0">
+          <select class="form-control p-4 text-center border-0 rounded-0" role="button" name="predecessors" id="predecessors">
             {{range $.AllSubActivities}}
               {{if ne .ID $subActivity.ID}}
                 <option value="{{ .ID }}">{{ .No }}</option>
@@ -44,7 +44,7 @@
             {{end}}
           </select>
         </td>
-        <td>{{ .ExpectedTime }}</td>
+        <td class="fs-6">{{ .ExpectedTime }}</td>
       </tr>
       {{end}}
       {{end}}

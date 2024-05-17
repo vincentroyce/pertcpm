@@ -4,7 +4,7 @@ import "github.com/uadmin/uadmin"
 
 type SubActivity struct {
 	uadmin.Model
-	Key             int
+	Predecessor     uint
 	Project         Project
 	ProjectID       uint
 	Phase           Phase
