@@ -158,6 +158,7 @@ func AddProject(w http.ResponseWriter, r *http.Request) {
 		phaseNum := k // phaseNum is a string
 		for k, v := range phaseObj {
 			if arr, ok := v.([]interface{}); ok {
+				fmt.Println(arr)
 				// Save phase and store its ID
 				phaseID := AddPhase(phaseNum, project.ID, k, int(arr[0].(float64)), int(arr[1].(float64)), int(arr[2].(float64)))
 				phaseIDMap[phaseNum] = phaseID

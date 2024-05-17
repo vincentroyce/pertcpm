@@ -4,12 +4,14 @@ import "github.com/uadmin/uadmin"
 
 type Worker struct {
 	uadmin.Model
-	Project     Project
-	ProjectID   uint
-	Name        string
-	RatePerHour int
-	Quantity    int
-	Total       int
+	Project   Project
+	ProjectID uint
+	Phase     Phase
+	PhaseID   uint
+	Name      string
+	Rate      int
+	Quantity  int
+	Total     int
 }
 
 func (w Worker) String() string {

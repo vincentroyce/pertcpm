@@ -117,22 +117,7 @@ let addSubAct = ($("#subactName").val()).trim()
     </div>
   </div>`
       }
-  //     if (typeof Object.values(actObj)[j] === "string") {
-  //       console.log('this is a string')
-  //       var phaseDirect =
-  //         `<div class="direct-sub-activity-container-${j + 1}">
-  //   <div class="table-content text-center text-break" style="color:purple;">
-  //     <div>${convertToRoman(i + 1)}. ${alphabet[j]}.</div>
-  //     <div>${actKey}</div>
-  //     <div><input type="number" value="0" min="0" oninput="stringAct(this)"></div>
-  //     <div><input type="number" value="0" min="0" oninput="stringAct(this)"></div>
-  //     <div><input type="number" value="0" min="0" oninput="stringAct(this)"></div>
-  //     <div>--</div>
-  //   </div>
-  // </div>`
-  //       $(`.phase-activity-container-${i + 1}`).append(phaseDirect)
-  //       continue
-  //     }
+
       $(`.phase-activity-container-${i + 1}`).append(actFormat)
       for (let k = 0; k < Object.keys(projectObj[addProj][phaseKey][actKey]).length; k++) {
         //actKey = Object.keys(projectObj[addProj][phaseKey])[j]
@@ -169,7 +154,7 @@ let addSubAct = ($("#subactName").val()).trim()
   projectLen = Object.keys(projectObj[addProj]).length
   for (let i = 0; i < projectLen; i++) {
     format =
-      `<div class="border border-light p-2 d-flex flex-column gap-2">
+      `<div class="act-body border border-light p-2 d-flex flex-column gap-2">
       <div class="container">
       <h3>Activity: ${Object.keys(projectObj[addProj])[i]}</h3>
       <h3>Labor</h3>
@@ -182,7 +167,6 @@ let addSubAct = ($("#subactName").val()).trim()
                     <th>Total</th>
                 </tr>
             </thead>
-            <tbody>
                 <tr>
                     <td><input type="text" name="worker[]"></td>
                     <td><input type="number" name="quantity[]" oninput="calculateTotal(this)"></td>
@@ -390,12 +374,35 @@ $(".save-plan").click(function () {
   var completeSchedObj = {}
   let phases = $(".table-body").children()
   for (var i = 0; i < phases.length; i++) {
+    var workerName = [];
+    var workerRate = [];
+    var workerQty = [];
+    var equipmentName = [];
+    var equipmentRate = [];
+    var equipmentQty = [];
+
+    var laborTbody = $(".act-body")[i].children[0].children[2].children[1]
+    console.log($(laborTbody.children).length)
+    for (let i = 0; i < $(laborTbody.children).length; i++) {
+      workerName.push($(laborTbody.children[i].children[0].children[0]).val())
+      workerRate.push($(laborTbody.children[i].children[1].children[0]).val())
+      workerQty.push($(laborTbody.children[i].children[2].children[0]).val())
+    }
+
+    var equipTbody = $(".act-body")[i].children[1].children[1].children[1]
+    console.log($(laborTbody.children).length)
+    for (let i = 0; i < $(equipTbody.children).length; i++) {
+      equipmentName.push($(equipTbody.children[i].children[0].children[0]).val())
+      equipmentRate.push($(equipTbody.children[i].children[1].children[0]).val())
+      equipmentQty.push($(equipTbody.children[i].children[2].children[0]).val())
+    }
+
     var phaseNum = $(phases[i].children[0].children[0]).text()
     var phaseVal = $(phases[i].children[0].children[1]).text()
     var phaseOt = !isNaN(Number($(phases[i].children[0].children[2]).text())) ? Number($(phases[i].children[0].children[2]).text()) : 0;
     var phaseMt = !isNaN(Number($(phases[i].children[0].children[3]).text())) ? Number($(phases[i].children[0].children[3]).text()) : 0;
     var phasePt = !isNaN(Number($(phases[i].children[0].children[4]).text())) ? Number($(phases[i].children[0].children[4]).text()) : 0;
-    var phaseobj = { [phaseNum]: { [phaseVal]: [phaseOt, phaseMt, phasePt] } }
+    var phaseobj = { [phaseNum]: { [phaseVal]: [phaseOt, phaseMt, phasePt, workerName, workerRate, workerQty, equipmentName, equipmentRate, equipmentQty]} }
     Object.assign(completeSchedObj, phaseobj)
     var activities = $(phases[i]).children()
     for (let j = 1; j < activities.length; j++) {
@@ -418,6 +425,7 @@ $(".save-plan").click(function () {
         } 
     }
   }
+
   // console.log(completeSchedObj)
   $.ajax({
     url:"/api/add-project",
@@ -430,7 +438,7 @@ $(".save-plan").click(function () {
     }),
     success: function(resp) { 
       console.log(resp["response"])
-      location.href = location.origin + "/user/schedule-completion"
+      // location.href = location.origin + "/user/schedule-completion"
     },
     error: function(response) {
       console.log(response["responseText"])
