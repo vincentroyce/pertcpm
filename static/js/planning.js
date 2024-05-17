@@ -169,7 +169,7 @@ let addSubAct = ($("#subactName").val()).trim()
   projectLen = Object.keys(projectObj[addProj]).length
   for (let i = 0; i < projectLen; i++) {
     format =
-      `<div class="border border-light p-2">
+      `<div class="border border-light p-2 d-flex flex-column gap-2">
       <div class="container">
       <h3>Activity: ${Object.keys(projectObj[addProj])[i]}</h3>
       <h3>Labor</h3>
@@ -191,7 +191,7 @@ let addSubAct = ($("#subactName").val()).trim()
                 </tr>
             </tbody>
         </table>
-        <button class="add-row-btn" onclick="addRow(this)">Add Row</button>
+        <button class="add-row-btn mt-2" onclick="addRow(this)">Add Row</button>
     </div>
 
     <div class="container">
@@ -214,7 +214,7 @@ let addSubAct = ($("#subactName").val()).trim()
                 </tr>
             </tbody>
         </table>
-        <button class="add-row-btn" onclick="addRow(this)">Add Row</button>
+        <button class="add-row-btn mt-2" onclick="addRow(this)">Add Row</button>
     </div>
   </div>`
     $(".content-from-table").append(format)
