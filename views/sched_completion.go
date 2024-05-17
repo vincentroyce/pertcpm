@@ -25,6 +25,7 @@ func ScheduleCompletionHandler(w http.ResponseWriter, r *http.Request) map[strin
 	phases := []models.Phase{}
 	uadmin.Filter(&phases, "project_id = ?", project.ID)
 
+	allSubActivities := []models.SubActivity{}
 	// Loop through each phase to load related activities and sub-activities
 	for i := range phases {
 		// Load activities for the phase
@@ -36,6 +37,7 @@ func ScheduleCompletionHandler(w http.ResponseWriter, r *http.Request) map[strin
 			subActivities := []models.SubActivity{}
 			uadmin.Filter(&subActivities, "activity_id = ?", activities[j].ID)
 			activities[j].SubActivity = subActivities
+			allSubActivities = append(allSubActivities, subActivities...)
 		}
 
 		// Assign activities to the phase
@@ -47,8 +49,9 @@ func ScheduleCompletionHandler(w http.ResponseWriter, r *http.Request) map[strin
 
 	// Prepare the data to be sent to the template
 	return map[string]interface{}{
-		"Title":       "Schedule Completion",
-		"ProjectName": project.Name,
-		"Project":     project,
+		"Title":            "Schedule Completion",
+		"ProjectName":      project.Name,
+		"Project":          project,
+		"AllSubActivities": allSubActivities,
 	}
 }

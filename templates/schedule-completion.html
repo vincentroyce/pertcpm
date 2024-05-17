@@ -8,34 +8,42 @@
 </div>
 <div class="container">
   <table class="table table-bordered table-hover">
-    <thead class="thead-dark">
+    <thead class="thead-dark text-center ">
       <tr>
-        <th scope="col">Item No.</th>
-        <th scope="col">Activity</th>
-        <th scope="col">Immediate Predecessors</th>
-        <th scope="col">Expected Time</th>
+        <th class="text-light" scope="col">Item No.</th>
+        <th class="text-light" scope="col">Activity</th>
+        <th class="text-light" scope="col">Immediate Predecessors</th>
+        <th class="text-light" scope="col">Expected Time</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody class="text-center">
       {{range .Project.Phase}}
       <tr>
         <th scope="row">{{ .No }}</th>
         <td>{{ .Name }}</td>
-        <td></td>
-        <td></td>
+        <td colspan="2"></td>
       </tr>
       {{range .Activity}}
+      {{$activity := .}}
       <tr>
         <th scope="row">{{ .No }}</th>
         <td>{{ .Name }}</td>
-        <td></td>
-        <td></td>
+        <td colspan="2"></td>
       </tr>
       {{range .SubActivity}}
+      {{$subActivity := .}}
       <tr>
         <th scope="row">{{ .No }}</th>
         <td>{{ .Name }}</td>
-        <td></td>
+        <td>
+          <select role="button" name="predecessors" id="predecessors">
+            {{range $.AllSubActivities}}
+              {{if ne .ID $subActivity.ID}}
+                <option value="{{ .ID }}">{{ .No }}</option>
+              {{end}}
+            {{end}}
+          </select>
+        </td>
         <td>{{ .ExpectedTime }}</td>
       </tr>
       {{end}}
