@@ -110,9 +110,9 @@ let addSubAct = ($("#subactName").val()).trim()
     <div class="d-none table-content text-center text-break">
       <div>${convertToRoman(i + 1)}. ${alphabet[j]}.</div>
       <div>${actKey}</div>
-      <div><input type="number" value="0" min="0" onchange="stringAct(this)"></div>
-      <div><input type="number" value="0" min="0" onchange="stringAct(this)"></div>
-      <div><input type="number" value="0" min="0" onchange="stringAct(this)"></div>
+      <div><input type="number" value="0" min="0" oninput="stringAct(this)"></div>
+      <div><input type="number" value="0" min="0" oninput="stringAct(this)"></div>
+      <div><input type="number" value="0" min="0" oninput="stringAct(this)"></div>
       <div>--</div>
     </div>
   </div>`
@@ -124,9 +124,9 @@ let addSubAct = ($("#subactName").val()).trim()
   //   <div class="table-content text-center text-break" style="color:purple;">
   //     <div>${convertToRoman(i + 1)}. ${alphabet[j]}.</div>
   //     <div>${actKey}</div>
-  //     <div><input type="number" value="0" min="0" onchange="stringAct(this)"></div>
-  //     <div><input type="number" value="0" min="0" onchange="stringAct(this)"></div>
-  //     <div><input type="number" value="0" min="0" onchange="stringAct(this)"></div>
+  //     <div><input type="number" value="0" min="0" oninput="stringAct(this)"></div>
+  //     <div><input type="number" value="0" min="0" oninput="stringAct(this)"></div>
+  //     <div><input type="number" value="0" min="0" oninput="stringAct(this)"></div>
   //     <div>--</div>
   //   </div>
   // </div>`
@@ -142,9 +142,9 @@ let addSubAct = ($("#subactName").val()).trim()
       <div class="table-content text-center text-break">
       <div>${convertToRoman(i + 1)}. ${alphabet[j]}. ${convertToRoman(k + 1).toLowerCase()}.</div>
       <div>${subActKey}</div>
-      <div><input type="number" value="0" min="0" onchange="unexpectedTimeRow(this)"></div>
-      <div><input type="number" value="0" min="0" onchange="unexpectedTimeRow(this)"></div>
-      <div><input type="number" value="0" min="0" onchange="unexpectedTimeRow(this)"></div>
+      <div><input type="number" value="0" min="0" oninput="unexpectedTimeRow(this)"></div>
+      <div><input type="number" value="0" min="0" oninput="unexpectedTimeRow(this)"></div>
+      <div><input type="number" value="0" min="0" oninput="unexpectedTimeRow(this)"></div>
       <div>--</div>
     </div>
     </div>`
@@ -154,9 +154,9 @@ let addSubAct = ($("#subactName").val()).trim()
       <div class="d-none table-content text-center text-break">
       <div>${convertToRoman(i + 1)}. ${alphabet[j]}. ${convertToRoman(k + 1).toLowerCase()}.</div>
       <div>${subActKey}</div>
-      <div><input type="number" value="0" min="0" onchange="unexpectedTimeRow(this)"></div>
-      <div><input type="number" value="0" min="0" onchange="unexpectedTimeRow(this)"></div>
-      <div><input type="number" value="0" min="0" onchange="unexpectedTimeRow(this)"></div>
+      <div><input type="number" value="0" min="0" oninput="unexpectedTimeRow(this)"></div>
+      <div><input type="number" value="0" min="0" oninput="unexpectedTimeRow(this)"></div>
+      <div><input type="number" value="0" min="0" oninput="unexpectedTimeRow(this)"></div>
       <div>--</div>
     </div>
     </div>`

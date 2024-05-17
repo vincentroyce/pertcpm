@@ -2,34 +2,38 @@
 <title>{{ .Title }}</title>
 {{ end }}
 {{ define "content" }}
-<h1>Planning Page</h1>
-<div class="d-flex gap-1 mt-2 align-items-center">
-  <label for="projName">Enter Project Name: </label>
-  <input id="projName" type="text">
+<h1 class="text-center mt-2 ">Planning Page</h1>
+<div class="container d-flex flex-column gap-4 align-items-center">
+  <div class="container d-flex flex-column gap-4">
+    <div class="row gap-1 mt-2 align-items-center">
+      <label for="projName" class="fs-5 gx-0">Enter Project Name: </label>
+      <input id="projName" class="col p-2" type="text">
+    </div>
+    <div class="row gap-1 mt-2 align-items-center">
+      <label for="phaseName" class="fs-5 gx-0">Enter Activity Phase Name: </label>
+      <input id="phaseName" class="col p-2" type="text">
+    </div>
+    <div class="row gap-1 mt-2 align-items-center">
+      <label for="actName" class="fs-5 gx-0">Enter Activity Name: </label>
+      <input id="actName" class="col p-2" type="text">
+    </div>
+    <div class="row gap-1 mt-2 align-items-center">
+      <label for="subactName" class="fs-5 gx-0">Enter Sub-Activity Name: </label>
+      <input id="subactName" class="col p-2" type="text">
+    </div>
+  </div>
+  <button class="add-phase btn btn-primary">Add to Project</button>
 </div>
-<div class="d-flex gap-1 mt-2 align-items-center">
-  <label for="phaseName">Enter Activity Phase Name: </label>
-  <input id="phaseName" type="text">
-</div>
-<div class="d-flex gap-1 mt-2 align-items-center">
-  <label for="actName">Enter Activity Name: </label>
-  <input id="actName" type="text">
-</div>
-<div class="d-flex gap-1 mt-2 align-items-center">
-  <label for="subactName">Enter Sub-Activity Name: </label>
-  <input id="subactName" type="text">
-</div>
-<button class="add-phase btn btn-primary">Button</button>
 
 <div class="container mt-4">
   <div class="table-header text-center  text-break">
-    <div>Item No.</div>
-    <div>Activity</div>
-    <div>Time Estimate</div>
-    <div>Expected Time</div>
-    <div>Optimistic Time</div>
-    <div>Most Likely Time</div>
-    <div>Pessimistic Time</div>
+    <div class="fs-5">Item No.</div>
+    <div class="fs-5">Activity</div>
+    <div class="fs-5">Time Estimate</div>
+    <div class="fs-5">Expected Time</div>
+    <div class="fs-5">Optimistic Time</div>
+    <div class="fs-5">Most Likely Time</div>
+    <div class="fs-5">Pessimistic Time</div>
   </div>
   <div class="table-body"></div>
   <div class="pricing d-flex position-relative mt-4 gap-1 align-items-start">
