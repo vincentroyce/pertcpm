@@ -19,6 +19,7 @@ type Project struct {
 	CreatedByID       uint
 	ModifiedBy        uadmin.User
 	ModifiedByID      uint
+	Completed         bool
 }
 
 func (p Project) String() string {

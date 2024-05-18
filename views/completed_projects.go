@@ -9,15 +9,15 @@ import (
 	"github.com/vrsalazar/pertcpm/models"
 )
 
-func OngoingProjectHandler(w http.ResponseWriter, r *http.Request) map[string]interface{} {
+func CompletedProjectHandler(w http.ResponseWriter, r *http.Request) map[string]interface{} {
 	r.URL.Path = strings.TrimPrefix(r.URL.Path, "/ongoing-projects/")
 
 	projects := []models.Project{}
-	uadmin.Filter(&projects, "completed = ?", false)
+	uadmin.Filter(&projects, "completed = ?", true)
 	fmt.Println(projects)
 
 	return map[string]interface{}{
-		"Title":    "Ongoing Projects",
+		"Title":    "Completed Projects",
 		"Projects": projects,
 	}
 }

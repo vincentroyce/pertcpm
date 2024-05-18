@@ -30,6 +30,9 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		context = ScheduleCompletionHandler(w, r)
 	case "ongoing-projects":
 		context = OngoingProjectHandler(w, r)
+	case "completed-projects":
+		context = CompletedProjectHandler(w, r)
+
 	default:
 		page = "home"
 	}

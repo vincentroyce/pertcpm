@@ -1,0 +1,13 @@
+{{ define "title" }}
+<title>{{ .Title }}</title>
+{{end}}
+{{ define "content" }}
+<h1>Welcome to Completed Project</h1>
+{{ range .Projects}}
+<div>
+  <p>{{ .Name }}</p>
+  <p>{{ .Cost }}</p>
+  <p>{{ .ScheduleCompleted }}</p>
+</div>  
+{{ end }}
+{{end}}
