@@ -3,3 +3,29 @@
   display: flex;
   flex-direction: column;
 }
+
+.text-indent {
+  text-indent: 10px;
+}
+
+.file-plus {
+  background-image: url('/static/media/file-plus.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 14px;
+  width: 14px;
+}
+.clock {
+  background-image: url('/static/media/clock.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 14px;
+  width: 14px;
+}
+.check-square {
+  background-image: url('/static/media/check-square.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 14px;
+  width: 14px;
+}
