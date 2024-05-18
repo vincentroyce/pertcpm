@@ -17,3 +17,8 @@ type Equipment struct {
 func (e Equipment) String() string {
 	return e.Name
 }
+
+func (e *Equipment) Save() {
+	e.Total = e.Cost * e.Quantity
+	uadmin.Save(e)
+}

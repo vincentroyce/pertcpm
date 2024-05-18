@@ -17,3 +17,8 @@ type Worker struct {
 func (w Worker) String() string {
 	return w.Name
 }
+
+func (w *Worker) Save() {
+	w.Total = w.Rate * w.Quantity
+	uadmin.Save(w)
+}

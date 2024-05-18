@@ -1,10 +1,12 @@
 package api
 
 import (
+	"strconv"
+
 	"github.com/vrsalazar/pertcpm/models"
 )
 
-func AddPhase(phaseNum string, projectId uint, k string, ot, mlt, pt int) uint {
+func AddPhase(phaseNum string, projectId uint, k string, ot, mlt, pt int, workName, workRate, workQty, equipName, equipRate, equipQty []interface{}) uint {
 	// log.Printf("Adding Phase: phaseNum=%s, projectID=%d, k=%s, values=%d,%d,%d\n", phaseNum, projectId, k, ot, mlt, pt)
 	phase := models.Phase{}
 	phase.No = phaseNum
@@ -14,6 +16,8 @@ func AddPhase(phaseNum string, projectId uint, k string, ot, mlt, pt int) uint {
 	phase.MostLikelyTime = mlt
 	phase.PessimisticTime = pt
 	phase.Save()
+	AddWorker(projectId, phase.ID, workName, workRate, workQty)
+	AddEquipment(projectId, phase.ID, equipName, equipRate, equipQty)
 	return phase.ID
 }
 
@@ -43,4 +47,28 @@ func AddSubActivity(subActNum string, projectId, actId, phaseId uint, k string, 
 	subActivity.PhaseID = phaseId
 	subActivity.ActivityID = actId
 	subActivity.Save()
+}
+
+func AddWorker(projectId, phaseId uint, workName, workRate, workQty []interface{}) {
+	for i := range workName {
+		worker := models.Worker{}
+		worker.ProjectID = projectId
+		worker.PhaseID = phaseId
+		worker.Name = string(workName[i].(string))
+		worker.Rate, _ = strconv.Atoi(workRate[i].(string))
+		worker.Quantity, _ = strconv.Atoi(workQty[i].(string))
+		worker.Save()
+	}
+}
+
+func AddEquipment(projectId, phaseId uint, workName, workRate, workQty []interface{}) {
+	for i := range workName {
+		equipment := models.Equipment{}
+		equipment.ProjectID = projectId
+		equipment.PhaseID = phaseId
+		equipment.Name = string(workName[i].(string))
+		equipment.Cost, _ = strconv.Atoi(workRate[i].(string))
+		equipment.Quantity, _ = strconv.Atoi(workQty[i].(string))
+		equipment.Save()
+	}
 }
