@@ -8,15 +8,14 @@ import (
 )
 
 func ScheduleCompletionHandler(w http.ResponseWriter, r *http.Request) map[string]interface{} {
-	// Parse project ID from the request URL
-	// projectID := r.URL.Query().Get("1")
-	// if projectID == "" {
-	// 	http.Error(w, "Project ID is required", http.StatusBadRequest)
-	// }
+	projectID := r.URL.Query().Get("id")
+	if projectID == "" {
+		http.Error(w, "Project ID is required", http.StatusBadRequest)
+	}
 
 	// Fetch the project from the database
 	project := models.Project{}
-	err := uadmin.Get(&project, "id = ?", 1)
+	err := uadmin.Get(&project, "id = ?", projectID)
 	if err != nil {
 		http.Error(w, "Project not found", http.StatusNotFound)
 	}

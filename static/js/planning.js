@@ -42,6 +42,7 @@ let addSubAct = ($("#subactName").val()).trim()
     alert("Please put a end time.");
     return
   }
+
   projectObj[addProj][addPhase] = { ...projectObj[addProj][addPhase] };
   projectObj[addProj][addPhase][addAct] = { ...projectObj[addProj][addPhase][addAct] };
   projectObj[addProj][addPhase][addAct][addSubAct] = addSubAct;
@@ -183,6 +184,7 @@ let addSubAct = ($("#subactName").val()).trim()
                     <th>Total</th>
                 </tr>
             </thead>
+            </tbody>
                 <tr>
                     <td><input type="text" name="worker[]"></td>
                     <td><input type="number" value="0" min="0" name="quantity[]" oninput="calculateTotal(this)"></td>
@@ -386,10 +388,17 @@ function convertToRoman(num) {
   return newNumeral;
 }
 
-// TODO: Schedule Completion
-// Save plan which is next page
-
-$(".save-plan").click(function () {
+$(".save-plan").click(function (event) {
+  let addStart = ($("#dateStart").val()).trim()
+  let addEnd= ($("#dateEnd").val()).trim()
+  if (addStart == null || addStart == "" || addStart == undefined) {
+    alert("Please put a start time.");
+    return
+  }
+  if (addEnd == null || addEnd == "" || addEnd == undefined) {
+    alert("Please put a end time.");
+    return
+  }
   var completeSchedObj = {}
   let phases = $(".table-body").children()
   for (var i = 0; i < phases.length; i++) {
@@ -447,6 +456,23 @@ $(".save-plan").click(function () {
   dateStart = new Date(($("#dateStart").val()).trim())
   dateEnd = new Date(($("#dateEnd").val()).trim())
   // console.log(completeSchedObj)
+
+  // TODO: dont save if empty input
+  $("#laborTable tbody tr td input").each(function() {
+      if ($(this).val().trim() == "") { // Check if the input value is empty
+          alert("Please fill out all required fields.");
+          return false; // Exit the loop early
+      }
+  });
+
+  $("#equipmentTable tbody tr td input").each(function () {
+    if ($(this).val().trim() == "") { // Check if the input value is empty
+      alert("Please fill out all required fields.");
+      return false; // Exit the loop early
+    }
+  });
+  //
+
   $.ajax({
     url:"/api/add-project",
     method:"POST",
