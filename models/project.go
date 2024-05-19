@@ -9,6 +9,7 @@ import (
 type Project struct {
 	uadmin.Model
 	Name              string
+	Description       string
 	Cost              int64
 	Phase             []Phase `uadmin:"list_exclude"`
 	DateStart         time.Time

@@ -4,6 +4,9 @@ let projectObj = {};
 let alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 
 $(".add-phase").click(function () {
+  let addStart = ($("#dateStart").val()).trim()
+  let addEnd= ($("#dateEnd").val()).trim()
+  let addDesc = ($("#projDesc").val()).trim()
   let addPhase = ($("#phaseName").val()).trim()
 let addProj = ($("#projName").val()).trim()
 let addAct = ($("#actName").val()).trim()
@@ -12,6 +15,10 @@ let addSubAct = ($("#subactName").val()).trim()
   // ! Object Creator (Done)
   if (addProj == null || addProj == "" || addProj == undefined) {
     alert("Please put a project name.");
+    return
+  }
+  if (addDesc == null || addDesc == "" || addDesc == undefined) {
+    alert("Please put a description for the project.");
     return
   }
   projectObj[addProj] = { ...projectObj[addProj] };
@@ -25,6 +32,14 @@ let addSubAct = ($("#subactName").val()).trim()
   }
   if (addSubAct == null || addSubAct == "" || addSubAct == undefined) {
     alert("Please put a sub-activity name.");
+    return
+  }
+  if (addStart == null || addStart == "" || addStart == undefined) {
+    alert("Please put a start time.");
+    return
+  }
+  if (addEnd == null || addEnd == "" || addEnd == undefined) {
+    alert("Please put a end time.");
     return
   }
   projectObj[addProj][addPhase] = { ...projectObj[addProj][addPhase] };
@@ -211,6 +226,9 @@ let addSubAct = ($("#subactName").val()).trim()
     </div>`)
   // DONE?
   $("#projName").prop("readonly", true)
+  $("#projDesc").prop("readonly", true)
+  $("#dateStart").prop("readonly", true)
+  $("#dateEnd").prop("readonly", true)
 })
 // 
 
@@ -426,7 +444,8 @@ $(".save-plan").click(function () {
         } 
     }
   }
-
+  dateStart = new Date(($("#dateStart").val()).trim())
+  dateEnd = new Date(($("#dateEnd").val()).trim())
   // console.log(completeSchedObj)
   $.ajax({
     url:"/api/add-project",
@@ -434,8 +453,11 @@ $(".save-plan").click(function () {
     contentType: "application/json",
     data: JSON.stringify({
       projectName: ($("#projName").val()).trim(),
+      description: ($("#projDesc").val()).trim(),
       cost: Number($("#totalAmount").text()),
       obj: completeSchedObj,
+      dateStart: dateStart.toISOString(),
+      dateEnd: dateEnd.toISOString(),
     }),
     success: function(resp) { 
       console.log(resp["response"])

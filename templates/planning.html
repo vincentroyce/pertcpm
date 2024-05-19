@@ -10,6 +10,10 @@
       <input id="projName" class="col p-2" type="text">
     </div>
     <div class="row gap-1 mt-2 align-items-center">
+      <label for="projDesc" class="fs-5 gx-0">Enter Description: </label>
+      <textarea name="projDesc" id="projDesc" rows="8" style="resize: none;"></textarea>
+    </div>
+    <div class="row gap-1 mt-2 align-items-center">
       <label for="phaseName" class="fs-5 gx-0">Enter Activity Phase Name: </label>
       <input id="phaseName" class="col p-2" type="text">
     </div>
@@ -21,7 +25,21 @@
       <label for="subactName" class="fs-5 gx-0">Enter Sub-Activity Name: </label>
       <input id="subactName" class="col p-2" type="text">
     </div>
+    <div class="row gap-1 mt-2 align-items-center">
+      <div class="container-fluid d-flex justify-content-between">
+        <div class="row col-6">
+          <label for="dateStart" class="fs-5 gx-0">Date Start: </label>
+          <input class="p-0" type="date" id="dateStart" name="dateStart">
+        </div>
+        <div class="row col-6">
+          <label for="dateEnd" class="fs-5 gx-0">Date End: </label>
+          <input class="p-0" type="date" id="dateEnd" name="dateEnd">
+        </div>
+      </div>
+    </div>
   </div>
+  
+ 
   <button class="add-phase btn btn-primary">Add to Project</button>
 </div>
 

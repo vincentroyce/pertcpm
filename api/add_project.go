@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/uadmin/uadmin"
 	"github.com/vrsalazar/pertcpm/models"
@@ -98,6 +99,60 @@ func AddProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if _, ok := obj["description"]; !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		uadmin.ReturnJSON(w, r, map[string]any{
+			"status":  "error",
+			"err_msg": "missing 'description' key in json body",
+		})
+		return
+	}
+
+	if obj["description"] == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		uadmin.ReturnJSON(w, r, map[string]any{
+			"status":  "error",
+			"err_msg": "empty description",
+		})
+		return
+	}
+
+	if _, ok := obj["dateStart"]; !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		uadmin.ReturnJSON(w, r, map[string]any{
+			"status":  "error",
+			"err_msg": "missing 'dateStart' key in json body",
+		})
+		return
+	}
+
+	if obj["dateStart"] == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		uadmin.ReturnJSON(w, r, map[string]any{
+			"status":  "error",
+			"err_msg": "empty date start",
+		})
+		return
+	}
+
+	if _, ok := obj["dateEnd"]; !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		uadmin.ReturnJSON(w, r, map[string]any{
+			"status":  "error",
+			"err_msg": "missing 'dateEnd' key in json body",
+		})
+		return
+	}
+
+	if obj["dateEnd"] == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		uadmin.ReturnJSON(w, r, map[string]any{
+			"status":  "error",
+			"err_msg": "empty date end",
+		})
+		return
+	}
+
 	if _, ok := obj["obj"]; !ok {
 		w.WriteHeader(http.StatusBadRequest)
 		uadmin.ReturnJSON(w, r, map[string]any{
@@ -134,6 +189,33 @@ func AddProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if _, ok := obj["description"].(string); !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		uadmin.ReturnJSON(w, r, map[string]any{
+			"status":  "error",
+			"err_msg": "'description' json key is not a string",
+		})
+		return
+	}
+
+	if _, ok := obj["dateStart"].(string); !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		uadmin.ReturnJSON(w, r, map[string]any{
+			"status":  "error",
+			"err_msg": "'dateStart' json key is not a string",
+		})
+		return
+	}
+
+	if _, ok := obj["dateEnd"].(string); !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		uadmin.ReturnJSON(w, r, map[string]any{
+			"status":  "error",
+			"err_msg": "'dateEnd' json key is not a string",
+		})
+		return
+	}
+
 	if _, ok := obj["obj"].(map[string]interface{}); !ok {
 		w.WriteHeader(http.StatusBadRequest)
 		uadmin.ReturnJSON(w, r, map[string]any{
@@ -145,8 +227,19 @@ func AddProject(w http.ResponseWriter, r *http.Request) {
 
 	project := models.Project{}
 	project.Name = fmt.Sprintf("%v", obj["projectName"])
+	project.Description = fmt.Sprintf("%v", obj["description"])
 	cost := fmt.Sprintf("%v", obj["cost"])
 	project.Cost, _ = strconv.ParseInt(cost, 10, 0)
+	project.DateStart, err = time.Parse(time.RFC3339, fmt.Sprintf("%v", obj["dateStart"]))
+	if err != nil {
+		fmt.Println("Error parsing start time:", err)
+		return
+	}
+	project.DateEnd, err = time.Parse(time.RFC3339, fmt.Sprintf("%v", obj["dateEnd"]))
+	if err != nil {
+		fmt.Println("Error parsing end time:", err)
+		return
+	}
 	project.Save()
 
 	projectObj := obj["obj"].(map[string]any)

@@ -1,0 +1,5 @@
+.grid-layout {
+  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat( auto-fit, 350px );
+}
