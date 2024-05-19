@@ -1,3 +1,4 @@
+
 let expectedTime = (a, m, b) => Math.floor((a + (4 * m) + b) / 6);
 let projectObj = {};
 let alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
@@ -169,8 +170,8 @@ let addSubAct = ($("#subactName").val()).trim()
             </thead>
                 <tr>
                     <td><input type="text" name="worker[]"></td>
-                    <td><input type="number" name="quantity[]" oninput="calculateTotal(this)"></td>
-                    <td><input type="number" name="rate[]" oninput="calculateTotal(this)"></td>
+                    <td><input type="number" value="0" min="0" name="quantity[]" oninput="calculateTotal(this)"></td>
+                    <td><input type="number" value="0" min="0" name="rate[]" oninput="calculateTotal(this)"></td>
                     <td>₱<span class="total">0</span></td>
                 </tr>
             </tbody>
@@ -192,8 +193,8 @@ let addSubAct = ($("#subactName").val()).trim()
             <tbody>
                 <tr>
                     <td><input type="text" name="equipment[]"></td>
-                    <td><input type="number" name="quantity[]" oninput="calculateTotal(this)"></td>
-                    <td><input type="number" name="rate[]" oninput="calculateTotal(this)"></td>
+                    <td><input type="number" value="0" min="0" name="quantity[]" oninput="calculateTotal(this)"></td>
+                    <td><input type="number" value="0" min="0" name="rate[]" oninput="calculateTotal(this)"></td>
                     <td>₱<span class="total">0</span></td>
                 </tr>
             </tbody>
@@ -438,10 +439,24 @@ $(".save-plan").click(function () {
     }),
     success: function(resp) { 
       console.log(resp["response"])
+      Swal.fire({
+        title: "Project Added",
+        text: "You will be redirected to ongoing projects",
+        icon: "success"
+      });
+      window.setTimeout(function() {
+        window.location.href = window.location.origin + "/user/ongoing-projects/"
+      }, 3000)
+
       // location.href = location.origin + "/user/schedule-completion"
     },
     error: function(response) {
-      console.log(response["responseText"])
+      let resp = JSON.parse(response["responseText"])
+      Swal.fire({
+        title: "Error",
+        text: resp["err_msg"],
+        icon: "error"
+      });
     }
   })
 })
