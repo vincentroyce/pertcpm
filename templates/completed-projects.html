@@ -32,7 +32,7 @@
       var options = { year: 'numeric', month: 'long', day: 'numeric' };
       var formattedStartDate = dateStartObject.toLocaleDateString('en-US', options);
       var formattedEndDate = dateEndObject.toLocaleDateString('en-US', options);
-
+      
       // Display the formatted date
       project.querySelector(`.start${index}`).innerText = "Date Start: " + formattedStartDate;
       project.querySelector(`.end${index}`).innerText = "Date End: " + formattedEndDate;
