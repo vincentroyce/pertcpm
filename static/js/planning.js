@@ -344,8 +344,8 @@ function addRow(element) {
   const newRow = document.createElement('tr');
   newRow.innerHTML = `
         <td><input type="text" name="worker[]"></td>
-        <td><input type="number" name="quantity[]" oninput="calculateTotal(this)"></td>
-        <td><input type="number" name="rate[]" oninput="calculateTotal(this)"></td>
+        <td><input value="0" min="0" type="number" name="quantity[]" oninput="calculateTotal(this)"></td>
+        <td><input value="0" min="0" type="number" name="rate[]" oninput="calculateTotal(this)"></td>
         <td>₱<span class="total">0</span></td>
     `;
   tbody.appendChild(newRow);
@@ -388,7 +388,7 @@ function convertToRoman(num) {
   return newNumeral;
 }
 
-$(".save-plan").click(function (event) {
+$(".save-plan").click(function () {
   let addStart = ($("#dateStart").val()).trim()
   let addEnd= ($("#dateEnd").val()).trim()
   if (addStart == null || addStart == "" || addStart == undefined) {
@@ -399,6 +399,39 @@ $(".save-plan").click(function (event) {
     alert("Please put a end time.");
     return
   }
+
+  let hasEmptyInput = false;
+
+  // Check labor table inputs
+  $("#laborTable tbody tr td input").each(function() {
+    if ($(this).val().trim() === "") {
+        hasEmptyInput = true;
+        return
+      }
+  });
+
+  // Check if an empty input was found in the labor table
+  if (hasEmptyInput) {
+    alert("Please fill out all required fields.");
+    return; // Exit the function if an empty input was found
+  }
+
+  // Check equipment table inputs
+  $("#equipmentTable tbody tr td input").each(function () {
+    if ($(this).val().trim() === "") {
+      console.log($(this).val().trim())
+      hasEmptyInput = true;
+      return
+    }
+  });
+
+  // Check if an empty input was found in the equipment table
+  if (hasEmptyInput) {
+    alert("Please fill out all required fields.");
+    return; // Exit the function if an empty input was found
+  }
+  // console.log(hasEmptyInput)
+//
   var completeSchedObj = {}
   let phases = $(".table-body").children()
   for (var i = 0; i < phases.length; i++) {
@@ -456,22 +489,6 @@ $(".save-plan").click(function (event) {
   dateStart = new Date(($("#dateStart").val()).trim())
   dateEnd = new Date(($("#dateEnd").val()).trim())
   // console.log(completeSchedObj)
-
-  // TODO: dont save if empty input
-  $("#laborTable tbody tr td input").each(function() {
-      if ($(this).val().trim() == "") { // Check if the input value is empty
-          alert("Please fill out all required fields.");
-          return false; // Exit the loop early
-      }
-  });
-
-  $("#equipmentTable tbody tr td input").each(function () {
-    if ($(this).val().trim() == "") { // Check if the input value is empty
-      alert("Please fill out all required fields.");
-      return false; // Exit the loop early
-    }
-  });
-  //
 
   $.ajax({
     url:"/api/add-project",

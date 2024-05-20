@@ -14,7 +14,7 @@
       <p class="card-text schedule-completed">Schedule Completed: {{ $project.ScheduleCompleted }}</p>
       <p class="card-text start{{ $index }}">Date Start: {{ $project.DateStart }}</p>
       <p class="card-text end{{ $index }}">Date End: {{ $project.DateEnd }}</p>
-      <a href="/user/schedule-completion/?id={{ $project.ID }}" class="btn btn-primary mt-2">Go somewhere</a>
+      <a href="/user/schedule-completion/?id={{ $project.ID }}" class="btn btn-primary mt-2">Complete Schedule</a>
     </div>
   </div>
   {{ end }}
