@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/uadmin/uadmin"
@@ -59,19 +60,13 @@ func SetPredecessorAPI(w http.ResponseWriter, r *http.Request) {
 			}
 
 			// Fetch predecessors
-			predecessors := []models.SubActivity{}
+			predecessors := []string{}
 			for _, predID := range predecessorArr[i].([]interface{}) {
-				predSubAct := models.SubActivity{}
-				err = uadmin.Get(&predSubAct, "id = ?", predID)
-				if err != nil {
-					handleError(w, r, "unable to find the sub activity from array index "+strconv.Itoa(i)+" as a predecessor."+err.Error())
-					return
-				}
-				predecessors = append(predecessors, predSubAct)
+				predecessors = append(predecessors, predID.(string))
 			}
 
 			// Update subactivity
-			subActivity.Predecessors = predecessors
+			subActivity.PredecessorsList = strings.Join([]string(predecessors), ", ")
 			subActivity.Save()
 
 			// Update project

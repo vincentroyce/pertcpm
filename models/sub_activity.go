@@ -1,16 +1,12 @@
 package models
 
 import (
-	"strconv"
-	"strings"
-
 	"github.com/uadmin/uadmin"
 )
 
 type SubActivity struct {
 	uadmin.Model
-	Predecessors     []SubActivity `gorm:"-" uadmin:"list_exclude"`
-	PredecessorsList string        `uadmin:"read_only"`
+	PredecessorsList string `uadmin:"read_only"`
 	Project          Project
 	ProjectID        uint
 	Phase            Phase
@@ -33,19 +29,5 @@ func (s SubActivity) String() string {
 
 func (s *SubActivity) Save() {
 	s.ExpectedTime = GetExpectedTime(s.OptimisticTime, s.MostLikelyTime, s.PessimisticTime)
-
-	predecessorsList := []string{}
-
-	// Append every element to the categoryList array
-	for i := range s.Predecessors {
-		predecessorsList = append(predecessorsList, strconv.FormatUint(uint64(s.Predecessors[i].ID), 10))
-	}
-
-	// Concatenate the categoryList to a single string separated by comma
-	joinList := strings.Join(predecessorsList, ", ")
-
-	// Store the joined string to the CategoryList field
-	s.PredecessorsList = joinList
-
 	uadmin.Save(s)
 }
