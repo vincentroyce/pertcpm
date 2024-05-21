@@ -6,15 +6,15 @@
   <h1 class="text-center">Ongoing Projects</h1>
   <div class="grid-layout gap-6">
     {{ range $index, $project := .Projects }}
-    <div class="container card">
+    <div class="container card card-container">
       <img src="/static/media/440921056_3780621792183800_4943365504590121414_n-removebg-preview.png" class="card-img-top" alt="...">
       <div class="card-body justify-content-between d-flex flex-column">
         <h5 class="card-title">Project Name: {{ $project.Name }}</h5>
         <p class="card-text">Description: {{ $project.Description }}</p>
         <p class="card-text">Cost: {{ $project.Cost }}</p>
         <p class="card-text schedule-completed">Schedule Completed: {{ $project.ScheduleCompleted }}</p>
-        <p class="card-text start{{ $index }}">Date Start: {{ $project.DateStart }}</p>
-        <p class="card-text end{{ $index }}">Date End: {{ $project.DateEnd }}</p>
+        <p class="card-text start-{{ $index }}">Date Start: {{ $project.DateStart }}</p>
+        <p class="card-text end-{{ $index }}">Date End: {{ $project.DateEnd }}</p>
         <div class="row">
           <a href="/user/schedule-completion/?id={{ $project.ID }}" class="btn btn-primary mt-2">Complete Schedule</a>
           <input onclick="deleteProject({{ $project.ID }})" class="btn btn-danger mt-2" type="button" value="Delete Project">
@@ -27,11 +27,11 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    var projects = document.querySelectorAll(".container");
+    var projects = document.querySelectorAll(".card-container");
     projects.forEach(function(project, index) {
-      var dateStart = project.querySelector(`.start${index}`).textContent;
+      var dateStart = project.querySelector(`.start-${index}`).textContent;
       var dateStartObject = new Date(dateStart);
-      var dateEnd = project.querySelector(`.end${index}`).textContent;
+      var dateEnd = project.querySelector(`.end-${index}`).textContent;
       var dateEndObject = new Date(dateEnd);
 
       // Format the date
@@ -40,8 +40,8 @@
       var formattedEndDate = dateEndObject.toLocaleDateString('en-US', options);
 
       // Display the formatted date
-      project.querySelector(`.start${index}`).innerText = "Date Start: " + formattedStartDate;
-      project.querySelector(`.end${index}`).innerText = "Date End: " + formattedEndDate;
+      project.querySelector(`.start-${index}`).innerText = "Date Start: " + formattedStartDate;
+      project.querySelector(`.end-${index}`).innerText = "Date End: " + formattedEndDate;
     });
   });
 </script>

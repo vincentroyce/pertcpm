@@ -7,8 +7,8 @@
   <h2>Project Title: <span class="project-title">{{ .ProjectName }}</span></h2>
 </div>
 <div class="container">
-  <table class="table table-bordered table-collapsed table-hover">
-    <thead class="thead-dark text-center ">
+  <table class="table table-bordered table-hover">
+    <thead class="thead-dark text-center">
       <tr>
         <th class="text-light" scope="col">Item No.</th>
         <th class="text-light" scope="col">Activity</th>
@@ -36,22 +36,51 @@
         <th class="fs-6" scope="row">{{ .No }}</th>
         <td class="fs-6">{{ .Name }}</td>
         <td class="p-0">
-          <select class="form-control p-4 text-center border-0 rounded-0" role="button" name="predecessors" id="predecessors">
-            {{range $.AllSubActivities}}
-              {{if ne .ID $subActivity.ID}}
-                <option value="{{ .ID }}">{{ .No }}</option>
+          <div class="dropdown w-100">
+            <button class="btn btn-secondary dropdown-toggle w-100 pt-4 pb-4" type="button" id="dropdownMenuButton-{{.ID}}" data-bs-toggle="dropdown" aria-expanded="false">
+              Select Predecessors
+            </button>
+            <div class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton-{{.ID}}">
+              {{range $.AllSubActivities}}
+                {{if ne .ID $subActivity.ID}}
+                  <a class="dropdown-item" href="#">
+                    <input type="checkbox" value="{{ .ID }}" class="predecessor-checkbox" data-no="{{ .No }}"> {{ .No }}
+                  </a>
+                {{end}}
               {{end}}
-            {{end}}
-          </select>
+            </div>
+          </div>
         </td>
         <td class="fs-6">{{ .ExpectedTime }}</td>
       </tr>
       {{end}}
       {{end}}
       {{end}}
-
     </tbody>
   </table>
+  <button class="btn btn-primary mt-2 mb-2" type="button">Complete Schedule</button>
 </div>
 
+<script>
+  $(document).ready(function() {
+    // Ensure event listeners are only added once
+    $('.dropdown-item').off('click').on('click', function(e) {
+      e.preventDefault();
+      var checkbox = $(this).find('input[type="checkbox"]');
+      var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
+      var selectedPredecessors = [];
+
+      // Toggle checkbox state
+      checkbox.prop('checked', !checkbox.prop('checked'));
+
+      // Update the selected predecessors display
+      $(this).closest('.dropdown-menu').find('input:checked').each(function() {
+        selectedPredecessors.push($(this).data('no'));
+      });
+
+      var buttonText = selectedPredecessors.length > 0 ? selectedPredecessors.join(', ') : 'Select Predecessors';
+      $('#dropdownMenuButton-' + subActivityId).text(buttonText);
+    });
+  });
+</script>
 {{ end }}
