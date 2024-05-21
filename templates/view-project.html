@@ -3,7 +3,7 @@
 {{ end }}
 {{ define "content" }}
 <div class="container">
-  <h1>Schedule Completion</h1>
+  <h1>View Project</h1>
   <h2>Project Title: <span class="project-title">{{ .ProjectName }}</span></h2>
 </div>
 <div class="container">
@@ -16,7 +16,7 @@
         <th class="text-light" scope="col">Expected Time</th>
       </tr>
     </thead>
-    <tbody class="text-center">
+    <tbody class="for-load text-center">
       {{range .Project.Phase}}
       <tr>
         <th class="fs-6" scope="row">{{ .No }}</th>
@@ -37,19 +37,21 @@
         <td class="fs-6">{{ .Name }}</td>
         <td class="p-0">
           <div class="dropdown w-100">
-            <button class="btn btn-secondary dropdown-toggle w-100 pt-4 pb-4" type="button" id="dropdownMenuButton-{{.ID}}" data-bs-toggle="dropdown" aria-expanded="false">
-              Select Predecessors
+            <button class="btn btn-secondary dropdown-toggle w-100 pt-4 pb-4" disabled type="button"
+              id="dropdownMenuButton-{{.ID}}" data-bs-toggle="dropdown" aria-expanded="false">
+              {{ .NoPredecessorsList }}
             </button>
             <div class="dropdown-menu w-100 text-center" aria-labelledby="dropdownMenuButton-{{.ID}}">
               <a class="dropdown-item" href="#">
                 <input class="d-none" type="checkbox" value="0" class="predecessor-checkbox" data-no="Start"> Start
               </a>
               {{range $.AllSubActivities}}
-                {{if ne .ID $subActivity.ID}}
-                  <a class="dropdown-item" href="#">
-                    <input class="d-none" type="checkbox" value="{{ .ID }}" class="predecessor-checkbox" data-no="{{ .No }}"> {{ .No }}
-                  </a>
-                {{end}}
+              {{if ne .ID $subActivity.ID}}
+              <a class="dropdown-item" href="#">
+                <input class="" type="checkbox" value="{{ .ID }}" class="predecessor-checkbox" data-no="{{ .No }}"> {{
+                .No }}
+              </a>
+              {{end}}
               {{end}}
             </div>
           </div>
@@ -61,7 +63,8 @@
       {{end}}
     </tbody>
   </table>
-  <button class="complete-schedule btn btn-primary mt-2 mb-2" type="button">Complete Schedule</button>
+  <button class="edit-predecessors btn btn-primary mt-2 mb-2" type="button">Edit Predecessors</button>
+  <button class="save-changes btn btn-success mt-2 mb-2" type="button" style="display: none;">Save Changes</button>
 </div>
 
 <script>
@@ -88,9 +91,36 @@
       $('#dropdownMenuButton-' + subActivityId).text(buttonText);
     });
 
-    // Add event listener to the "Complete Schedule" button
-    $('.complete-schedule').off('click').on('click', function (e) {
-      e.preventDefault();
+    // Add event listener to the "Edit Predecessors" button
+    $('.edit-predecessors').off('click').on('click', function () {
+      var $this = $(this);
+      var buttonText = $this.text();
+      if (buttonText === 'Edit Predecessors') {
+        // Enable all dropdown buttons
+        $('.dropdown-toggle').prop('disabled', false);
+
+        // Show the "Save Changes" button
+        $('.save-changes').show();
+        $this.text('Cancel');
+      } else {
+        $(".for-load").load(location.href+" .for-load>*");
+        // Revert back to "Edit Predecessors" only if there is no alert
+        if (!$('.alert').length) {
+          $('.dropdown-toggle').prop('disabled', true);
+          $('.save-changes').hide();
+          $this.text('Edit Predecessors');
+
+          // Revert dropdown menus to default state
+          $('.dropdown-menu').removeClass('show');
+          location.reload()
+        }
+      }
+    });
+
+    // Add event listener to the "Save Changes" button
+    $('.save-changes').off('click').on('click', function () {
+      // Disable all dropdown buttons
+
 
       // Check if any dropdown has no value selected
       var allDropdownsHaveValues = true;
@@ -106,8 +136,16 @@
         alert('All dropdowns should have at least one input.');
         return;
       }
-      let idArr = []
-      let predecessorArr = []
+      $('.dropdown-toggle').prop('disabled', true);
+
+      // Hide the "Save Changes" button
+      $('.save-changes').hide();
+
+      // Revert "Edit Predecessors" button text
+      $('.edit-predecessors').text('Edit Predecessors');
+      let idArr = [];
+      let predecessorArr = [];
+
       // Print the selected values (values associated with the names)
       $('.dropdown-menu').each(function () {
         var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
@@ -118,41 +156,56 @@
           selectedValues.push(value);
         });
         console.log('Selected values for Sub Activity ' + subActivityId + ':', String(selectedValues));
-        idArr.push(subActivityId)
-        predecessorArr.push(selectedValues)
+        idArr.push(subActivityId);
+        predecessorArr.push(selectedValues);
       });
-      console.log(idArr)
-      console.log(predecessorArr)
+
+      console.log(idArr);
+      console.log(predecessorArr);
+
       $.ajax({
-        method:'POST',
-        url:'/api/set-predecessor',
+        method: 'POST',
+        url: '/api/set-predecessor',
         data: {
           ids: JSON.stringify(idArr),
           predecessors: JSON.stringify(predecessorArr),
         },
-        success: function(response) {
+        success: function (response) {
           console.log(response);
           Swal.fire({
-          title: "Changes have been saved",
-          text: response.response,
-          icon: "success"
-        });
-        window.setTimeout(function() {
-          window.location.href = window.location.origin + "/user/ongoing-projects/"
-        }, 3000);
+            title: "Changes have been saved",
+            text: response.response,
+            icon: "success"
+          });
+          window.setTimeout(function () {
+            window.location.href = window.location.origin + "/user/ongoing-projects/"
+          }, 3000);
         },
-      })
-
-
-
-      // fetch(`/api/set-predecessor?id=${idArr}&predecessors=${predecessorArr}`)
-      //   .then(resp => resp.json())
-      //   .then(resp => {
-      //     if (resp["status"] != "ok") {
-      //       console.log("err_msg")
-      //     }
-      //   })
+      });
     });
   });
 </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var subActivities = document.querySelectorAll('.dropdown-menu');
+
+    subActivities.forEach(function (menu) {
+      var subActivityId = menu.getAttribute("aria-labelledby").split('-')[1]; // Extract the sub activity ID
+      var predecessorList = document.getElementById('dropdownMenuButton-' + subActivityId).innerText.split(','); // Get the predecessor list from the button text
+      var checkboxes = menu.querySelectorAll('input[type="checkbox"]');
+
+      checkboxes.forEach(function (checkbox) {
+        var checkboxValue = checkbox.getAttribute("data-no");
+
+        // Check if the checkbox value exists in the predecessor list
+        predecessorList.forEach(function (predecessor) {
+          if (predecessor.trim() == checkboxValue.toString()) {
+            checkbox.checked = true;
+          }
+        })
+      });
+    });
+  });
+</script>
+
 {{ end }}

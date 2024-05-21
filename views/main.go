@@ -32,7 +32,8 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		context = OngoingProjectHandler(w, r)
 	case "completed-projects":
 		context = CompletedProjectHandler(w, r)
-
+	case "view-project":
+		context = ViewProjectHandler(w, r)
 	default:
 		page = "home"
 	}

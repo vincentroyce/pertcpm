@@ -16,7 +16,11 @@
         <p class="card-text start-{{ $index }}">Date Start: {{ $project.DateStart }}</p>
         <p class="card-text end-{{ $index }}">Date End: {{ $project.DateEnd }}</p>
         <div class="row">
+          {{ if $project.ScheduleCompleted }}
+          <a href="/user/view-project/?id={{ $project.ID }}" class="btn btn-success mt-2">View Project</a>
+          {{ else }}
           <a href="/user/schedule-completion/?id={{ $project.ID }}" class="btn btn-primary mt-2">Complete Schedule</a>
+          {{ end }}
           <input onclick="deleteProject({{ $project.ID }})" class="btn btn-danger mt-2" type="button" value="Delete Project">
         </div>
       </div>
@@ -30,9 +34,9 @@
     var projects = document.querySelectorAll(".card-container");
     projects.forEach(function(project, index) {
       var dateStart = project.querySelector(`.start-${index}`).textContent;
-      var dateStartObject = new Date(dateStart);
+      var dateStartObject = new Date(dateStart.replace("Date Start: ", ""));
       var dateEnd = project.querySelector(`.end-${index}`).textContent;
-      var dateEndObject = new Date(dateEnd);
+      var dateEndObject = new Date(dateEnd.replace("Date End: ", ""));
 
       // Format the date
       var options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -47,41 +51,26 @@
 </script>
 <script>
   function deleteProject(id) {
-    console.log(id)
     fetch(`/api/delete-project?id=${id}`)
     .then(resp => resp.json())
     .then(resp => {
-      if (resp["status"] != "ok") {
+      if (resp.status != "ok") {
         Swal.fire({
-        title: "Error",
-        text: resp["error_msg"],
-        icon: "error"
-      });
+          title: "Error",
+          text: resp.error_msg,
+          icon: "error"
+        });
       } else {
         Swal.fire({
-        title: "Deleted",
-        text: resp["response"],
-        icon: "success"
-      });
-      window.setTimeout(function() {
-        window.location.reload();
-      }, 3000)
+          title: "Deleted",
+          text: resp.response,
+          icon: "success"
+        });
+        window.setTimeout(function() {
+          window.location.reload();
+        }, 3000);
       }
-    })
-    // $.ajax({
-    //   method: "POST",
-    //   contentType: "application/json",
-    //   data: {
-    //     id: id,
-    //   },
-    //   url:"/api/delete-project",
-    //   success: function(response) {
-    //     console.log(response)
-    //   },
-    //   error: function(response) {
-    //     console.log(response)
-    //   }, 
-    // })
+    });
   }
 </script>
 

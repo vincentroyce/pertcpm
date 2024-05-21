@@ -76,19 +76,15 @@ func SetPredecessorAPI(w http.ResponseWriter, r *http.Request) {
 	}
 	wg.Wait()
 
-	returnJSON(w, r, "ok", "predecessors for this project are set.")
+	uadmin.ReturnJSON(w, r, map[string]interface{}{
+		"status":   "ok",
+		"response": "Predecessors have been set to this project",
+	})
 }
 
 func handleError(w http.ResponseWriter, r *http.Request, errMsg string) {
 	uadmin.ReturnJSON(w, r, map[string]interface{}{
 		"status":  "error",
-		"err_msg": errMsg,
-	})
-}
-
-func returnJSON(w http.ResponseWriter, r *http.Request, status, errMsg string) {
-	uadmin.ReturnJSON(w, r, map[string]interface{}{
-		"status":  status,
 		"err_msg": errMsg,
 	})
 }
