@@ -16,6 +16,8 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		AddProject(w, r)
 	case strings.HasPrefix(r.URL.Path, "/delete-project"):
 		DeleteProjectAPI(w, r)
+	case strings.HasPrefix(r.URL.Path, "/set-predecessor"):
+		SetPredecessorAPI(w, r)
 	default:
 		w.WriteHeader(http.StatusNotFound)
 		uadmin.ReturnJSON(w, r, map[string]any{
