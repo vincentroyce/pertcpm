@@ -2,6 +2,22 @@
 <title>{{ .Title }}</title>
 {{ end }}
 {{ define "content" }}
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="container">
   <h1>Schedule Completion</h1>
   <h2>Project Title: <span class="project-title">{{ .ProjectName }}</span></h2>
@@ -61,7 +77,10 @@
       {{end}}
     </tbody>
   </table>
-  <button class="complete-schedule btn btn-primary mt-2 mb-2" type="button">Complete Schedule</button>
+  <div class="d-flex gap-4 justify-start">
+    <button class="complete-schedule btn btn-success mt-2 mb-2" type="button">Complete Schedule</button>
+    <button class="view-pert btn btn-info mt-2 mb-2" type="button" data-bs-target="#exampleModal">View PERT Diagram</button>
+  </div>
 </div>
 
 <script>
@@ -133,7 +152,7 @@
         success: function(response) {
           console.log(response);
           Swal.fire({
-          title: "Changes have been saved",
+          title: "Predecessors have been set!",
           text: response.response,
           icon: "success"
         });
@@ -142,17 +161,47 @@
         }, 3000);
         },
       })
-
-
-
-      // fetch(`/api/set-predecessor?id=${idArr}&predecessors=${predecessorArr}`)
-      //   .then(resp => resp.json())
-      //   .then(resp => {
-      //     if (resp["status"] != "ok") {
-      //       console.log("err_msg")
-      //     }
-      //   })
     });
   });
+</script>
+<script>
+  $('.view-pert').off('click').on('click', function (e) {
+      e.preventDefault();
+
+      // Check if any dropdown has no value selected
+      var allDropdownsHaveValues = true;
+      $('.dropdown-menu').each(function () {
+        if ($(this).find('input:checked').length === 0) {
+          allDropdownsHaveValues = false;
+          return false; // Exit the loop early
+        }
+      });
+      
+      // If any dropdown has no value selected, alert the user
+      if (!allDropdownsHaveValues) {
+        alert('All dropdowns should have at least one input.');
+        return;
+      }
+
+      $('#exampleModal').modal('show');
+ 
+      let idArr = []
+      let predecessorArr = []
+      // Print the selected values (values associated with the names)
+      $('.dropdown-menu').each(function () {
+        var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
+        var selectedValues = [];
+        $(this).find('input:checked').each(function () {
+          var name = $(this).data('no');
+          var value = $(this).val();
+          selectedValues.push(value);
+        });
+        console.log('Selected values for Sub Activity ' + subActivityId + ':', String(selectedValues));
+        idArr.push(subActivityId)
+        predecessorArr.push(selectedValues)
+      });
+      console.log(idArr)
+      console.log(predecessorArr)
+    });
 </script>
 {{ end }}

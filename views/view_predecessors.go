@@ -7,7 +7,7 @@ import (
 	"github.com/vrsalazar/pertcpm/models"
 )
 
-func ViewProjectHandler(w http.ResponseWriter, r *http.Request) map[string]interface{} {
+func EditPredecessorsHandler(w http.ResponseWriter, r *http.Request) map[string]interface{} {
 	projectID := r.URL.Query().Get("id")
 	if projectID == "" {
 		http.Error(w, "Project ID is required", http.StatusBadRequest)

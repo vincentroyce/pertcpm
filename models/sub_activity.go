@@ -37,6 +37,10 @@ func (s *SubActivity) Save() {
 	prednolist := make([]string, len(predlist))
 	for i := range predlist {
 		sub := SubActivity{}
+		if predlist[i] == "0" {
+			prednolist[i] = "Start"
+			continue
+		}
 		uadmin.Get(&sub, "id = ?", predlist[i])
 		prednolist[i] = sub.No
 	}

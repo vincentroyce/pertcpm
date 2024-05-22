@@ -17,7 +17,7 @@
         <p class="card-text end-{{ $index }}">Date End: {{ $project.DateEnd }}</p>
         <div class="row">
           {{ if $project.ScheduleCompleted }}
-          <a href="/user/view-project/?id={{ $project.ID }}" class="btn btn-success mt-2">View Project</a>
+          <a href="/user/view-predecessors/?id={{ $project.ID }}" class="btn btn-success mt-2">View Predecessors</a>
           {{ else }}
           <a href="/user/schedule-completion/?id={{ $project.ID }}" class="btn btn-primary mt-2">Complete Schedule</a>
           {{ end }}
@@ -50,28 +50,28 @@
   });
 </script>
 <script>
-  function deleteProject(id) {
-    fetch(`/api/delete-project?id=${id}`)
-    .then(resp => resp.json())
-    .then(resp => {
-      if (resp.status != "ok") {
-        Swal.fire({
-          title: "Error",
-          text: resp.error_msg,
-          icon: "error"
-        });
-      } else {
-        Swal.fire({
-          title: "Deleted",
-          text: resp.response,
-          icon: "success"
-        });
-        window.setTimeout(function() {
-          window.location.reload();
-        }, 3000);
-      }
-    });
-  }
+function deleteProject(id) {
+  Swal.fire({
+    title: "Are you sure you want to delete this project?",
+    showCancelButton: true,
+    confirmButtonText: "Delete",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      fetch(`/api/delete-project?id=${id}`)
+      .then(resp => resp.json())
+      .then(resp => {
+        if (resp.status != "ok") {
+          Swal.fire("Error", resp.error_msg, "error");
+        } else {
+          Swal.fire("Deleted", resp.response, "success");
+          window.setTimeout(function() {
+            window.location.reload();
+          }, 3000);
+        }
+      });
+    }
+  });
+}
 </script>
 
 {{end}}
