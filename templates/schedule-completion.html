@@ -182,20 +182,20 @@
 $(document).ready(function () {
   $('.view-pert').off('click').on('click', function (e) {
       e.preventDefault();
-      // // Check if any dropdown has no value selected
-      // var allDropdownsHaveValues = true;
-      // $('.dropdown-menu').each(function () {
-      //   if ($(this).find('input:checked').length === 0) {
-      //     allDropdownsHaveValues = false;
-      //     return false; // Exit the loop early
-      //   }
-      // });
+      // Check if any dropdown has no value selected
+      var allDropdownsHaveValues = true;
+      $('.dropdown-menu').each(function () {
+        if ($(this).find('input:checked').length === 0) {
+          allDropdownsHaveValues = false;
+          return false; // Exit the loop early
+        }
+      });
       
-      // // If any dropdown has no value selected, alert the user
-      // if (!allDropdownsHaveValues) {
-      //   alert('All dropdowns should have at least one input.');
-      //   return;
-      // }
+      // If any dropdown has no value selected, alert the user
+      if (!allDropdownsHaveValues) {
+        alert('All dropdowns should have at least one input.');
+        return;
+      }
       let idArr = []
       let noArr = []
       let predecessorArr = []
