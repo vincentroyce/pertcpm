@@ -39,7 +39,7 @@
         <td class="fs-6">{{ .Name }}</td>
         <td class="p-0">
           <div class="dropdown w-100">
-            <button class="btn btn-secondary dropdown-toggle w-100 pt-4 pb-4" data-num="{{ .No }}" type="button" id="dropdownMenuButton-{{.ID}}" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-secondary dropdown-toggle w-100 pt-4 pb-4" data-num="{{ .No }}" type="button" data-et="{{ .ExpectedTime }}" id="dropdownMenuButton-{{.ID}}" data-bs-toggle="dropdown" aria-expanded="false">
               Select Predecessors
             </button>
             <div class="dropdown-menu w-100 text-center" aria-labelledby="dropdownMenuButton-{{.ID}}">
@@ -85,7 +85,7 @@
       <button class="close-btn btn btn-secondary ">Close</button>
     </div>
 </div>
-  
+<h></h>
 
 </div>
 
@@ -205,6 +205,7 @@ $(document).ready(function () {
         return;
       }
       let idArr = []
+      let etArr = []
       let noArr = []
       let predecessorArr = []
       let criticalPath = []
@@ -215,6 +216,7 @@ $(document).ready(function () {
       $('.dropdown-menu').each(function () {
         var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
         var subActivityNo = $(this).closest('.dropdown').find('.dropdown-toggle').data('num')
+        var subActivityEt = $(this).closest('.dropdown').find('.dropdown-toggle').data('et')
         var selectedValues = [];
         $(this).find('input:checked').each(function () {
           var name = $(this).data('no');
@@ -224,20 +226,21 @@ $(document).ready(function () {
         console.log('Selected values for Sub Activity ' + subActivityId + ':', String(selectedValues));
         idArr.push(subActivityId)
         noArr.push(subActivityNo)
+        etArr.push(subActivityEt)
         predecessorArr.push(selectedValues)
       });
       
       setTimeout(function() {
             $(".myModal").css("display","flex")
             $(".myModal").css("opacity", 1)
-            init(idArr, predecessorArr, noArr, criticalPath); // Call the init function after a delay
+            init(idArr, predecessorArr, noArr, etArr, criticalPath); // Call the init function after a delay
         }, 1); // Adjust the del
     });
 
 })   
 </script>
 <script id="code">
-function init(ids,predecessors, nos, criticals) {
+function init(ids,predecessors, nos, ets, criticals) {
     // Since 2.2 you can also author concise templates with method chaining instead of GraphObject.make
     // For details, see https://gojs.net/latest/intro/buildingObjects.html
     const $ = go.GraphObject.make;  // for more concise visual tree definitions
@@ -346,7 +349,7 @@ function init(ids,predecessors, nos, criticals) {
     ];
 
     for (let i = 0; i < ids.length; i++) {
-      nodeDataArray.push({ key: ids[i], text: nos[i], length: 0, earlyStart: 0, lateFinish: 0, critical: criticals[i] })
+      nodeDataArray.push({ key: ids[i], text: nos[i], length:ets[i], earlyStart: 0, lateFinish: 0, critical: criticals[i] })
     }
 
     var linkDataArray = [];
