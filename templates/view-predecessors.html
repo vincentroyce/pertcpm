@@ -428,9 +428,42 @@
         }
       }
       
-      for (let i = 0; i < nodeDataArray.length; i++) {
+      nodeDataArray.forEach(function (node) {
+      var predecessors = linkDataArray.filter(function (link) {
+        return link.to === node.key;
+      }).map(function (link) {
+        return link.from;
+      });
 
+      if (predecessors.length > 0) {
+        var maxEarlyFinish = -Infinity; // Initialize with the smallest possible value
+        predecessors.forEach(function (predKey) {
+          var predNode = nodeDataArray.find(function (node) {
+            return node.key === predKey;
+          });
+          if (predNode && predNode.earlyFinish !== undefined) { // Check if predNode has a valid earlyFinish
+            maxEarlyFinish = Math.max(maxEarlyFinish, predNode.earlyFinish);
+          }
+        });
+        if (isFinite(maxEarlyFinish)) { // Check if maxEarlyFinish is a finite number
+          node.earlyStart = maxEarlyFinish; // Use the maxEarlyFinish of predecessors
+          node.earlyFinish = maxEarlyFinish + node.length;
+        } else {
+          // Handle case where maxEarlyFinish is not a finite number
+          node.earlyStart = 0;
+          node.earlyFinish = node.length;
+        }
+      } else {
+        node.earlyStart = 0;
+        node.earlyFinish = node.length;
       }
+
+      if (node.critical) {
+        node.lateStart = node.earlyStart; // Set late start to early start for critical nodes
+        node.slack = 0; // Set slack to 0 for critical nodes
+        node.lateFinish = node.earlyFinish; // Set late finish to early finish for critical nodes
+      }
+    });
       
 
       myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);

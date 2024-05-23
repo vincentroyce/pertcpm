@@ -39,7 +39,9 @@
         <td class="fs-6">{{ .Name }}</td>
         <td class="p-0">
           <div class="dropdown w-100">
-            <button class="btn btn-secondary dropdown-toggle w-100 pt-4 pb-4" data-num="{{ .No }}" type="button" data-et="{{ .ExpectedTime }}" id="dropdownMenuButton-{{.ID}}" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-secondary dropdown-toggle w-100 pt-4 pb-4" data-num="{{ .No }}" type="button"
+              data-et="{{ .ExpectedTime }}" id="dropdownMenuButton-{{.ID}}" data-bs-toggle="dropdown"
+              aria-expanded="false">
               Select Predecessors
             </button>
             <div class="dropdown-menu w-100 text-center" aria-labelledby="dropdownMenuButton-{{.ID}}">
@@ -47,11 +49,12 @@
                 <input class="d-none" type="checkbox" value="0" class="predecessor-checkbox" data-no="Start"> Start
               </a>
               {{range $.AllSubActivities}}
-                {{if ne .ID $subActivity.ID}}
-                  <a class="dropdown-item" href="#">
-                    <input class="d-none" type="checkbox" value="{{ .ID }}" class="predecessor-checkbox" data-no="{{ .No }}"> {{ .No }}
-                  </a>
-                {{end}}
+              {{if ne .ID $subActivity.ID}}
+              <a class="dropdown-item" href="#">
+                <input class="d-none" type="checkbox" value="{{ .ID }}" class="predecessor-checkbox"
+                  data-no="{{ .No }}"> {{ .No }}
+              </a>
+              {{end}}
               {{end}}
             </div>
           </div>
@@ -84,8 +87,8 @@
       </div>
       <button class="close-btn btn btn-secondary ">Close</button>
     </div>
-</div>
-<h></h>
+  </div>
+  <h></h>
 
 </div>
 
@@ -93,13 +96,13 @@
 
 <script src="https://unpkg.com/gojs@2.3.16/release/go.js"></script>
 <script>
-  $(".close-btn").click(function() {
-    $(".myModal").css("display","none")
+  $(".close-btn").click(function () {
+    $(".myModal").css("display", "none")
   })
 </script>
 <script>
   $(document).ready(function () {
-    setTimeout(function(){$(".myModal").css("display","none")},1)
+    setTimeout(function () { $(".myModal").css("display", "none") }, 1)
     // Ensure event listeners are only added once
     $('.dropdown-item').off('click').on('click', function (e) {
       e.preventDefault();
@@ -152,43 +155,43 @@
           var value = $(this).val();
           selectedValues.push(value);
         });
-        console.log('Selected values for Sub Activity ' + subActivityId + ':', String(selectedValues));
+        // console.log('Selected values for Sub Activity ' + subActivityId + ':', String(selectedValues));
         idArr.push(subActivityId)
         predecessorArr.push(selectedValues)
       });
-      $('.critical-bool').each(function() {
+      $('.critical-bool').each(function () {
         criticalPath.push($(this).is(":checked"))
       })
-      console.log(idArr)
-      console.log(predecessorArr)
-      console.log(criticalPath)
+      // console.log(idArr)
+      // console.log(predecessorArr)
+      // console.log(criticalPath)
       $.ajax({
-        method:'POST',
-        url:'/api/set-predecessor',
+        method: 'POST',
+        url: '/api/set-predecessor',
         data: {
           ids: JSON.stringify(idArr),
           predecessors: JSON.stringify(predecessorArr),
           critical: JSON.stringify(criticalPath)
         },
-        success: function(response) {
+        success: function (response) {
           console.log(response);
           Swal.fire({
-          title: "Predecessors have been set!",
-          text: response.response,
-          icon: "success"
-        });
-        window.setTimeout(function() {
-          window.location.href = window.location.origin + "/user/ongoing-projects/"
-        }, 3000);
+            title: "Predecessors have been set!",
+            text: response.response,
+            icon: "success"
+          });
+          window.setTimeout(function () {
+            window.location.href = window.location.origin + "/user/ongoing-projects/"
+          }, 3000);
         },
       })
     });
   });
-  
+
 </script>
 <script>
-$(document).ready(function () {
-  $('.view-pert').off('click').on('click', function (e) {
+  $(document).ready(function () {
+    $('.view-pert').off('click').on('click', function (e) {
       e.preventDefault();
       // Check if any dropdown has no value selected
       var allDropdownsHaveValues = true;
@@ -198,7 +201,7 @@ $(document).ready(function () {
           return false; // Exit the loop early
         }
       });
-      
+
       // If any dropdown has no value selected, alert the user
       if (!allDropdownsHaveValues) {
         alert('All dropdowns should have at least one input.');
@@ -209,7 +212,7 @@ $(document).ready(function () {
       let noArr = []
       let predecessorArr = []
       let criticalPath = []
-      $('.critical-bool').each(function() {
+      $('.critical-bool').each(function () {
         criticalPath.push($(this).is(":checked"))
       })
       // Print the selected values (values associated with the names)
@@ -229,25 +232,26 @@ $(document).ready(function () {
         etArr.push(subActivityEt)
         predecessorArr.push(selectedValues)
       });
-      
-      setTimeout(function() {
-            $(".myModal").css("display","flex")
-            $(".myModal").css("opacity", 1)
-            init(idArr, predecessorArr, noArr, etArr, criticalPath); // Call the init function after a delay
-        }, 1); // Adjust the del
+
+
+      setTimeout(function () {
+        $(".myModal").css("display", "flex")
+        $(".myModal").css("opacity", 1)
+        init(idArr, predecessorArr, noArr, etArr, criticalPath); // Call the init function after a delay
+      }, 1); // Adjust the del
     });
 
-})   
+  })   
 </script>
 <script id="code">
-function init(ids,predecessors, nos, ets, criticals) {
+  function init(ids, predecessors, nos, ets, criticals) {
     // Since 2.2 you can also author concise templates with method chaining instead of GraphObject.make
     // For details, see https://gojs.net/latest/intro/buildingObjects.html
     const $ = go.GraphObject.make;  // for more concise visual tree definitions
     if (this.myDiagram) {
       this.myDiagram.div = null;
     }
-    
+
     // colors used, named for easier identification
     var blue = "#0288D1";
     var pink = "#B71C1C";
@@ -343,63 +347,98 @@ function init(ids,predecessors, nos, ets, criticals) {
           new go.Binding("fill", "", linkColorConverter))
       );
 
-    // here's the data defining the graph
     var nodeDataArray = [
       { key: 0, text: "Start", length: 0, earlyStart: 0, lateFinish: 0, critical: true },
     ];
 
+    // Assuming ids, nos, ets, and criticals are arrays containing node properties
     for (let i = 0; i < ids.length; i++) {
-      nodeDataArray.push({ key: ids[i], text: nos[i], length:ets[i], earlyStart: 0, lateFinish: 0, critical: criticals[i] })
+      nodeDataArray.push({ key: ids[i], text: nos[i], length: ets[i], earlyStart: 0, lateFinish: 0, critical: criticals[i] })
     }
 
     var linkDataArray = [];
 
+    // Assuming predecessors is an array containing the predecessors for each node
     for (let i = 0; i < ids.length; i++) {
-      let id = ids[i];      
+      let id = ids[i];
       for (let k = 0; k < predecessors[i].length; k++) {
-        let predecessor = predecessors[i]
-        linkDataArray.push({ from: predecessor[k], to: id })
+        let predecessor = predecessors[i];
+        linkDataArray.push({ from: predecessor[k], to: id });
       }
     }
 
-    console.log(nodeDataArray)
-    console.log(linkDataArray)
+    // Calculate early start and early finish for each node
+    nodeDataArray.forEach(function (node) {
+      var predecessors = linkDataArray.filter(function (link) {
+        return link.to === node.key;
+      }).map(function (link) {
+        return link.from;
+      });
 
+      if (predecessors.length > 0) {
+        var maxEarlyFinish = -Infinity; // Initialize with the smallest possible value
+        predecessors.forEach(function (predKey) {
+          var predNode = nodeDataArray.find(function (node) {
+            return node.key === predKey;
+          });
+          if (predNode && predNode.earlyFinish !== undefined) { // Check if predNode has a valid earlyFinish
+            maxEarlyFinish = Math.max(maxEarlyFinish, predNode.earlyFinish);
+          }
+        });
+        if (isFinite(maxEarlyFinish)) { // Check if maxEarlyFinish is a finite number
+          node.earlyStart = maxEarlyFinish; // Use the maxEarlyFinish of predecessors
+          node.earlyFinish = maxEarlyFinish + node.length;
+        } else {
+          // Handle case where maxEarlyFinish is not a finite number
+          node.earlyStart = 0;
+          node.earlyFinish = node.length;
+        }
+      } else {
+        node.earlyStart = 0;
+        node.earlyFinish = node.length;
+      }
+
+      if (node.critical) {
+        node.lateStart = node.earlyStart; // Set late start to early start for critical nodes
+        node.slack = 0; // Set slack to 0 for critical nodes
+        node.lateFinish = node.earlyFinish; // Set late finish to early finish for critical nodes
+      }
+    });
 
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
-        // create an unbound Part that acts as a "legend" for the diagram
-        myDiagram.add(
-          $(go.Node, "Auto",
-            $(go.Shape, "Rectangle",  // the border
-              { fill: "#EEEEEE" }),
-            $(go.Panel, "Table",
-              $(go.RowColumnDefinition, { column: 1, separatorStroke: "black" }),
-              $(go.RowColumnDefinition, { column: 2, separatorStroke: "black" }),
-              $(go.RowColumnDefinition, { row: 1, separatorStroke: "black", background: "#EEEEEE", coversSeparators: true }),
-              $(go.RowColumnDefinition, { row: 2, separatorStroke: "black" }),
-              $(go.TextBlock, "Early Start",
-                { row: 0, column: 0, margin: 5, textAlign: "center" }),
-              $(go.TextBlock, "Length",
-                { row: 0, column: 1, margin: 5, textAlign: "center" }),
-              $(go.TextBlock, "Early Finish",
-                { row: 0, column: 2, margin: 5, textAlign: "center" }),
+    // create an unbound Part that acts as a "legend" for the diagram
+    myDiagram.add(
+      $(go.Node, "Auto",
+        $(go.Shape, "Rectangle",  // the border
+          { fill: "#EEEEEE" }),
+        $(go.Panel, "Table",
+          $(go.RowColumnDefinition, { column: 1, separatorStroke: "black" }),
+          $(go.RowColumnDefinition, { column: 2, separatorStroke: "black" }),
+          $(go.RowColumnDefinition, { row: 1, separatorStroke: "black", background: "#EEEEEE", coversSeparators: true }),
+          $(go.RowColumnDefinition, { row: 2, separatorStroke: "black" }),
+          $(go.TextBlock, "Early Start",
+            { row: 0, column: 0, margin: 5, textAlign: "center" }),
+          $(go.TextBlock, "Length",
+            { row: 0, column: 1, margin: 5, textAlign: "center" }),
+          $(go.TextBlock, "Early Finish",
+            { row: 0, column: 2, margin: 5, textAlign: "center" }),
 
-              $(go.TextBlock, "Activity Name",
-                {
-                  row: 1, column: 0, columnSpan: 3, margin: 5,
-                  textAlign: "center", font: "bold 14px sans-serif"
-                }),
+          $(go.TextBlock, "Activity Name",
+            {
+              row: 1, column: 0, columnSpan: 3, margin: 5,
+              textAlign: "center", font: "bold 14px sans-serif"
+            }),
 
-              $(go.TextBlock, "Late Start",
-                { row: 2, column: 0, margin: 5, textAlign: "center" }),
-              $(go.TextBlock, "Slack",
-                { row: 2, column: 1, margin: 5, textAlign: "center" }),
-              $(go.TextBlock, "Late Finish",
-                { row: 2, column: 2, margin: 5, textAlign: "center" })
-            )  // end Table Panel
-          ));
-      }
-      
+          $(go.TextBlock, "Late Start",
+            { row: 2, column: 0, margin: 5, textAlign: "center" }),
+          $(go.TextBlock, "Slack",
+            { row: 2, column: 1, margin: 5, textAlign: "center" }),
+          $(go.TextBlock, "Late Finish",
+            { row: 2, column: 2, margin: 5, textAlign: "center" })
+        )  // end Table Panel
+      ));
+  }
+
   // window.addEventListener('DOMContentLoaded', init);
 </script>
 {{ end }}
