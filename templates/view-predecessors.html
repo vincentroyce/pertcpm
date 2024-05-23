@@ -15,6 +15,7 @@
         <th class="text-light" scope="col">Activity</th>
         <th class="text-light" scope="col">Immediate Predecessors</th>
         <th class="text-light" scope="col">Expected Time</th>
+        <th class="text-light" scope="col">Critical</th>
       </tr>
     </thead>
     <tbody class="for-load text-center">
@@ -38,7 +39,7 @@
         <td class="fs-6">{{ .Name }}</td>
         <td class="p-0">
           <div class="dropdown w-100">
-            <button class="btn btn-secondary dropdown-toggle w-100 pt-4 pb-4" disabled type="button" data-num="{{ .No }}"
+            <button class="btn btn-secondary dropdown-toggle w-100 pt-4 pb-4" disabled type="button" data-et="{{ .ExpectedTime }}" data-num="{{ .No }}"
               id="dropdownMenuButton-{{.ID}}" data-bs-toggle="dropdown" aria-expanded="false">
               {{ .NoPredecessorsList }}
             </button>
@@ -58,6 +59,7 @@
           </div>
         </td>
         <td class="fs-6">{{ .ExpectedTime }}</td>
+        <td class="fs-6"><input data-critical="{{ .Critical }}" class="critical-bool" type="checkbox"></td>
       </tr>
       {{end}}
       {{end}}
@@ -119,6 +121,9 @@
 
     // Add event listener to the "Edit Predecessors" button
     $('.edit-predecessors').off('click').on('click', function () {
+      $('.critical-bool').each(function () {
+        $(this).attr("disabled", false)
+      })
       var $this = $(this);
       var buttonText = $this.text();
       if (buttonText === 'Edit Predecessors') {
@@ -171,7 +176,7 @@
       $('.edit-predecessors').text('Edit Predecessors');
       let idArr = [];
       let predecessorArr = [];
-
+      let criticalPath = []
       // Print the selected values (values associated with the names)
       $('.dropdown-menu').each(function () {
         var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
@@ -185,16 +190,19 @@
         idArr.push(subActivityId);
         predecessorArr.push(selectedValues);
       });
-
+      $('.critical-bool').each(function() {
+        criticalPath.push($(this).is(":checked"))
+      })
       console.log(idArr);
       console.log(predecessorArr);
-
+      console.log(criticalPath)
       $.ajax({
         method: 'POST',
         url: '/api/set-predecessor',
         data: {
           ids: JSON.stringify(idArr),
           predecessors: JSON.stringify(predecessorArr),
+          critical: JSON.stringify(criticalPath),
         },
         success: function (response) {
           console.log(response);
@@ -231,6 +239,13 @@
         })
       });
     });
+    $('.critical-bool').each(function () {
+      $(this).attr("disabled", true)
+      if ($(this).data("critical") == true) {
+        $(this).attr("checked", true)
+      }
+        // console.log($(this).data("critical"))
+      });
   });
 </script>
 <script>
@@ -252,12 +267,14 @@
         return;
       }
       let idArr = []
+      let etArr = []
       let noArr = []
       let predecessorArr = []
       // Print the selected values (values associated with the names)
       $('.dropdown-menu').each(function () {
         var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
         var subActivityNo = $(this).closest('.dropdown').find('.dropdown-toggle').data('num')
+        var subActivityEt = $(this).closest('.dropdown').find('.dropdown-toggle').data('et')
         var selectedValues = [];
         $(this).find('input:checked').each(function () {
           var name = $(this).data('no');
@@ -267,20 +284,21 @@
         console.log('Selected values for Sub Activity ' + subActivityId + ':', String(selectedValues));
         idArr.push(subActivityId)
         noArr.push(subActivityNo)
+        etArr.push(subActivityEt)
         predecessorArr.push(selectedValues)
       });
-      console.log(noArr)
+  
       setTimeout(function() {
             $(".myModal").css("display","flex")
             $(".myModal").css("opacity", 1)
-            init(idArr, predecessorArr, noArr); // Call the init function after a delay
+            init(idArr, predecessorArr, noArr, etArr); // Call the init function after a delay
         }, 1); // Adjust the del
     });
 
 })   
 </script>
 <script id="code">
-  function init(ids,predecessors, nos) {
+  function init(ids,predecessors, nos, ets) {
       // Since 2.2 you can also author concise templates with method chaining instead of GraphObject.make
       // For details, see https://gojs.net/latest/intro/buildingObjects.html
       const $ = go.GraphObject.make;  // for more concise visual tree definitions
@@ -383,17 +401,19 @@
             new go.Binding("fill", "", linkColorConverter))
         );
   
+
+      console.log(ets)
       // here's the data defining the graph
       var nodeDataArray = [
         { key: 0, text: "Start", length: 0, earlyStart: 0, lateFinish: 0, critical: true },
       ];
   
       for (let i = 0; i < ids.length; i++) {
-        nodeDataArray.push({ key: ids[i], text: nos[i], length: 0, earlyStart: 0, lateFinish: 0, critical: true })
+        nodeDataArray.push({ key: ids[i], text: nos[i], length:ets[i], earlyStart: 0, lateFinish: 0, critical: false })
       }
-  
+      
       var linkDataArray = [];
-  
+      
       for (let i = 0; i < ids.length; i++) {
         let id = ids[i];      
         for (let k = 0; k < predecessors[i].length; k++) {
@@ -401,8 +421,12 @@
           linkDataArray.push({ from: predecessor[k], to: id })
         }
       }
-  
-  
+      
+      for (let i = 0; i < nodeDataArray.length; i++) {
+
+      }
+      
+
       myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
           // create an unbound Part that acts as a "legend" for the diagram
           myDiagram.add(

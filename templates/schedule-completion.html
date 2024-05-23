@@ -15,6 +15,7 @@
         <th class="text-light" scope="col">Activity</th>
         <th class="text-light" scope="col">Immediate Predecessors</th>
         <th class="text-light" scope="col">Expected Time</th>
+        <th class="text-light" scope="col">Critical</th>
       </tr>
     </thead>
     <tbody class="text-center">
@@ -56,6 +57,7 @@
           </div>
         </td>
         <td class="fs-6">{{ .ExpectedTime }}</td>
+        <td class="fs-6"><input class="critical-bool" type="checkbox"></td>
       </tr>
       {{end}}
       {{end}}
@@ -140,6 +142,7 @@
       }
       let idArr = []
       let predecessorArr = []
+      let criticalPath = []
       // Print the selected values (values associated with the names)
       $('.dropdown-menu').each(function () {
         var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
@@ -153,14 +156,19 @@
         idArr.push(subActivityId)
         predecessorArr.push(selectedValues)
       });
+      $('.critical-bool').each(function() {
+        criticalPath.push($(this).is(":checked"))
+      })
       console.log(idArr)
       console.log(predecessorArr)
+      console.log(criticalPath)
       $.ajax({
         method:'POST',
         url:'/api/set-predecessor',
         data: {
           ids: JSON.stringify(idArr),
           predecessors: JSON.stringify(predecessorArr),
+          critical: JSON.stringify(criticalPath)
         },
         success: function(response) {
           console.log(response);
@@ -346,6 +354,9 @@ function init(ids,predecessors, nos) {
         linkDataArray.push({ from: predecessor[k], to: id })
       }
     }
+
+    console.log(nodeDataArray)
+    console.log(linkDataArray)
 
 
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
