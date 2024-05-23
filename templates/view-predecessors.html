@@ -269,8 +269,14 @@
       let idArr = []
       let etArr = []
       let noArr = []
+      let criticalPath = []
       let predecessorArr = []
       // Print the selected values (values associated with the names)
+      
+      $('.critical-bool').each(function() {
+        criticalPath.push($(this).is(":checked"))
+      })
+
       $('.dropdown-menu').each(function () {
         var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
         var subActivityNo = $(this).closest('.dropdown').find('.dropdown-toggle').data('num')
@@ -291,14 +297,14 @@
       setTimeout(function() {
             $(".myModal").css("display","flex")
             $(".myModal").css("opacity", 1)
-            init(idArr, predecessorArr, noArr, etArr); // Call the init function after a delay
+            init(idArr, predecessorArr, noArr, etArr, criticalPath); // Call the init function after a delay
         }, 1); // Adjust the del
     });
 
 })   
 </script>
 <script id="code">
-  function init(ids,predecessors, nos, ets) {
+  function init(ids,predecessors, nos, ets, criticals) {
       // Since 2.2 you can also author concise templates with method chaining instead of GraphObject.make
       // For details, see https://gojs.net/latest/intro/buildingObjects.html
       const $ = go.GraphObject.make;  // for more concise visual tree definitions
@@ -409,7 +415,7 @@
       ];
   
       for (let i = 0; i < ids.length; i++) {
-        nodeDataArray.push({ key: ids[i], text: nos[i], length:ets[i], earlyStart: 0, lateFinish: 0, critical: false })
+        nodeDataArray.push({ key: ids[i], text: nos[i], length:ets[i], earlyStart: 0, lateFinish: 0, critical: criticals[i] })
       }
       
       var linkDataArray = [];
