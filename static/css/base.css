@@ -7,7 +7,37 @@
 .text-indent {
   text-indent: 10px;
 }
-
+.widget-content-right{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+.widget-numbers{
+  font-weight: 700;
+  font-size: 1.8rem;
+}
+.bg-midnight-bloom{
+  background-image: linear-gradient(-20deg,#4c7ea0 0%,#2f2552 100%)!important;
+}
+.bg-arielle-smile{
+  background-image: linear-gradient(to top,#2ac5da 0%,#287dcc 100%)!important;
+}
+.bg-grow-early{
+  background-image: linear-gradient(to top,#0d7c4c 0%,#28cc98 100%)!important;
+}
+.widget-content .widget-content-left .widget-subheading{
+  opacity: .5;
+}
+.widget-content-left{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.widget-content .widget-content-left .widget-heading{
+  opacity: .8;
+  font-weight: 700; 
+}
 .file-plus {
   background-image: url('/static/media/file-plus.svg');
   background-position: center;
@@ -28,4 +58,50 @@
   background-repeat: no-repeat;
   height: 14px;
   width: 14px;
+}
+.highcharts-figure,
+.highcharts-data-table table {
+    min-width: 310px;
+    width: 100%;
+    margin: 1em auto;
+}
+
+#chart {
+    height: 400px;
+}
+
+.highcharts-data-table table {
+    font-family: Verdana, sans-serif;
+    border-collapse: collapse;
+    border: 1px solid #ebebeb;
+    margin: 10px auto;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+.highcharts-data-table caption {
+    padding: 1em 0;
+    font-size: 1.2em;
+    color: #555;
+}
+
+.highcharts-data-table th {
+    font-weight: 600;
+    padding: 0.5em;
+}
+
+.highcharts-data-table td,
+.highcharts-data-table th,
+.highcharts-data-table caption {
+    padding: 0.5em;
+}
+
+.highcharts-data-table thead tr,
+.highcharts-data-table tr:nth-child(even) {
+    background: #f8f8f8;
+}
+
+.highcharts-data-table tr:hover {
+    background: #f1f7ff;
 }

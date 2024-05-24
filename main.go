@@ -20,6 +20,17 @@ func main() {
 		models.Activity{},
 		models.SubActivity{},
 	)
+
+	uadmin.RegisterInlines(
+		models.Project{},
+		map[string]string{
+			"Equipment":   "ProjectID",
+			"Worker":      "ProjectID",
+			"Phase":       "ProjectID",
+			"Activity":    "ProjectID",
+			"SubActivity": "ProjectID",
+		},
+	)
 	uadmin.Port = 1111
 	http.HandleFunc("/", uadmin.Handler(views.Main))
 	http.HandleFunc("/api/", uadmin.Handler(api.Main))

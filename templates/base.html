@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,6 +16,11 @@
     rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+  
 </head>
 
 <body>
@@ -104,7 +108,7 @@
       </div>
     </nav>
     <!-- Main content -->
-    <div class="h-screen flex-grow-1 overflow-y-lg-auto overflow-y-md-auto overflow-y-sm-auto">
+    <div class=" flex-grow-1 overflow-y-lg-auto overflow-y-md-auto overflow-y-sm-auto">
       {{ template "content" . }}
     </div>
   </div>

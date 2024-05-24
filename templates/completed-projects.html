@@ -6,7 +6,7 @@
   <h1>Completed Projects</h1>
   <div class="grid-layout gap-6">
     {{ range $index, $project := .Projects }}
-    <div class="container card">
+    <div class="container card card-container">
       <img src="/static/media/440921056_3780621792183800_4943365504590121414_n-removebg-preview.png" class="card-img-top" alt="...">
       <div class="card-body justify-content-between d-flex flex-column">
         <h5 class="card-title">Project Name: {{ $project.Name }}</h5>
@@ -21,10 +21,11 @@
     </div>
     {{ end }}
   </div>
+
 </div>
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    var projects = document.querySelectorAll(".container");
+    var projects = document.querySelectorAll(".card-container");
     projects.forEach(function(project, index) {
       var dateStart = project.querySelector(`.start-${index}`).textContent;
       var dateStartObject = new Date(dateStart);
