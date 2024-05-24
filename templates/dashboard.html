@@ -61,12 +61,15 @@
     .then(resp => resp.json())
     .then(resp => {
       // incomplete
-      let incompleteCount = resp.result[0].id__count
+      let incompleteCount = resp.result[0].id__count 
+      console.log(incompleteCount)
+
       //complete
-      let completeCount = resp.result[1].id__count
+      let completeCount = resp.result[1].id__count ? resp.result[1].id__count : 0
+      console.log(completeCount)
       chart(completeCount, incompleteCount)
     })
-
+    
     fetch("/pertcpm-admin/api/d/project/?$f=cost,name&$order=-date_start&$limit=6")
     .then(resp => resp.json())
     .then(resp => {
