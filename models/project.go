@@ -14,12 +14,9 @@ type Project struct {
 	Phase             []Phase `uadmin:"list_exclude"`
 	DateStart         time.Time
 	DateEnd           time.Time
+	CompletedAt       time.Time
 	ExpiresAt         *time.Time
 	ScheduleCompleted bool
-	CreatedBy         uadmin.User
-	CreatedByID       uint
-	ModifiedBy        uadmin.User
-	ModifiedByID      uint
 	Completed         bool
 }
 

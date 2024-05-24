@@ -3,8 +3,10 @@ package api
 import (
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/uadmin/uadmin"
+	"github.com/vrsalazar/pertcpm/models"
 )
 
 func Main(w http.ResponseWriter, r *http.Request) {
@@ -18,6 +20,8 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		DeleteProjectAPI(w, r)
 	case strings.HasPrefix(r.URL.Path, "/set-predecessor"):
 		SetPredecessorAPI(w, r)
+	case strings.HasPrefix(r.URL.Path, "/complete-project"):
+		CompleteProjectAPI(w, r)
 	default:
 		w.WriteHeader(http.StatusNotFound)
 		uadmin.ReturnJSON(w, r, map[string]any{
@@ -25,4 +29,28 @@ func Main(w http.ResponseWriter, r *http.Request) {
 			"err_msg": "Invalid API endpoint",
 		})
 	}
+}
+
+func CompleteProjectAPI(w http.ResponseWriter, r *http.Request) {
+
+	id := r.FormValue("id")
+
+	project := models.Project{}
+	err := uadmin.Get(&project, "id = ?", id)
+	if err != nil {
+		uadmin.ReturnJSON(w, r, map[string]interface{}{
+			"err_msg": "unable to get the project. " + err.Error(),
+			"status":  "error",
+		})
+		return
+	}
+
+	project.Completed = true
+	project.CompletedAt = time.Now()
+	project.Save()
+
+	uadmin.ReturnJSON(w, r, map[string]interface{}{
+		"response": "Project set to completed.",
+		"status":   "ok",
+	})
 }

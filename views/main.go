@@ -20,8 +20,6 @@ func Main(w http.ResponseWriter, r *http.Request) {
 	switch page {
 	case "dashboard":
 		context = DashboardHandler(w, r)
-	case "home":
-		context = HomeHandler(w, r)
 	case "pert":
 		context = PertHandler(w, r)
 	case "planning":
@@ -34,8 +32,11 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		context = CompletedProjectHandler(w, r)
 	case "view-predecessors":
 		context = EditPredecessorsHandler(w, r)
+	case "view-summary":
+		context = ViewSummaryHandler(w, r)
+
 	default:
-		page = "home"
+		page = "dashboard"
 	}
 	context["Page"] = page
 	Render(w, r, page, context)

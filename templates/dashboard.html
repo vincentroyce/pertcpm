@@ -2,5 +2,78 @@
 <title>{{ .Title }}</title>
 {{end}}
 {{ define "content" }}
-<h1>Welcome to Dashboard</h1>
+<link href="https://demo.dashboardpack.com/architectui-html-free/main.css" rel="stylesheet">
+<div class="container-fluid">
+  <h1 text>Welcome to Dashboard</h1>
+  <div class="row">
+    <div class="col-md-6 col-xl-4">
+        <div class="card mb-3 widget-content bg-midnight-bloom">
+            <div class="widget-content-wrapper text-white">
+                <div class="widget-content-left">
+                    <div class="widget-heading">Total Projects</div>
+                    <div class="widget-subheading">Last year expenses</div>
+                </div>
+                <div class="widget-content-right">
+                    <div class="widget-numbers text-white"><span>{{ .AllProjects }}</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <div class="card mb-3 widget-content bg-arielle-smile">
+            <div class="widget-content-wrapper text-white">
+                <div class="widget-content-left">
+                    <div class="widget-heading">Ongoing Projects</div>
+                    <div class="widget-subheading">Total Clients Profit</div>
+                </div>
+                <div class="widget-content-right">
+                    <div class="widget-numbers text-white"><span>{{ .OngoingProjects }}</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-4">
+        <div class="card mb-3 widget-content bg-grow-early">
+            <div class="widget-content-wrapper text-white">
+                <div class="widget-content-left">
+                    <div class="widget-heading">Completed Projects</div>
+                    <div class="widget-subheading">People Interested</div>
+                </div>
+                <div class="widget-content-right">
+                    <div class="widget-numbers text-white"><span>{{ .CompletedProjects }}</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12 col-lg-12">
+      <div class="mb-3 card">
+          <div class="card-header-tab card-header-tab-animation card-header">
+              <div class="card-header-title">
+                  <i class="header-icon lnr-apartment icon-gradient bg-love-kiss"> </i>
+                  Sales Report
+              </div>
+          </div>
+          <div class="card-body">
+              <div class="tab-content">
+                  <div class="tab-pane fade show active" id="tabs-eg-77">
+                      <div class="card mb-3 widget-chart widget-chart2 text-left w-100">
+                          <div class="widget-chat-wrapper-outer">
+                              <div class="widget-chart-wrapper widget-chart-wrapper-lg opacity-10 m-0">
+                                  <canvas id="canvas"></canvas>
+                              </div>
+                          </div>
+                      </div>
+                    
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+<script type="text/javascript" src="https://demo.dashboardpack.com/architectui-html-free/assets/scripts/main.js"></script></body>
 {{end}}

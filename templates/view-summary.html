@@ -2,12 +2,110 @@
 <title>{{ .Title }}</title>
 {{ end }}
 {{ define "content" }}
-<link rel="stylesheet" href="/static/css/view-predecessors.css">
 <div class="container">
-  <h1>View Project</h1>
+  <h1>Project Summary</h1>
   <h2>Project Title: <span class="project-title">{{ .ProjectName }}</span></h2>
+  <h5>Date Start: <span class="date-time">{{ .Project.DateStart }}</span></h5>
+  <h5>Date End: <span class="date-time">{{ .Project.DateEnd }}</span></h5>
+  <h5>Date Completed: <span class="date-time">{{ .Project.CompletedAt }}</span></h5>
 </div>
+
 <div class="container">
+  <table class="table table-bordered table-hover">
+    <thead class="thead-dark text-center">
+      <tr>
+        <th class="text-light" rowspan="2" scope="col">Item No.</th>
+        <th class="text-light" rowspan="2" scope="col">Activity</th>
+        <th class="text-light"  colspan="3" scope="col">Time Estimate</th>
+        <th class="text-light" rowspan="2" scope="col">Expected Time</th>
+      </tr>
+      <tr>
+        <th class="text-light" scope="col">Optimistic Time</th>
+        <th class="text-light" scope="col">Most Likely Time</th>
+        <th class="text-light" scope="col">Pessimistic Time Time</th>
+      </tr>
+    </thead>
+    <tbody class="for-load text-center">
+      {{range .Project.Phase}}
+      <tr>
+        <th class="fs-6" scope="row">{{ .No }}</th>
+        <td class="fs-6">{{ .Name }}</td>
+        <td class="fs-6">{{ .OptimisticTime }}</td>
+        <td class="fs-6">{{ .MostLikelyTime }}</td>
+        <td class="fs-6">{{ .PessimisticTime }}</td>
+        <td class="fs-6">{{ .ExpectedTime }}</td>
+      </tr>
+      {{range .Activity}}
+      {{$activity := .}}
+      <th class="fs-6" scope="row">{{ .No }}</th>
+        <td class="fs-6">{{ .Name }}</td>
+        <td class="fs-6">{{ .OptimisticTime }}</td>
+        <td class="fs-6">{{ .MostLikelyTime }}</td>
+        <td class="fs-6">{{ .PessimisticTime }}</td>
+        <td class="fs-6">{{ .ExpectedTime }}</td>
+      {{range .SubActivity}}
+      {{$subActivity := .}}
+      <tr>
+        <th class="fs-6" scope="row">{{ .No }}</th>
+        <td class="fs-6">{{ .Name }}</td>
+        <td class="fs-6">{{ .OptimisticTime }}</td>
+        <td class="fs-6">{{ .MostLikelyTime }}</td>
+        <td class="fs-6">{{ .PessimisticTime }}</td>
+        <td class="fs-6">{{ .ExpectedTime }}</td>
+      </tr>
+      {{end}}
+      {{end}}
+      {{end}}
+    </tbody>
+  </table>
+</div>
+
+<div class="container">
+  <h1>Workers</h1>
+  <table class="table table-bordered table-hover">
+    <thead class="thead-dark text-center">
+        <th class="text-light" scope="col">Worker</th>
+        <th class="text-light" scope="col">Quantity</th>
+        <th class="text-light"  scope="col">Rate</th>
+        <th class="text-light" scope="col">Total</th>
+    </thead>
+    <tbody class="for-load text-center">
+      {{ range .Workers}}
+      <tr>
+        <th class="fs-6" scope="row">{{ .Name }}</th>
+        <td class="fs-6">{{ .Quantity }}</td>
+        <td class="fs-6">₱{{ .Rate }}</td>
+        <td class="fs-6">₱{{ .Total }}</td>
+      </tr>
+      {{ end }}
+    </tbody>
+  </table>
+</div>
+
+<div class="container">
+  <h1>Equipments</h1>
+  <table class="table table-bordered table-hover">
+    <thead class="thead-dark text-center">
+        <th class="text-light" scope="col">Equipment</th>
+        <th class="text-light" scope="col">Quantity</th>
+        <th class="text-light"  scope="col">Cost</th>
+        <th class="text-light" scope="col">Total</th>
+    </thead>
+    <tbody class="for-load text-center">
+      {{ range .Equipments}}
+      <tr>
+        <th class="fs-6" scope="row">{{ .Name }}</th>
+        <td class="fs-6">{{ .Quantity }}</td>
+        <td class="fs-6">₱{{ .Cost }}</td>
+        <td class="fs-6">₱{{ .Total }}</td>
+      </tr>
+      {{ end }}
+    </tbody>
+  </table>
+</div>
+
+<div class="container">
+  <h1>Predecessors</h1>
   <table class="table table-bordered table-hover">
     <thead class="thead-dark text-center">
       <tr>
@@ -66,185 +164,24 @@
       {{end}}
     </tbody>
   </table>
-  <button class="edit-predecessors btn btn-primary mt-2 mb-2" type="button">Edit Predecessors</button>
-  <button class="save-changes btn btn-success mt-2 mb-2" type="button" style="display: none;">Save Changes</button>
-  <button class="view-pert btn btn-info mt-2 mb-2" type="button">View Pert Diagram</button>
-  <button onclick="completed( {{ .Project.ID }} )" class="btn btn-success mt-2 mb-2" type="button">Mark as Done</button>
-
 </div>
-<div class="myModal">
-  <div class="container modal-container">
-    <div id="allSampleContent" class="w-full">
-      <div id="sample">
-        <div id="myDiagramDiv"
-          style="border: 1px solid black; width: 100%; height: 400px; position: relative; -webkit-tap-highlight-color: rgba(255, 255, 255, 0);">
-          <canvas tabindex="0" width="1054" height="398"
-            style="position: absolute; top: 0px; left: 0px; z-index: 2; user-select: none; touch-action: none; width: 1054px; height: 398px;"></canvas>
-          <div style="position: absolute; overflow: auto; width: 1054px; height: 398px; z-index: 1;">
-            <div style="position: absolute; width: 1px; height: 1px;"></div>
-          </div>
+<div class="container">
+  <h1>Pert Diagram</h1>
+  <div id="allSampleContent" class="w-full">
+    <div id="sample">
+      <div id="myDiagramDiv"
+        style="border: 1px solid black; width: 100%; height: 400px; position: relative; -webkit-tap-highlight-color: rgba(255, 255, 255, 0);">
+        <canvas tabindex="0" width="1054" height="398"
+          style="position: absolute; top: 0px; left: 0px; z-index: 2; user-select: none; touch-action: none; width: 1054px; height: 398px;"></canvas>
+        <div style="position: absolute; overflow: auto; width: 1054px; height: 398px; z-index: 1;">
+          <div style="position: absolute; width: 1px; height: 1px;"></div>
         </div>
       </div>
     </div>
-    <button class="close-btn btn btn-secondary ">Close</button>
   </div>
 </div>
 
-<script src="https://unpkg.com/gojs@2.3.16/release/go.js"></script>
-<script>
-  function completed(id) {
-    fetch(`/api/complete-project?id=${id}`)
-    .then(resp => resp.json())
-    .then(resp => {
-      if (resp['status'] != "ok") {
-        Swal.fire({
-            title: "Project not found",
-            text: resp.err_msg,
-            icon: "error"
-          });
-      } else {
-        Swal.fire({
-            title: "Project set to complete",
-            text: resp.response,
-            icon: "success"
-          });
-          setTimeout(function() {
-            location.href = location.origin + "/user/completed-projects/"
-          }, 3000);
-      }
-    })
-  }
-</script>
-<script>
-  $(".close-btn").click(function() {
-    $(".myModal").css("display","none")
-  })
-</script>
-<script>
-  $(document).ready(function () {
-    setTimeout(function(){$(".myModal").css("display","none")},1)
-    // Ensure event listeners are only added once
-    $('.dropdown-item').off('click').on('click', function (e) {
-      e.preventDefault();
-      var checkbox = $(this).find('input[type="checkbox"]');
-      var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
-      var selectedPredecessors = [];
 
-      // Toggle checkbox state
-      checkbox.prop('checked', !checkbox.prop('checked'));
-
-      // Update the selected predecessors display
-      $(this).closest('.dropdown-menu').find('input:checked').each(function () {
-        selectedPredecessors.push({
-          name: $(this).data('no'),
-          value: $(this).val()
-        });
-      });
-
-      var buttonText = selectedPredecessors.length > 0 ? selectedPredecessors.map(item => item.name).join(', ') : 'Select Predecessors';
-      $('#dropdownMenuButton-' + subActivityId).text(buttonText);
-    });
-
-    // Add event listener to the "Edit Predecessors" button
-    $('.edit-predecessors').off('click').on('click', function () {
-      $('.critical-bool').each(function () {
-        $(this).attr("disabled", false)
-      })
-      var $this = $(this);
-      var buttonText = $this.text();
-      if (buttonText === 'Edit Predecessors') {
-        // Enable all dropdown buttons
-        $('.dropdown-toggle').prop('disabled', false);
-
-        // Show the "Save Changes" button
-        $('.save-changes').show();
-        $this.text('Cancel');
-      } else {
-        $(".for-load").load(location.href+" .for-load>*");
-        // Revert back to "Edit Predecessors" only if there is no alert
-        if (!$('.alert').length) {
-          $('.dropdown-toggle').prop('disabled', true);
-          $('.save-changes').hide();
-          $this.text('Edit Predecessors');
-
-          // Revert dropdown menus to default state
-          $('.dropdown-menu').removeClass('show');
-          location.reload()
-        }
-      }
-    });
-
-    // Add event listener to the "Save Changes" button
-    $('.save-changes').off('click').on('click', function () {
-      // Disable all dropdown buttons
-
-
-      // Check if any dropdown has no value selected
-      var allDropdownsHaveValues = true;
-      $('.dropdown-menu').each(function () {
-        if ($(this).find('input:checked').length === 0) {
-          allDropdownsHaveValues = false;
-          return false; // Exit the loop early
-        }
-      });
-
-      // If any dropdown has no value selected, alert the user
-      if (!allDropdownsHaveValues) {
-        alert('All dropdowns should have at least one input.');
-        return;
-      }
-      $('.dropdown-toggle').prop('disabled', true);
-
-      // Hide the "Save Changes" button
-      $('.save-changes').hide();
-
-      // Revert "Edit Predecessors" button text
-      $('.edit-predecessors').text('Edit Predecessors');
-      let idArr = [];
-      let predecessorArr = [];
-      let criticalPath = []
-      // Print the selected values (values associated with the names)
-      $('.dropdown-menu').each(function () {
-        var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
-        var selectedValues = [];
-        $(this).find('input:checked').each(function () {
-          var name = $(this).data('no');
-          var value = $(this).val();
-          selectedValues.push(value);
-        });
-        console.log('Selected values for Sub Activity ' + subActivityId + ':', String(selectedValues));
-        idArr.push(subActivityId);
-        predecessorArr.push(selectedValues);
-      });
-      $('.critical-bool').each(function() {
-        criticalPath.push($(this).is(":checked"))
-      })
-      console.log(idArr);
-      console.log(predecessorArr);
-      console.log(criticalPath)
-      $.ajax({
-        method: 'POST',
-        url: '/api/set-predecessor',
-        data: {
-          ids: JSON.stringify(idArr),
-          predecessors: JSON.stringify(predecessorArr),
-          critical: JSON.stringify(criticalPath),
-        },
-        success: function (response) {
-          console.log(response);
-          Swal.fire({
-            title: "Changes have been saved",
-            text: response.response,
-            icon: "success"
-          });
-          window.setTimeout(function () {
-            window.location.reload()
-          }, 3000);
-        },
-      });
-    });
-  });
-</script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     var subActivities = document.querySelectorAll('.dropdown-menu');
@@ -275,23 +212,19 @@
   });
 </script>
 <script>
- $(document).ready(function () {
-  $('.view-pert').off('click').on('click', function (e) {
-      e.preventDefault();
-      // Check if any dropdown has no value selected
-      var allDropdownsHaveValues = true;
-      $('.dropdown-menu').each(function () {
-        if ($(this).find('input:checked').length === 0) {
-          allDropdownsHaveValues = false;
-          return false; // Exit the loop early
-        }
-      });
-      
-      // If any dropdown has no value selected, alert the user
-      if (!allDropdownsHaveValues) {
-        alert('All dropdowns should have at least one input.');
-        return;
-      }
+    document.addEventListener("DOMContentLoaded", function () {
+      var dates = document.querySelectorAll(".date-time");
+      dates.forEach(date => {
+        var text = date.textContent;
+        var dateObject = new Date(text);
+        var options = { year: 'numeric', month: 'long', day: 'numeric' };
+        var formattedDate = dateObject.toLocaleDateString('en-US', options);
+        date.textContent = formattedDate;
+      })
+    })
+</script>
+<script>
+  $(document).ready(function () {
       let idArr = []
       let etArr = []
       let noArr = []
@@ -318,17 +251,12 @@
         noArr.push(subActivityNo)
         etArr.push(subActivityEt)
         predecessorArr.push(selectedValues)
+        
       });
-  
-      setTimeout(function() {
-            $(".myModal").css("display","flex")
-            $(".myModal").css("opacity", 1)
-            init(idArr, predecessorArr, noArr, etArr, criticalPath); // Call the init function after a delay
-        }, 1); // Adjust the del
-    });
-
-})   
+      init(idArr, predecessorArr, noArr, etArr, criticalPath);
+    })
 </script>
+<script src="https://unpkg.com/gojs@2.3.16/release/go.js"></script>
 <script id="code">
   function init(ids,predecessors, nos, ets, criticals) {
       // Since 2.2 you can also author concise templates with method chaining instead of GraphObject.make
@@ -528,5 +456,4 @@
         
     // window.addEventListener('DOMContentLoaded', init);
   </script>
-
 {{ end }}
