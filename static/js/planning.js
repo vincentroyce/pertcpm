@@ -504,14 +504,14 @@ $(".save-plan").click(function () {
     }),
     success: function(resp) { 
       console.log(resp["response"])
-      // Swal.fire({
-      //   title: "Project Added",
-      //   text: "You will be redirected to ongoing projects",
-      //   icon: "success"
-      // });
-      // window.setTimeout(function() {
-      //   window.location.href = window.location.origin + "/user/ongoing-projects/"
-      // }, 3000)
+      Swal.fire({
+        title: "Project Added",
+        text: "You will be redirected to ongoing projects",
+        icon: "success"
+      });
+      window.setTimeout(function() {
+        window.location.href = window.location.origin + "/user/ongoing-projects/"
+      }, 3000)
 
       // location.href = location.origin + "/user/schedule-completion"
     },

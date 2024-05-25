@@ -3,9 +3,10 @@
 {{ end }}
 {{ define "content" }}
 <link rel="stylesheet" href="/static/css/schedule-completion.css">
-<div class="container">
-  <h1>Schedule Completion</h1>
-  <h2>Project Title: <span class="project-title">{{ .ProjectName }}</span></h2>
+<div class="container d-flex flex-column mt-4">
+  <h1 class="roboto-medium">Schedule Completion</h1>
+  <h2 class="roboto-regular">Project Title: <span class="project-title">{{ .ProjectName }}</span></h2>
+  <hr class="mb-4 mt-4 line">
 </div>
 <div class="container position-relative">
   <table class="table table-bordered table-hover">

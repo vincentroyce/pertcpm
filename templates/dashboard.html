@@ -65,24 +65,26 @@
         <th scope="col">Status</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody class="status-board">
     </tbody>
   </table>
   </div>
 <script>
-    
-
+    function convertDate(isodate) {
+      var options = { year: 'numeric', month: 'long', day: 'numeric' };
+      var dateEndObject = new Date(isodate);
+      var formattedEndDate = dateEndObject.toLocaleDateString('en-US', options);
+      return formattedEndDate
+    }
     fetch("/pertcpm-admin/api/d/project/?$f=id__count,completed&$groupby=completed")
     .then(resp => resp.json())
     .then(resp => {
         let incompleteCount = 0;
         let completeCount = 0;
-        console.log(resp)
         if (resp.result == null) {
           chart(completeCount, incompleteCount)
         } else {
           resp.result.forEach(item => {
-            console.log(item)
               if (item.completed) {
                   completeCount = item.id__count;
               } else {
@@ -102,12 +104,26 @@
         bar(project_list, project_cost)
       } else {
         resp.result.forEach(res => {
-          console.log(res)
           project_list.push(res.name)
           project_cost.push(res.cost)
         })
         bar(project_list, project_cost)
       }
+    })
+    fetch("/pertcpm-admin/api/d/project/?$f=id,name,date_start,date_end,schedule_completed&completed=0&$order=-id&$limit=5")
+    .then(resp => resp.json())
+    .then(resp => {
+      resp.result.forEach(res => {
+        console.log(convertDate(res.date_end))
+        appendFormat = 
+        `<tr>
+          <td scope="col">${res.name}</td>
+          <td scope="col">${convertDate(res.date_start)}</td>
+          <td scope="col">${convertDate(res.date_end)}</td>
+          <td scope="col">${res.schedule_completed ? `<span class="badge bg-success">Schedule Completed</span>` : `<span class="badge bg-warning text-dark">For Completion</span>` }</td>
+        </tr>`
+        $(".status-board").append(appendFormat)
+      })
     })
 </script>
 <script>
@@ -155,7 +171,6 @@
     ]
 });
   }
-
 </script>
 <script>
   function chart(complete, notComplete) {
