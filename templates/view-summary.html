@@ -2,15 +2,212 @@
 <title>{{ .Title }}</title>
 {{ end }}
 {{ define "content" }}
-<div class="container">
-  <h1>Project Summary</h1>
-  <h2>Project Title: <span class="project-title">{{ .ProjectName }}</span></h2>
-  <h5>Date Start: <span class="date-time">{{ .Project.DateStart }}</span></h5>
-  <h5>Date End: <span class="date-time">{{ .Project.DateEnd }}</span></h5>
-  <h5>Date Completed: <span class="date-time">{{ .Project.CompletedAt }}</span></h5>
+<link rel="stylesheet" href="/static/css/view-summary.css">
+<div class="container d-flex flex-column gap-4 mt-4">
+  <div>
+    <h1 class="roboto-medium">Project Summary</h1>
+    <h2 class="roboto-regular">Project Title: <span class="project-title">{{ .ProjectName }}</span></h2>
+  </div>
+  <hr class="mb-1 mt-1 line">
+  <div>
+    <p class="roboto-light ">Date Start: <span class="date-time ">{{ .Project.DateStart }}</span></p>
+    <p class="roboto-light">Date End: <span class="date-time ">{{ .Project.DateEnd }}</span></p>
+    <p class="roboto-light">Date Completed: <span class="date-time ">{{ .Project.CompletedAt }}</span></p>
+  </div>
+</div>
+<div class="container mb-4">
+  
+    <ul class="nav nav-tabs justify-content-evenly" role="tablist">
+      <li class="nav-item">
+        <a href="#pert" role="tab" data-toggle="tab"
+           class="nav-link border-bottom-5 active"> Pert Diagram </a>
+      </li>
+      <li class="nav-item">
+        <a href="#predecessors" role="tab" data-toggle="tab"
+           class="nav-link border-bottom-5"> Predecessors </a>
+      </li>
+      <li class="nav-item">
+        <a href="#schedule" role="tab" data-toggle="tab"
+           class="nav-link border-bottom-5 "> Scheduling </a>
+      </li>
+      <li class="nav-item">
+        <a href="#workers" role="tab" data-toggle="tab"
+           class="nav-link border-bottom-5"> Workers </a>
+      </li>
+      <li class="nav-item">
+        <a href="#equipments" role="tab" data-toggle="tab"
+           class="nav-link border-bottom-5"> Equipments </a>
+      </li>
+    </ul>
+    <div class="tab-content mt-5 overflow-auto">
+      <div class="tab-pane " role="tabpanel" id="schedule">
+        <table class="table table-bordered table-hover">
+          <thead class="thead-dark text-center">
+            <tr>
+              <th class="text-light" rowspan="2" scope="col">Item No.</th>
+              <th class="text-light" rowspan="2" scope="col">Activity</th>
+              <th class="text-light"  colspan="3" scope="col">Time Estimate</th>
+              <th class="text-light" rowspan="2" scope="col">Expected Time</th>
+            </tr>
+            <tr>
+              <th class="text-light" scope="col">Optimistic Time</th>
+              <th class="text-light" scope="col">Most Likely Time</th>
+              <th class="text-light" scope="col">Pessimistic Time Time</th>
+            </tr>
+          </thead>
+          <tbody class="for-load text-center">
+            {{range .Project.Phase}}
+            <tr>
+              <th class="fs-6" scope="row">{{ .No }}</th>
+              <td class="fs-6">{{ .Name }}</td>
+              <td class="fs-6">{{ .OptimisticTime }}</td>
+              <td class="fs-6">{{ .MostLikelyTime }}</td>
+              <td class="fs-6">{{ .PessimisticTime }}</td>
+              <td class="fs-6">{{ .ExpectedTime }}</td>
+            </tr>
+            {{range .Activity}}
+            {{$activity := .}}
+            <th class="fs-6" scope="row">{{ .No }}</th>
+              <td class="fs-6">{{ .Name }}</td>
+              <td class="fs-6">{{ .OptimisticTime }}</td>
+              <td class="fs-6">{{ .MostLikelyTime }}</td>
+              <td class="fs-6">{{ .PessimisticTime }}</td>
+              <td class="fs-6">{{ .ExpectedTime }}</td>
+            {{range .SubActivity}}
+            {{$subActivity := .}}
+            <tr>
+              <th class="fs-6" scope="row">{{ .No }}</th>
+              <td class="fs-6">{{ .Name }}</td>
+              <td class="fs-6">{{ .OptimisticTime }}</td>
+              <td class="fs-6">{{ .MostLikelyTime }}</td>
+              <td class="fs-6">{{ .PessimisticTime }}</td>
+              <td class="fs-6">{{ .ExpectedTime }}</td>
+            </tr>
+            {{end}}
+            {{end}}
+            {{end}}
+          </tbody>
+        </table>
+      </div>
+      <div class="tab-pane" role="tabpanel" id="workers">
+        <table class="table table-bordered table-hover">
+          <thead class="thead-dark text-center">
+              <th class="text-light" scope="col">Worker</th>
+              <th class="text-light" scope="col">Quantity</th>
+              <th class="text-light"  scope="col">Rate</th>
+              <th class="text-light" scope="col">Total</th>
+          </thead>
+          <tbody class="for-load text-center">
+            {{ range .Workers}}
+            <tr>
+              <th class="fs-6" scope="row">{{ .Name }}</th>
+              <td class="fs-6">{{ .Quantity }}</td>
+              <td class="fs-6">₱{{ .Rate }}</td>
+              <td class="fs-6">₱{{ .Total }}</td>
+            </tr>
+            {{ end }}
+          </tbody>
+        </table>
+      </div>
+      <div class="tab-pane" role="tabpanel" id="equipments">
+      
+  <table class="table table-bordered table-hover">
+    <thead class="thead-dark text-center">
+        <th class="text-light" scope="col">Equipment</th>
+        <th class="text-light" scope="col">Quantity</th>
+        <th class="text-light"  scope="col">Cost</th>
+        <th class="text-light" scope="col">Total</th>
+    </thead>
+    <tbody class="for-load text-center">
+      {{ range .Equipments}}
+      <tr>
+        <th class="fs-6" scope="row">{{ .Name }}</th>
+        <td class="fs-6">{{ .Quantity }}</td>
+        <td class="fs-6">₱{{ .Cost }}</td>
+        <td class="fs-6">₱{{ .Total }}</td>
+      </tr>
+      {{ end }}
+    </tbody>
+  </table>
+      </div>
+      <div class="tab-pane" role="tabpanel" id="predecessors">
+        <table class="table table-bordered table-hover">
+          <thead class="thead-dark text-center">
+            <tr>
+              <th class="text-light" scope="col">Item No.</th>
+              <th class="text-light" scope="col">Activity</th>
+              <th class="text-light" scope="col">Immediate Predecessors</th>
+              <th class="text-light" scope="col">Expected Time</th>
+              <th class="text-light" scope="col">Critical</th>
+            </tr>
+          </thead>
+          <tbody class="for-load text-center">
+            {{range .Project.Phase}}
+            <tr>
+              <th class="fs-6" scope="row">{{ .No }}</th>
+              <td class="fs-6">{{ .Name }}</td>
+              <td colspan="2"></td>
+            </tr>
+            {{range .Activity}}
+            {{$activity := .}}
+            <tr>
+              <th class="fs-6" scope="row">{{ .No }}</th>
+              <td class="fs-6">{{ .Name }}</td>
+              <td colspan="2"></td>
+            </tr>
+            {{range .SubActivity}}
+            {{$subActivity := .}}
+            <tr>
+              <th class="fs-6" scope="row">{{ .No }}</th>
+              <td class="fs-6">{{ .Name }}</td>
+              <td class="p-0">
+                <div class="dropdown w-100">
+                  <button class="btn btn-secondary dropdown-toggle w-100 pt-4 pb-4" disabled type="button" data-et="{{ .ExpectedTime }}" data-num="{{ .No }}"
+                    id="dropdownMenuButton-{{.ID}}" data-bs-toggle="dropdown" aria-expanded="false">
+                    {{ .NoPredecessorsList }}
+                  </button>
+                  <div class="dropdown-menu w-100 text-center" aria-labelledby="dropdownMenuButton-{{.ID}}">
+                    <a class="dropdown-item" href="#">
+                      <input class="d-none" type="checkbox" value="0" class="predecessor-checkbox" data-no="Start"> Start
+                    </a>
+                    {{range $.AllSubActivities}}
+                    {{if ne .ID $subActivity.ID}}
+                    <a class="dropdown-item" href="#">
+                      <input class="" type="checkbox" value="{{ .ID }}" class="predecessor-checkbox" data-no="{{ .No }}"> {{
+                      .No }}
+                    </a>
+                    {{end}}
+                    {{end}}
+                  </div>
+                </div>
+              </td>
+              <td class="fs-6">{{ .ExpectedTime }}</td>
+              <td class="fs-6"><input data-critical="{{ .Critical }}" class="critical-bool" type="checkbox"></td>
+            </tr>
+            {{end}}
+            {{end}}
+            {{end}}
+          </tbody>
+        </table>
+      </div>
+      <div class="tab-pane active" role="tabpanel" id="pert">
+        <div id="allSampleContent" class="w-full">
+          <div id="sample">
+            <div id="myDiagramDiv"
+              style="border: 1px solid black; width: 100%; height: 400px; position: relative; -webkit-tap-highlight-color: rgba(255, 255, 255, 0);">
+              <canvas tabindex="0" width="1054" height="398"
+                style="position: absolute; top: 0px; left: 0px; z-index: 2; user-select: none; touch-action: none; width: 1054px; height: 398px;"></canvas>
+              <div style="position: absolute; overflow: auto; width: 1054px; height: 398px; z-index: 1;">
+                <div style="position: absolute; width: 1px; height: 1px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 </div>
 
-<div class="container">
+<!-- <div class="container">
   <table class="table table-bordered table-hover">
     <thead class="thead-dark text-center">
       <tr>
@@ -179,9 +376,24 @@
       </div>
     </div>
   </div>
-</div>
-
-
+</div> -->
+<script>
+</script>
+<script
+        src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous">
+</script>
+<script
+        src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous">
+</script>
+<script
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous">
+</script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     var subActivities = document.querySelectorAll('.dropdown-menu');
@@ -255,6 +467,13 @@
       });
       init(idArr, predecessorArr, noArr, etArr, criticalPath);
     })
+</script>
+<script>
+      function toggleTab(e){
+        var hrefVal = $(e).attr('href');
+        $('.nav-tabs li').removeClass('active');
+        $('.nav-tabs li[data-active="'+hrefVal+'"]').addClass('active');
+    }
 </script>
 <script src="https://unpkg.com/gojs@2.3.16/release/go.js"></script>
 <script id="code">

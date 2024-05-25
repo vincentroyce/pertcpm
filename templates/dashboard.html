@@ -60,7 +60,7 @@
     fetch("/pertcpm-admin/api/d/project/?$f=id__count,completed&$groupby=completed")
     .then(resp => resp.json())
     .then(resp => {
-      let incompleteCount = 0;
+        let incompleteCount = 0;
         let completeCount = 0;
 
         // Loop through the response to find counts for completed and incomplete projects
