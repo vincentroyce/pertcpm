@@ -60,31 +60,31 @@ let addSubAct = ($("#subactName").val()).trim()
   // }
   // Done
   console.log(projectObj)
-  projectObj = {
-    "Project 1": {
-      "Phase 1": {
-        "Act 1": {
-          "Sub Act 1": "Sub Act 1"
-        },
-        "Act 2": {
-          "Sub Act 1": "Sub Act 1",
-          "Sub Act 2": "Sub Act 2",
-          "Sub Act 3": "Sub Act 3"
-        },
-      },
-      "Phase 2": {
-        "Act 1": {
-          "Sub Act 1": "Sub Act 1",
-          "Sub Act 2": "Sub Act 2",
-          "Sub Act 3": "Sub Act 3"
-        },
-        "Act 2": {
-          "Sub Act 1": "Sub Act 1",
-          "Sub Act 2": "Sub Act 2"
-        }
-      }
-    }
-  }
+  // projectObj = {
+  //   "Project 1": {
+  //     "Phase 1": {
+  //       "Act 1": {
+  //         "Sub Act 1": "Sub Act 1"
+  //       },
+  //       "Act 2": {
+  //         "Sub Act 1": "Sub Act 1",
+  //         "Sub Act 2": "Sub Act 2",
+  //         "Sub Act 3": "Sub Act 3"
+  //       },
+  //     },
+  //     "Phase 2": {
+  //       "Act 1": {
+  //         "Sub Act 1": "Sub Act 1",
+  //         "Sub Act 2": "Sub Act 2",
+  //         "Sub Act 3": "Sub Act 3"
+  //       },
+  //       "Act 2": {
+  //         "Sub Act 1": "Sub Act 1",
+  //         "Sub Act 2": "Sub Act 2"
+  //       }
+  //     }
+  //   }
+  // }
   // Table Creator (Under Construction) (DONE?)
   $(".table-body").empty();
   $(".content-from-table").empty();
