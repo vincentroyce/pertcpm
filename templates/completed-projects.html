@@ -2,8 +2,9 @@
 <title>{{ .Title }}</title>
 {{end}}
 {{ define "content" }}
-<div class="container">
-  <h1>Completed Projects</h1>
+<div class="container mt-4">
+  <h1 class="roboto-medium">Completed Projects</h1>
+  <hr class="mb-4 mt-1 line">
   <div class="grid-layout gap-6">
     {{ range $index, $project := .Projects }}
     <div class="container card card-container">

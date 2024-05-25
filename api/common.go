@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/vrsalazar/pertcpm/models"
@@ -17,7 +18,13 @@ func AddPhase(phaseNum string, projectId uint, k string, ot, mlt, pt int, workNa
 	phase.PessimisticTime = pt
 	phase.Save()
 	AddWorker(projectId, phase.ID, workName, workRate, workQty)
+	fmt.Println("worker names: ", workName)
+	fmt.Println("worker rates: ", workRate)
+	fmt.Println("worker quantity: ", workQty)
 	AddEquipment(projectId, phase.ID, equipName, equipRate, equipQty)
+	fmt.Println("equip names: ", equipName)
+	fmt.Println("equip cost: ", equipRate)
+	fmt.Println("equip quantity: ", equipQty)
 	return phase.ID
 }
 
@@ -61,14 +68,14 @@ func AddWorker(projectId, phaseId uint, workName, workRate, workQty []interface{
 	}
 }
 
-func AddEquipment(projectId, phaseId uint, workName, workRate, workQty []interface{}) {
-	for i := range workName {
+func AddEquipment(projectId, phaseId uint, equipmentName, equipmentRate, equipmentQty []interface{}) {
+	for i := range equipmentName {
 		equipment := models.Equipment{}
 		equipment.ProjectID = projectId
 		equipment.PhaseID = phaseId
-		equipment.Name = string(workName[i].(string))
-		equipment.Cost, _ = strconv.Atoi(workRate[i].(string))
-		equipment.Quantity, _ = strconv.Atoi(workQty[i].(string))
+		equipment.Name = string(equipmentName[i].(string))
+		equipment.Cost, _ = strconv.Atoi(equipmentRate[i].(string))
+		equipment.Quantity, _ = strconv.Atoi(equipmentQty[i].(string))
 		equipment.Save()
 	}
 }

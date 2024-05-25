@@ -2,8 +2,9 @@
 <title>{{ .Title }}</title>
 {{end}}
 {{ define "content" }}
-<div class="container-fluid">
-  <h1 text>Welcome to Dashboard</h1>
+<div class="container-fluid mt-4">
+  <h1 class="roboto-medium">Dashboard</h1>
+  <hr class="mb-4 mt-1 line">
   <div class="row">
     <div class="col-md-6 col-xl-4">
       <div class="card mb-3 widget-content bg-midnight-bloom">
@@ -55,25 +56,41 @@
 
     </figure>
   </div>
+  <table class="table mb-4" style="background: #fff;">
+    <thead>
+      <tr>
+        <th scope="col">Project Name</th>
+        <th scope="col">Date Started</th>
+        <th scope="col">Date End</th>
+        <th scope="col">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
   </div>
 <script>
+    
+
     fetch("/pertcpm-admin/api/d/project/?$f=id__count,completed&$groupby=completed")
     .then(resp => resp.json())
     .then(resp => {
         let incompleteCount = 0;
         let completeCount = 0;
-
-        // Loop through the response to find counts for completed and incomplete projects
-        resp.result.forEach(item => {
-          console.log(item)
-            if (item.completed) {
-                completeCount = item.id__count;
-            } else {
-                incompleteCount = item.id__count;
-            }
-        });
-
-        chart(completeCount, incompleteCount)
+        console.log(resp)
+        if (resp.result == null) {
+          chart(completeCount, incompleteCount)
+        } else {
+          resp.result.forEach(item => {
+            console.log(item)
+              if (item.completed) {
+                  completeCount = item.id__count;
+              } else {
+                  incompleteCount = item.id__count;
+              }
+            chart(completeCount, incompleteCount)
+          })
+        }
     })
     
     fetch("/pertcpm-admin/api/d/project/?$f=cost,name&$order=-date_start&$limit=6")
@@ -81,12 +98,16 @@
     .then(resp => {
       var project_list = []
       var project_cost = []
-      resp.result.forEach(res => {
-        console.log(res)
-        project_list.push(res.name)
-        project_cost.push(res.cost)
-      })     
-      bar(project_list, project_cost)
+      if (resp.result == null) {
+        bar(project_list, project_cost)
+      } else {
+        resp.result.forEach(res => {
+          console.log(res)
+          project_list.push(res.name)
+          project_cost.push(res.cost)
+        })
+        bar(project_list, project_cost)
+      }
     })
 </script>
 <script>
