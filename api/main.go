@@ -46,7 +46,8 @@ func CompleteProjectAPI(w http.ResponseWriter, r *http.Request) {
 	}
 
 	project.Completed = true
-	project.CompletedAt = time.Now()
+	now := time.Now()
+	project.CompletedAt = &now
 	project.Save()
 
 	uadmin.ReturnJSON(w, r, map[string]interface{}{

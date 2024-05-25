@@ -60,14 +60,20 @@
     fetch("/pertcpm-admin/api/d/project/?$f=id__count,completed&$groupby=completed")
     .then(resp => resp.json())
     .then(resp => {
-      // incomplete
-      let incompleteCount = resp.result[0].id__count 
-      console.log(incompleteCount)
+      let incompleteCount = 0;
+        let completeCount = 0;
 
-      //complete
-      let completeCount = resp.result[1].id__count ? resp.result[1].id__count : 0
-      console.log(completeCount)
-      chart(completeCount, incompleteCount)
+        // Loop through the response to find counts for completed and incomplete projects
+        resp.result.forEach(item => {
+          console.log(item)
+            if (item.completed) {
+                completeCount = item.id__count;
+            } else {
+                incompleteCount = item.id__count;
+            }
+        });
+
+        chart(completeCount, incompleteCount)
     })
     
     fetch("/pertcpm-admin/api/d/project/?$f=cost,name&$order=-date_start&$limit=6")
