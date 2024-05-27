@@ -230,7 +230,6 @@ let addSubAct = ($("#subactName").val()).trim()
   $("#projName").prop("readonly", true)
   $("#projDesc").prop("readonly", true)
   $("#dateStart").prop("readonly", true)
-  $("#dateEnd").prop("readonly", true)
 })
 // 
 
@@ -487,7 +486,6 @@ $(".save-plan").click(function () {
     }
   }
   dateStart = new Date(($("#dateStart").val()).trim())
-  dateEnd = new Date(($("#dateEnd").val()).trim())
   // console.log(completeSchedObj)
 
   $.ajax({
@@ -500,7 +498,6 @@ $(".save-plan").click(function () {
       cost: Number($("#totalAmount").text()),
       obj: completeSchedObj,
       dateStart: dateStart.toISOString(),
-      dateEnd: dateEnd.toISOString(),
     }),
     success: function(resp) { 
       console.log(resp["response"])

@@ -13,7 +13,7 @@ type Project struct {
 	Cost              int64
 	Phase             []Phase `uadmin:"list_exclude"`
 	DateStart         time.Time
-	DateEnd           time.Time
+	DateEnd           *time.Time
 	CompletedAt       *time.Time
 	ScheduleCompleted bool
 	Completed         bool
