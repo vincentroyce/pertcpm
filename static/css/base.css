@@ -105,3 +105,10 @@
 .highcharts-data-table tr:hover {
     background: #f1f7ff;
 }
+
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+  color: #0206c7 !important;
+  background-color: transparent !important;
+  border-color: #0206c7 !important;
+}
+
