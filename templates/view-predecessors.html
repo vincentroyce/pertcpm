@@ -52,7 +52,7 @@
               {{range $.AllSubActivities}}
               {{if ne .ID $subActivity.ID}}
               <a class="dropdown-item" href="#">
-                <input class="" type="checkbox" value="{{ .ID }}" class="predecessor-checkbox" data-no="{{ .No }}"> {{
+                <input class="d-none" type="checkbox" value="{{ .ID }}" class="predecessor-checkbox" data-no="{{ .No }}"> {{
                 .No }}
               </a>
               {{end}}

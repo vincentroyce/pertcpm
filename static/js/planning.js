@@ -60,31 +60,31 @@ let addSubAct = ($("#subactName").val()).trim()
   // }
   // Done
   console.log(projectObj)
-  projectObj = {
-    "Project 1": {
-      "Phase 1": {
-        "Act 1": {
-          "Sub Act 1": "Sub Act 1"
-        },
-        "Act 2": {
-          "Sub Act 1": "Sub Act 1",
-          "Sub Act 2": "Sub Act 2",
-          "Sub Act 3": "Sub Act 3"
-        },
-      },
-      "Phase 2": {
-        "Act 1": {
-          "Sub Act 1": "Sub Act 1",
-          "Sub Act 2": "Sub Act 2",
-          "Sub Act 3": "Sub Act 3"
-        },
-        "Act 2": {
-          "Sub Act 1": "Sub Act 1",
-          "Sub Act 2": "Sub Act 2"
-        }
-      }
-    }
-  }
+  // projectObj = {
+  //   "Project 1": {
+  //     "Phase 1": {
+  //       "Act 1": {
+  //         "Sub Act 1": "Sub Act 1"
+  //       },
+  //       "Act 2": {
+  //         "Sub Act 1": "Sub Act 1",
+  //         "Sub Act 2": "Sub Act 2",
+  //         "Sub Act 3": "Sub Act 3"
+  //       },
+  //     },
+  //     "Phase 2": {
+  //       "Act 1": {
+  //         "Sub Act 1": "Sub Act 1",
+  //         "Sub Act 2": "Sub Act 2",
+  //         "Sub Act 3": "Sub Act 3"
+  //       },
+  //       "Act 2": {
+  //         "Sub Act 1": "Sub Act 1",
+  //         "Sub Act 2": "Sub Act 2"
+  //       }
+  //     }
+  //   }
+  // }
   // Table Creator (Under Construction) (DONE?)
   $(".table-body").empty();
   $(".content-from-table").empty();
@@ -142,7 +142,7 @@ let addSubAct = ($("#subactName").val()).trim()
         var subActFormat =
           `<div class="sub-activity-container-${k + 1}">
       <div class="table-content text-center text-break">
-      <div>${convertToRoman(i + 1)}. ${alphabet[j]}. ${convertToRoman(k + 1).toLowerCase()}.</div>
+      <div>${convertToRoman(i + 1)}. ${alphabet[j]}. ${k + 1}.</div>
       <div>${subActKey}</div>
       <div><input type="number" value="0" min="0" oninput="unexpectedTimeRow(this)"></div>
       <div><input type="number" value="0" min="0" oninput="unexpectedTimeRow(this)"></div>
@@ -154,7 +154,7 @@ let addSubAct = ($("#subactName").val()).trim()
       var subActFormat =
           `<div class="sub-activity-container-${k + 1}">
       <div class="d-none table-content text-center text-break">
-      <div>${convertToRoman(i + 1)}. ${alphabet[j]}. ${convertToRoman(k + 1).toLowerCase()}.</div>
+      <div>${convertToRoman(i + 1)}. ${alphabet[j]}. ${k + 1}.</div>
       <div>${subActKey}</div>
       <div><input type="number" value="0" min="0" oninput="unexpectedTimeRow(this)"></div>
       <div><input type="number" value="0" min="0" oninput="unexpectedTimeRow(this)"></div>
