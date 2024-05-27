@@ -50,6 +50,7 @@ func ScheduleCompletionHandler(w http.ResponseWriter, r *http.Request) map[strin
 	return map[string]interface{}{
 		"Title":            "Schedule Completion",
 		"ProjectName":      project.Name,
+		"ProjectID":        project.ID,
 		"Project":          project,
 		"AllSubActivities": allSubActivities,
 	}

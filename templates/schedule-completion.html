@@ -397,6 +397,7 @@
     }
   });
 
+  // Backward pass to calculate late start and late finish times
   function calculateLateStartAndFinish(sortedNodes, linkDataArray) {
   sortedNodes.slice().reverse().forEach(function (node) {
     var successors = linkDataArray.filter(function (link) {
@@ -406,8 +407,8 @@
     });
 
     if (successors.length === 0) {
-      node.lateFinish = node.earlyFinish;
-      node.lateStart = node.earlyStart;
+      node.lateFinish = node.earlyFinish; // No successors, late finish is same as early finish
+      node.lateStart = node.earlyStart; // No successors, late start is same as early start
     } else {
       var minLateStart = Infinity;
       successors.forEach(function (succKey) {
@@ -432,9 +433,24 @@
       node.critical = false;
     }
   });
+
+  // Find the last node(s) with the highest late finish time
+  var lastNodes = sortedNodes.filter(function (node) {
+    return linkDataArray.every(function (link) {
+      return link.from !== node.key;
+    });
+  });
+
+  var maxLateFinish = -Infinity;
+  lastNodes.forEach(function (node) {
+    maxLateFinish = Math.max(maxLateFinish, node.lateFinish);
+  });
+
+  return maxLateFinish; // Return the highest late finish time among last nodes
 }
   // Backward pass to calculate late start and late finish times
-  calculateLateStartAndFinish(sortedNodes, linkDataArray);
+  var lfOfLastNode = calculateLateStartAndFinish(sortedNodes, linkDataArray);
+  console.log("LF of the last node:", lfOfLastNode);
 }
     function topologicalSort(nodeDataArray, linkDataArray) {
       var sorted = [];

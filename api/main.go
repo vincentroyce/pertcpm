@@ -20,6 +20,8 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		SetPredecessorAPI(w, r)
 	case strings.HasPrefix(r.URL.Path, "/complete-project"):
 		CompleteProjectAPI(w, r)
+	case strings.HasPrefix(r.URL.Path, "/set-date-end"):
+		SetDateEndAPI(w, r)
 	default:
 		w.WriteHeader(http.StatusNotFound)
 		uadmin.ReturnJSON(w, r, map[string]any{
