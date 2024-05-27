@@ -16,384 +16,202 @@
   </div>
 </div>
 <div class="container mb-4">
-  
-    <ul class="nav nav-tabs justify-content-evenly" role="tablist">
-      <li class="nav-item">
-        <a href="#pert" role="tab" data-toggle="tab"
-           class="nav-link border-bottom-5 active"> Pert Diagram </a>
-      </li>
-      <li class="nav-item">
-        <a href="#predecessors" role="tab" data-toggle="tab"
-           class="nav-link border-bottom-5"> Predecessors </a>
-      </li>
-      <li class="nav-item">
-        <a href="#schedule" role="tab" data-toggle="tab"
-           class="nav-link border-bottom-5 "> Scheduling </a>
-      </li>
-      <li class="nav-item">
-        <a href="#workers" role="tab" data-toggle="tab"
-           class="nav-link border-bottom-5"> Workers </a>
-      </li>
-      <li class="nav-item">
-        <a href="#equipments" role="tab" data-toggle="tab"
-           class="nav-link border-bottom-5"> Equipments </a>
-      </li>
-    </ul>
-    <div class="tab-content mt-5 overflow-auto">
-      <div class="tab-pane " role="tabpanel" id="schedule">
-        <table class="table table-bordered table-hover">
-          <thead class="thead-dark text-center">
-            <tr>
-              <th class="text-light" rowspan="2" scope="col">Item No.</th>
-              <th class="text-light" rowspan="2" scope="col">Activity</th>
-              <th class="text-light"  colspan="3" scope="col">Time Estimate</th>
-              <th class="text-light" rowspan="2" scope="col">Expected Time</th>
-            </tr>
-            <tr>
-              <th class="text-light" scope="col">Optimistic Time</th>
-              <th class="text-light" scope="col">Most Likely Time</th>
-              <th class="text-light" scope="col">Pessimistic Time Time</th>
-            </tr>
-          </thead>
-          <tbody class="for-load text-center">
-            {{range .Project.Phase}}
-            <tr>
-              <th class="fs-6" scope="row">{{ .No }}</th>
-              <td class="fs-6">{{ .Name }}</td>
-              <td class="fs-6">{{ .OptimisticTime }}</td>
-              <td class="fs-6">{{ .MostLikelyTime }}</td>
-              <td class="fs-6">{{ .PessimisticTime }}</td>
-              <td class="fs-6">{{ .ExpectedTime }}</td>
-            </tr>
-            {{range .Activity}}
-            {{$activity := .}}
+  <ul class="nav nav-tabs justify-content-evenly" role="tablist">
+    <li class="nav-item">
+      <a href="#pert" role="tab" data-toggle="tab" class="nav-link border-bottom-5 active"> Pert Diagram </a>
+    </li>
+    <li class="nav-item">
+      <a href="#predecessors" role="tab" data-toggle="tab" class="nav-link border-bottom-5"> Predecessors </a>
+    </li>
+    <li class="nav-item">
+      <a href="#schedule" role="tab" data-toggle="tab" class="nav-link border-bottom-5 "> Scheduling </a>
+    </li>
+    <li class="nav-item">
+      <a href="#workers" role="tab" data-toggle="tab" class="nav-link border-bottom-5"> Workers </a>
+    </li>
+    <li class="nav-item">
+      <a href="#equipments" role="tab" data-toggle="tab" class="nav-link border-bottom-5"> Equipments </a>
+    </li>
+  </ul>
+  <div class="tab-content mt-5 overflow-auto">
+    <div class="tab-pane " role="tabpanel" id="schedule">
+      <table class="table table-bordered table-hover">
+        <thead class="thead-dark text-center">
+          <tr>
+            <th class="text-light" rowspan="2" scope="col">Item No.</th>
+            <th class="text-light" rowspan="2" scope="col">Activity</th>
+            <th class="text-light" colspan="3" scope="col">Time Estimate</th>
+            <th class="text-light" rowspan="2" scope="col">Expected Time</th>
+          </tr>
+          <tr>
+            <th class="text-light" scope="col">Optimistic Time</th>
+            <th class="text-light" scope="col">Most Likely Time</th>
+            <th class="text-light" scope="col">Pessimistic Time Time</th>
+          </tr>
+        </thead>
+        <tbody class="for-load text-center">
+          {{range .Project.Phase}}
+          <tr>
             <th class="fs-6" scope="row">{{ .No }}</th>
-              <td class="fs-6">{{ .Name }}</td>
-              <td class="fs-6">{{ .OptimisticTime }}</td>
-              <td class="fs-6">{{ .MostLikelyTime }}</td>
-              <td class="fs-6">{{ .PessimisticTime }}</td>
-              <td class="fs-6">{{ .ExpectedTime }}</td>
-            {{range .SubActivity}}
-            {{$subActivity := .}}
-            <tr>
-              <th class="fs-6" scope="row">{{ .No }}</th>
-              <td class="fs-6">{{ .Name }}</td>
-              <td class="fs-6">{{ .OptimisticTime }}</td>
-              <td class="fs-6">{{ .MostLikelyTime }}</td>
-              <td class="fs-6">{{ .PessimisticTime }}</td>
-              <td class="fs-6">{{ .ExpectedTime }}</td>
-            </tr>
-            {{end}}
-            {{end}}
-            {{end}}
-          </tbody>
-        </table>
-      </div>
-      <div class="tab-pane" role="tabpanel" id="workers">
-        <table class="table table-bordered table-hover">
-          <thead class="thead-dark text-center">
-              <th class="text-light" scope="col">Worker</th>
-              <th class="text-light" scope="col">Quantity</th>
-              <th class="text-light"  scope="col">Rate</th>
-              <th class="text-light" scope="col">Total</th>
-          </thead>
-          <tbody class="for-load text-center">
-            {{ range .Workers}}
-            <tr>
-              <th class="fs-6" scope="row">{{ .Name }}</th>
-              <td class="fs-6">{{ .Quantity }}</td>
-              <td class="fs-6">₱{{ .Rate }}</td>
-              <td class="fs-6">₱{{ .Total }}</td>
-            </tr>
-            {{ end }}
-          </tbody>
-        </table>
-      </div>
-      <div class="tab-pane" role="tabpanel" id="equipments">
-      
-  <table class="table table-bordered table-hover">
-    <thead class="thead-dark text-center">
-        <th class="text-light" scope="col">Equipment</th>
-        <th class="text-light" scope="col">Quantity</th>
-        <th class="text-light"  scope="col">Cost</th>
-        <th class="text-light" scope="col">Total</th>
-    </thead>
-    <tbody class="for-load text-center">
-      {{ range .Equipments}}
-      <tr>
-        <th class="fs-6" scope="row">{{ .Name }}</th>
-        <td class="fs-6">{{ .Quantity }}</td>
-        <td class="fs-6">₱{{ .Cost }}</td>
-        <td class="fs-6">₱{{ .Total }}</td>
-      </tr>
-      {{ end }}
-    </tbody>
-  </table>
-      </div>
-      <div class="tab-pane" role="tabpanel" id="predecessors">
-        <table class="table table-bordered table-hover">
-          <thead class="thead-dark text-center">
-            <tr>
-              <th class="text-light" scope="col">Item No.</th>
-              <th class="text-light" scope="col">Activity</th>
-              <th class="text-light" scope="col">Immediate Predecessors</th>
-              <th class="text-light" scope="col">Expected Time</th>
-              <th class="text-light" scope="col">Critical</th>
-            </tr>
-          </thead>
-          <tbody class="for-load text-center">
-            {{range .Project.Phase}}
-            <tr>
-              <th class="fs-6" scope="row">{{ .No }}</th>
-              <td class="fs-6">{{ .Name }}</td>
-              <td colspan="2"></td>
-            </tr>
-            {{range .Activity}}
-            {{$activity := .}}
-            <tr>
-              <th class="fs-6" scope="row">{{ .No }}</th>
-              <td class="fs-6">{{ .Name }}</td>
-              <td colspan="2"></td>
-            </tr>
-            {{range .SubActivity}}
-            {{$subActivity := .}}
-            <tr>
-              <th class="fs-6" scope="row">{{ .No }}</th>
-              <td class="fs-6">{{ .Name }}</td>
-              <td class="p-0">
-                <div class="dropdown w-100">
-                  <button class="btn btn-secondary dropdown-toggle w-100 pt-4 pb-4" disabled type="button" data-et="{{ .ExpectedTime }}" data-num="{{ .No }}"
-                    id="dropdownMenuButton-{{.ID}}" data-bs-toggle="dropdown" aria-expanded="false">
-                    {{ .NoPredecessorsList }}
-                  </button>
-                  <div class="dropdown-menu w-100 text-center" aria-labelledby="dropdownMenuButton-{{.ID}}">
-                    <a class="dropdown-item" href="#">
-                      <input class="d-none" type="checkbox" value="0" class="predecessor-checkbox" data-no="Start"> Start
-                    </a>
-                    {{range $.AllSubActivities}}
-                    {{if ne .ID $subActivity.ID}}
-                    <a class="dropdown-item" href="#">
-                      <input class="" type="checkbox" value="{{ .ID }}" class="predecessor-checkbox" data-no="{{ .No }}"> {{
-                      .No }}
-                    </a>
-                    {{end}}
-                    {{end}}
-                  </div>
-                </div>
-              </td>
-              <td class="fs-6">{{ .ExpectedTime }}</td>
-              <td class="fs-6"><input data-critical="{{ .Critical }}" class="critical-bool" type="checkbox"></td>
-            </tr>
-            {{end}}
-            {{end}}
-            {{end}}
-          </tbody>
-        </table>
-      </div>
-      <div class="tab-pane active" role="tabpanel" id="pert">
-        <div id="allSampleContent" class="w-full">
-          <div id="sample">
-            <div id="myDiagramDiv"
-              style="border: 1px solid black; width: 100%; height: 400px; position: relative; -webkit-tap-highlight-color: rgba(255, 255, 255, 0);">
-              <canvas tabindex="0" width="1054" height="398"
-                style="position: absolute; top: 0px; left: 0px; z-index: 2; user-select: none; touch-action: none; width: 1054px; height: 398px;"></canvas>
-              <div style="position: absolute; overflow: auto; width: 1054px; height: 398px; z-index: 1;">
-                <div style="position: absolute; width: 1px; height: 1px;"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+            <td class="fs-6">{{ .Name }}</td>
+            <td class="fs-6">{{ .OptimisticTime }}</td>
+            <td class="fs-6">{{ .MostLikelyTime }}</td>
+            <td class="fs-6">{{ .PessimisticTime }}</td>
+            <td class="fs-6">{{ .ExpectedTime }}</td>
+          </tr>
+          {{range .Activity}}
+          {{$activity := .}}
+          <th class="fs-6" scope="row">{{ .No }}</th>
+          <td class="fs-6">{{ .Name }}</td>
+          <td class="fs-6">{{ .OptimisticTime }}</td>
+          <td class="fs-6">{{ .MostLikelyTime }}</td>
+          <td class="fs-6">{{ .PessimisticTime }}</td>
+          <td class="fs-6">{{ .ExpectedTime }}</td>
+          {{range .SubActivity}}
+          {{$subActivity := .}}
+          <tr>
+            <th class="fs-6" scope="row">{{ .No }}</th>
+            <td class="fs-6">{{ .Name }}</td>
+            <td class="fs-6">{{ .OptimisticTime }}</td>
+            <td class="fs-6">{{ .MostLikelyTime }}</td>
+            <td class="fs-6">{{ .PessimisticTime }}</td>
+            <td class="fs-6">{{ .ExpectedTime }}</td>
+          </tr>
+          {{end}}
+          {{end}}
+          {{end}}
+        </tbody>
+      </table>
     </div>
-</div>
+    <div class="tab-pane" role="tabpanel" id="workers">
+      <table class="table table-bordered table-hover">
+        <thead class="thead-dark text-center">
+          <th class="text-light" scope="col">Worker</th>
+          <th class="text-light" scope="col">Quantity</th>
+          <th class="text-light" scope="col">Rate</th>
+          <th class="text-light" scope="col">Total</th>
+        </thead>
+        <tbody class="for-load text-center">
+          {{ range .Workers}}
+          <tr>
+            <th class="fs-6" scope="row">{{ .Name }}</th>
+            <td class="fs-6">{{ .Quantity }}</td>
+            <td class="fs-6">₱{{ .Rate }}</td>
+            <td class="fs-6">₱{{ .Total }}</td>
+          </tr>
+          {{ end }}
+        </tbody>
+      </table>
+    </div>
+    <div class="tab-pane" role="tabpanel" id="equipments">
 
-<!-- <div class="container">
-  <table class="table table-bordered table-hover">
-    <thead class="thead-dark text-center">
-      <tr>
-        <th class="text-light" rowspan="2" scope="col">Item No.</th>
-        <th class="text-light" rowspan="2" scope="col">Activity</th>
-        <th class="text-light"  colspan="3" scope="col">Time Estimate</th>
-        <th class="text-light" rowspan="2" scope="col">Expected Time</th>
-      </tr>
-      <tr>
-        <th class="text-light" scope="col">Optimistic Time</th>
-        <th class="text-light" scope="col">Most Likely Time</th>
-        <th class="text-light" scope="col">Pessimistic Time Time</th>
-      </tr>
-    </thead>
-    <tbody class="for-load text-center">
-      {{range .Project.Phase}}
-      <tr>
-        <th class="fs-6" scope="row">{{ .No }}</th>
-        <td class="fs-6">{{ .Name }}</td>
-        <td class="fs-6">{{ .OptimisticTime }}</td>
-        <td class="fs-6">{{ .MostLikelyTime }}</td>
-        <td class="fs-6">{{ .PessimisticTime }}</td>
-        <td class="fs-6">{{ .ExpectedTime }}</td>
-      </tr>
-      {{range .Activity}}
-      {{$activity := .}}
-      <th class="fs-6" scope="row">{{ .No }}</th>
-        <td class="fs-6">{{ .Name }}</td>
-        <td class="fs-6">{{ .OptimisticTime }}</td>
-        <td class="fs-6">{{ .MostLikelyTime }}</td>
-        <td class="fs-6">{{ .PessimisticTime }}</td>
-        <td class="fs-6">{{ .ExpectedTime }}</td>
-      {{range .SubActivity}}
-      {{$subActivity := .}}
-      <tr>
-        <th class="fs-6" scope="row">{{ .No }}</th>
-        <td class="fs-6">{{ .Name }}</td>
-        <td class="fs-6">{{ .OptimisticTime }}</td>
-        <td class="fs-6">{{ .MostLikelyTime }}</td>
-        <td class="fs-6">{{ .PessimisticTime }}</td>
-        <td class="fs-6">{{ .ExpectedTime }}</td>
-      </tr>
-      {{end}}
-      {{end}}
-      {{end}}
-    </tbody>
-  </table>
-</div>
-
-<div class="container">
-  <h1>Workers</h1>
-  <table class="table table-bordered table-hover">
-    <thead class="thead-dark text-center">
-        <th class="text-light" scope="col">Worker</th>
-        <th class="text-light" scope="col">Quantity</th>
-        <th class="text-light"  scope="col">Rate</th>
-        <th class="text-light" scope="col">Total</th>
-    </thead>
-    <tbody class="for-load text-center">
-      {{ range .Workers}}
-      <tr>
-        <th class="fs-6" scope="row">{{ .Name }}</th>
-        <td class="fs-6">{{ .Quantity }}</td>
-        <td class="fs-6">₱{{ .Rate }}</td>
-        <td class="fs-6">₱{{ .Total }}</td>
-      </tr>
-      {{ end }}
-    </tbody>
-  </table>
-</div>
-
-<div class="container">
-  <h1>Equipments</h1>
-  <table class="table table-bordered table-hover">
-    <thead class="thead-dark text-center">
-        <th class="text-light" scope="col">Equipment</th>
-        <th class="text-light" scope="col">Quantity</th>
-        <th class="text-light"  scope="col">Cost</th>
-        <th class="text-light" scope="col">Total</th>
-    </thead>
-    <tbody class="for-load text-center">
-      {{ range .Equipments}}
-      <tr>
-        <th class="fs-6" scope="row">{{ .Name }}</th>
-        <td class="fs-6">{{ .Quantity }}</td>
-        <td class="fs-6">₱{{ .Cost }}</td>
-        <td class="fs-6">₱{{ .Total }}</td>
-      </tr>
-      {{ end }}
-    </tbody>
-  </table>
-</div>
-
-<div class="container">
-  <h1>Predecessors</h1>
-  <table class="table table-bordered table-hover">
-    <thead class="thead-dark text-center">
-      <tr>
-        <th class="text-light" scope="col">Item No.</th>
-        <th class="text-light" scope="col">Activity</th>
-        <th class="text-light" scope="col">Immediate Predecessors</th>
-        <th class="text-light" scope="col">Expected Time</th>
-        <th class="text-light" scope="col">Critical</th>
-      </tr>
-    </thead>
-    <tbody class="for-load text-center">
-      {{range .Project.Phase}}
-      <tr>
-        <th class="fs-6" scope="row">{{ .No }}</th>
-        <td class="fs-6">{{ .Name }}</td>
-        <td colspan="2"></td>
-      </tr>
-      {{range .Activity}}
-      {{$activity := .}}
-      <tr>
-        <th class="fs-6" scope="row">{{ .No }}</th>
-        <td class="fs-6">{{ .Name }}</td>
-        <td colspan="2"></td>
-      </tr>
-      {{range .SubActivity}}
-      {{$subActivity := .}}
-      <tr>
-        <th class="fs-6" scope="row">{{ .No }}</th>
-        <td class="fs-6">{{ .Name }}</td>
-        <td class="p-0">
-          <div class="dropdown w-100">
-            <button class="btn btn-secondary dropdown-toggle w-100 pt-4 pb-4" disabled type="button" data-et="{{ .ExpectedTime }}" data-num="{{ .No }}"
-              id="dropdownMenuButton-{{.ID}}" data-bs-toggle="dropdown" aria-expanded="false">
-              {{ .NoPredecessorsList }}
-            </button>
-            <div class="dropdown-menu w-100 text-center" aria-labelledby="dropdownMenuButton-{{.ID}}">
-              <a class="dropdown-item" href="#">
-                <input class="d-none" type="checkbox" value="0" class="predecessor-checkbox" data-no="Start"> Start
-              </a>
-              {{range $.AllSubActivities}}
-              {{if ne .ID $subActivity.ID}}
-              <a class="dropdown-item" href="#">
-                <input class="" type="checkbox" value="{{ .ID }}" class="predecessor-checkbox" data-no="{{ .No }}"> {{
-                .No }}
-              </a>
-              {{end}}
-              {{end}}
+      <table class="table table-bordered table-hover">
+        <thead class="thead-dark text-center">
+          <th class="text-light" scope="col">Equipment</th>
+          <th class="text-light" scope="col">Quantity</th>
+          <th class="text-light" scope="col">Cost</th>
+          <th class="text-light" scope="col">Total</th>
+        </thead>
+        <tbody class="for-load text-center">
+          {{ range .Equipments}}
+          <tr>
+            <th class="fs-6" scope="row">{{ .Name }}</th>
+            <td class="fs-6">{{ .Quantity }}</td>
+            <td class="fs-6">₱{{ .Cost }}</td>
+            <td class="fs-6">₱{{ .Total }}</td>
+          </tr>
+          {{ end }}
+        </tbody>
+      </table>
+    </div>
+    <div class="tab-pane" role="tabpanel" id="predecessors">
+      <table class="table table-bordered table-hover">
+        <thead class="thead-dark text-center">
+          <tr>
+            <th class="text-light" scope="col">Item No.</th>
+            <th class="text-light" scope="col">Activity</th>
+            <th class="text-light" scope="col">Immediate Predecessors</th>
+            <th class="text-light" scope="col">Expected Time</th>
+            <th class="text-light" scope="col">Critical</th>
+          </tr>
+        </thead>
+        <tbody class="for-load text-center">
+          {{range .Project.Phase}}
+          <tr>
+            <th class="fs-6" scope="row">{{ .No }}</th>
+            <td class="fs-6">{{ .Name }}</td>
+            <td colspan="2"></td>
+          </tr>
+          {{range .Activity}}
+          {{$activity := .}}
+          <tr>
+            <th class="fs-6" scope="row">{{ .No }}</th>
+            <td class="fs-6">{{ .Name }}</td>
+            <td colspan="2"></td>
+          </tr>
+          {{range .SubActivity}}
+          {{$subActivity := .}}
+          <tr>
+            <th class="fs-6" scope="row">{{ .No }}</th>
+            <td class="fs-6">{{ .Name }}</td>
+            <td class="p-0">
+              <div class="dropdown w-100">
+                <button class="btn btn-secondary dropdown-toggle w-100 pt-4 pb-4" disabled type="button"
+                  data-et="{{ .ExpectedTime }}" data-num="{{ .No }}" id="dropdownMenuButton-{{.ID}}"
+                  data-bs-toggle="dropdown" aria-expanded="false">
+                  {{ .NoPredecessorsList }}
+                </button>
+                <div class="dropdown-menu w-100 text-center" aria-labelledby="dropdownMenuButton-{{.ID}}">
+                  <a class="dropdown-item" href="#">
+                    <input class="d-none" type="checkbox" value="0" class="predecessor-checkbox" data-no="Start"> Start
+                  </a>
+                  {{range $.AllSubActivities}}
+                  {{if ne .ID $subActivity.ID}}
+                  <a class="dropdown-item" href="#">
+                    <input class="d-none" type="checkbox" value="{{ .ID }}" class="predecessor-checkbox" data-no="{{ .No }}">
+                    {{
+                    .No }}
+                  </a>
+                  {{end}}
+                  {{end}}
+                </div>
+              </div>
+            </td>
+            <td class="fs-6">{{ .ExpectedTime }}</td>
+            <td class="fs-6"><input data-critical="{{ .Critical }}" class="critical-bool" type="checkbox"></td>
+          </tr>
+          {{end}}
+          {{end}}
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+    <div class="tab-pane active" role="tabpanel" id="pert">
+      <div id="allSampleContent" class="w-full">
+        <div id="sample">
+          <div id="myDiagramDiv"
+            style="border: 1px solid black; width: 100%; height: 400px; position: relative; -webkit-tap-highlight-color: rgba(255, 255, 255, 0);">
+            <canvas tabindex="0" width="1054" height="398"
+              style="position: absolute; top: 0px; left: 0px; z-index: 2; user-select: none; touch-action: none; width: 1054px; height: 398px;"></canvas>
+            <div style="position: absolute; overflow: auto; width: 1054px; height: 398px; z-index: 1;">
+              <div style="position: absolute; width: 1px; height: 1px;"></div>
             </div>
           </div>
-        </td>
-        <td class="fs-6">{{ .ExpectedTime }}</td>
-        <td class="fs-6"><input data-critical="{{ .Critical }}" class="critical-bool" type="checkbox"></td>
-      </tr>
-      {{end}}
-      {{end}}
-      {{end}}
-    </tbody>
-  </table>
-</div>
-<div class="container">
-  <h1>Pert Diagram</h1>
-  <div id="allSampleContent" class="w-full">
-    <div id="sample">
-      <div id="myDiagramDiv"
-        style="border: 1px solid black; width: 100%; height: 400px; position: relative; -webkit-tap-highlight-color: rgba(255, 255, 255, 0);">
-        <canvas tabindex="0" width="1054" height="398"
-          style="position: absolute; top: 0px; left: 0px; z-index: 2; user-select: none; touch-action: none; width: 1054px; height: 398px;"></canvas>
-        <div style="position: absolute; overflow: auto; width: 1054px; height: 398px; z-index: 1;">
-          <div style="position: absolute; width: 1px; height: 1px;"></div>
         </div>
       </div>
     </div>
   </div>
-</div> -->
-<script>
-</script>
-<script
-        src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous">
-</script>
-<script
-        src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-        crossorigin="anonymous">
-</script>
-<script
-        src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
-        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-        crossorigin="anonymous">
-</script>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+  integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+  </script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+  integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+  </script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+  integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
+  </script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     var subActivities = document.querySelectorAll('.dropdown-menu');
@@ -419,260 +237,295 @@
       if ($(this).data("critical") == true) {
         $(this).attr("checked", true)
       }
-        // console.log($(this).data("critical"))
-      });
+      // console.log($(this).data("critical"))
+    });
   });
 </script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      var dates = document.querySelectorAll(".date-time");
-      dates.forEach(date => {
-        var text = date.textContent;
-        var dateObject = new Date(text);
-        var options = { year: 'numeric', month: 'long', day: 'numeric' };
-        var formattedDate = dateObject.toLocaleDateString('en-US', options);
-        date.textContent = formattedDate;
-      })
+  document.addEventListener("DOMContentLoaded", function () {
+    var dates = document.querySelectorAll(".date-time");
+    dates.forEach(date => {
+      var text = date.textContent;
+      var dateObject = new Date(text);
+      var options = { year: 'numeric', month: 'long', day: 'numeric' };
+      var formattedDate = dateObject.toLocaleDateString('en-US', options);
+      date.textContent = formattedDate;
     })
+  })
 </script>
 <script>
   $(document).ready(function () {
-      let idArr = []
-      let etArr = []
-      let noArr = []
-      let criticalPath = []
-      let predecessorArr = []
-      // Print the selected values (values associated with the names)
-      
-      $('.critical-bool').each(function() {
-        criticalPath.push($(this).is(":checked"))
-      })
+    let idArr = []
+    let etArr = []
+    let noArr = []
+    let criticalPath = []
+    let predecessorArr = []
+    // Print the selected values (values associated with the names)
 
-      $('.dropdown-menu').each(function () {
-        var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
-        var subActivityNo = $(this).closest('.dropdown').find('.dropdown-toggle').data('num')
-        var subActivityEt = $(this).closest('.dropdown').find('.dropdown-toggle').data('et')
-        var selectedValues = [];
-        $(this).find('input:checked').each(function () {
-          var name = $(this).data('no');
-          var value = $(this).val();
-          selectedValues.push(value);
-        });
-        console.log('Selected values for Sub Activity ' + subActivityId + ':', String(selectedValues));
-        idArr.push(subActivityId)
-        noArr.push(subActivityNo)
-        etArr.push(subActivityEt)
-        predecessorArr.push(selectedValues)
-        
-      });
-      init(idArr, predecessorArr, noArr, etArr, criticalPath);
+    $('.critical-bool').each(function () {
+      criticalPath.push($(this).is(":checked"))
     })
+
+    $('.dropdown-menu').each(function () {
+      var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
+      var subActivityNo = $(this).closest('.dropdown').find('.dropdown-toggle').data('num')
+      var subActivityEt = $(this).closest('.dropdown').find('.dropdown-toggle').data('et')
+      var selectedValues = [];
+      $(this).find('input:checked').each(function () {
+        var name = $(this).data('no');
+        var value = $(this).val();
+        selectedValues.push(value);
+      });
+      console.log('Selected values for Sub Activity ' + subActivityId + ':', String(selectedValues));
+      idArr.push(subActivityId)
+      noArr.push(subActivityNo)
+      etArr.push(subActivityEt)
+      predecessorArr.push(selectedValues)
+
+    });
+    init(idArr, predecessorArr, noArr, etArr, criticalPath);
+  })
 </script>
 <script>
-      function toggleTab(e){
-        var hrefVal = $(e).attr('href');
-        $('.nav-tabs li').removeClass('active');
-        $('.nav-tabs li[data-active="'+hrefVal+'"]').addClass('active');
-    }
+  function toggleTab(e) {
+    var hrefVal = $(e).attr('href');
+    $('.nav-tabs li').removeClass('active');
+    $('.nav-tabs li[data-active="' + hrefVal + '"]').addClass('active');
+  }
 </script>
 <script src="https://unpkg.com/gojs@2.3.16/release/go.js"></script>
 <script id="code">
-  function init(ids,predecessors, nos, ets, criticals) {
-      // Since 2.2 you can also author concise templates with method chaining instead of GraphObject.make
-      // For details, see https://gojs.net/latest/intro/buildingObjects.html
-      const $ = go.GraphObject.make;  // for more concise visual tree definitions
-      if (this.myDiagram) {
-        this.myDiagram.div = null;
-      }
-      
-      // colors used, named for easier identification
-      var blue = "#0288D1";
-      var pink = "#B71C1C";
-      var pinkfill = "#F8BBD0";
-      var bluefill = "#B3E5FC";
-  
-      this.myDiagram =
-        new go.Diagram("myDiagramDiv",
-          {
-            initialAutoScale: go.Diagram.Uniform,
-            layout: $(go.LayeredDigraphLayout, { alignOption: go.LayeredDigraphLayout.AlignAll })
-          });
-  
-      // The node template shows the activity name in the middle as well as
-      // various statistics about the activity, all surrounded by a border.
-      // The border's color is determined by the node data's ".critical" property.
-      // Some information is not available as properties on the node data,
-      // but must be computed -- we use converter functions for that.
-      myDiagram.nodeTemplate =
-        $(go.Node, "Auto",
-          $(go.Shape, "Rectangle",  // the border
-            { fill: "white", strokeWidth: 2 },
-            new go.Binding("fill", "critical", b => b ? pinkfill : bluefill),
-            new go.Binding("stroke", "critical", b => b ? pink : blue)),
-          $(go.Panel, "Table",
-            { padding: 0.5 },
-            $(go.RowColumnDefinition, { column: 1, separatorStroke: "black" }),
-            $(go.RowColumnDefinition, { column: 2, separatorStroke: "black" }),
-            $(go.RowColumnDefinition, { row: 1, separatorStroke: "black", background: "white", coversSeparators: true }),
-            $(go.RowColumnDefinition, { row: 2, separatorStroke: "black" }),
-            $(go.TextBlock, // earlyStart
-              new go.Binding("text", "earlyStart"),
-              { row: 0, column: 0, margin: 5, textAlign: "center" }),
-            $(go.TextBlock,
-              new go.Binding("text", "length"),
-              { row: 0, column: 1, margin: 5, textAlign: "center" }),
-            $(go.TextBlock,  // earlyFinish
-              new go.Binding("text", "",
-                d => (d.earlyStart + d.length).toFixed(2)),
-              { row: 0, column: 2, margin: 5, textAlign: "center" }),
-  
-            $(go.TextBlock,
-              new go.Binding("text", "text"),
-              {
-                row: 1, column: 0, columnSpan: 3, margin: 5,
-                textAlign: "center", font: "bold 14px sans-serif"
-              }),
-  
-            $(go.TextBlock,  // lateStart
-              new go.Binding("text", "",
-                d => (d.lateFinish - d.length).toFixed(2)),
-              { row: 2, column: 0, margin: 5, textAlign: "center" }),
-            $(go.TextBlock,  // slack
-              new go.Binding("text", "",
-                d => (d.lateFinish - (d.earlyStart + d.length)).toFixed(2)),
-              { row: 2, column: 1, margin: 5, textAlign: "center" }),
-            $(go.TextBlock, // lateFinish
-              new go.Binding("text", "lateFinish"),
-              { row: 2, column: 2, margin: 5, textAlign: "center" })
-          )  // end Table Panel
-        );  // end Node
-  
-      // The link data object does not have direct access to both nodes
-      // (although it does have references to their keys: .from and .to).
-      // This conversion function gets the GraphObject that was data-bound as the second argument.
-      // From that we can get the containing Link, and then the Link.fromNode or .toNode,
-      // and then its node data, which has the ".critical" property we need.
-      //
-      // But note that if we were to dynamically change the ".critical" property on a node data,
-      // calling myDiagram.model.updateTargetBindings(nodedata) would only update the color
-      // of the nodes.  It would be insufficient to change the appearance of any Links.
-      function linkColorConverter(linkdata, elt) {
-        var link = elt.part;
-        if (!link) return blue;
-        var f = link.fromNode;
-        if (!f || !f.data || !f.data.critical) return blue;
-        var t = link.toNode;
-        if (!t || !t.data || !t.data.critical) return blue;
-        return pink;  // when both Link.fromNode.data.critical and Link.toNode.data.critical
-      }
-  
-      // The color of a link (including its arrowhead) is red only when both
-      // connected nodes have data that is ".critical"; otherwise it is blue.
-      // This is computed by the binding converter function.
-      myDiagram.linkTemplate =
-        $(go.Link,
-          { toShortLength: 6, toEndSegmentLength: 20 },
-          $(go.Shape,
-            { strokeWidth: 4 },
-            new go.Binding("stroke", "", linkColorConverter)),
-          $(go.Shape,  // arrowhead
-            { toArrow: "Triangle", stroke: null, scale: 1.5 },
-            new go.Binding("fill", "", linkColorConverter))
-        );
-  
+  function init(ids, predecessors, nos, ets, criticals) {
+    // Since 2.2 you can also author concise templates with method chaining instead of GraphObject.make
+    // For details, see https://gojs.net/latest/intro/buildingObjects.html
+    const $ = go.GraphObject.make;  // for more concise visual tree definitions
+    if (this.myDiagram) {
+      this.myDiagram.div = null;
+    }
 
-      console.log(ets)
-      // here's the data defining the graph
-      var nodeDataArray = [
-        { key: 0, text: "Start", length: 0, earlyStart: 0, lateFinish: 0, critical: true },
-      ];
-  
-      for (let i = 0; i < ids.length; i++) {
-        nodeDataArray.push({ key: ids[i], text: nos[i], length:ets[i], earlyStart: 0, lateFinish: 0, critical: criticals[i] })
-      }
-      
-      var linkDataArray = [];
-      
-      for (let i = 0; i < ids.length; i++) {
-        let id = ids[i];      
-        for (let k = 0; k < predecessors[i].length; k++) {
-          let predecessor = predecessors[i]
-          linkDataArray.push({ from: predecessor[k], to: id })
-        }
-      }
-      
-      nodeDataArray.forEach(function (node) {
-      var predecessors = linkDataArray.filter(function (link) {
-        return link.to === node.key;
-      }).map(function (link) {
-        return link.from;
-      });
+    // colors used, named for easier identification
+    var blue = "#0288D1";
+    var pink = "#B71C1C";
+    var pinkfill = "#F8BBD0";
+    var bluefill = "#B3E5FC";
 
-      if (predecessors.length > 0) {
-        var maxEarlyFinish = -Infinity; // Initialize with the smallest possible value
-        predecessors.forEach(function (predKey) {
-          var predNode = nodeDataArray.find(function (node) {
-            return node.key === predKey;
-          });
-          if (predNode && predNode.earlyFinish !== undefined) { // Check if predNode has a valid earlyFinish
-            maxEarlyFinish = Math.max(maxEarlyFinish, predNode.earlyFinish);
-          }
+    this.myDiagram =
+      new go.Diagram("myDiagramDiv",
+        {
+          initialAutoScale: go.Diagram.Uniform,
+          layout: $(go.LayeredDigraphLayout, { alignOption: go.LayeredDigraphLayout.AlignAll })
         });
-        if (isFinite(maxEarlyFinish)) { // Check if maxEarlyFinish is a finite number
+
+    // The node template shows the activity name in the middle as well as
+    // various statistics about the activity, all surrounded by a border.
+    // The border's color is determined by the node data's ".critical" property.
+    // Some information is not available as properties on the node data,
+    // but must be computed -- we use converter functions for that.
+    myDiagram.nodeTemplate =
+      $(go.Node, "Auto",
+        $(go.Shape, "Rectangle",  // the border
+          { fill: "white", strokeWidth: 2 },
+          new go.Binding("fill", "critical", b => b ? pinkfill : bluefill),
+          new go.Binding("stroke", "critical", b => b ? pink : blue)),
+        $(go.Panel, "Table",
+          { padding: 0.5 },
+          $(go.RowColumnDefinition, { column: 1, separatorStroke: "black" }),
+          $(go.RowColumnDefinition, { column: 2, separatorStroke: "black" }),
+          $(go.RowColumnDefinition, { row: 1, separatorStroke: "black", background: "white", coversSeparators: true }),
+          $(go.RowColumnDefinition, { row: 2, separatorStroke: "black" }),
+          $(go.TextBlock, // earlyStart
+            new go.Binding("text", "earlyStart"),
+            { row: 0, column: 0, margin: 5, textAlign: "center" }),
+          $(go.TextBlock,
+            new go.Binding("text", "length"),
+            { row: 0, column: 1, margin: 5, textAlign: "center" }),
+          $(go.TextBlock,  // earlyFinish
+            new go.Binding("text", "",
+              d => (d.earlyStart + d.length).toFixed(2)),
+            { row: 0, column: 2, margin: 5, textAlign: "center" }),
+
+          $(go.TextBlock,
+            new go.Binding("text", "text"),
+            {
+              row: 1, column: 0, columnSpan: 3, margin: 5,
+              textAlign: "center", font: "bold 14px sans-serif"
+            }),
+
+          $(go.TextBlock,  // lateStart
+            new go.Binding("text", "",
+              d => (d.lateFinish - d.length).toFixed(2)),
+            { row: 2, column: 0, margin: 5, textAlign: "center" }),
+          $(go.TextBlock,  // slack
+            new go.Binding("text", "",
+              d => (d.lateFinish - (d.earlyStart + d.length)).toFixed(2)),
+            { row: 2, column: 1, margin: 5, textAlign: "center" }),
+          $(go.TextBlock, // lateFinish
+            new go.Binding("text", "lateFinish"),
+            { row: 2, column: 2, margin: 5, textAlign: "center" })
+        )  // end Table Panel
+      );  // end Node
+
+    // The link data object does not have direct access to both nodes
+    // (although it does have references to their keys: .from and .to).
+    // This conversion function gets the GraphObject that was data-bound as the second argument.
+    // From that we can get the containing Link, and then the Link.fromNode or .toNode,
+    // and then its node data, which has the ".critical" property we need.
+    //
+    // But note that if we were to dynamically change the ".critical" property on a node data,
+    // calling myDiagram.model.updateTargetBindings(nodedata) would only update the color
+    // of the nodes.  It would be insufficient to change the appearance of any Links.
+    function linkColorConverter(linkdata, elt) {
+      var link = elt.part;
+      if (!link) return blue;
+      var f = link.fromNode;
+      if (!f || !f.data || !f.data.critical) return blue;
+      var t = link.toNode;
+      if (!t || !t.data || !t.data.critical) return blue;
+      return pink;  // when both Link.fromNode.data.critical and Link.toNode.data.critical
+    }
+
+    // The color of a link (including its arrowhead) is red only when both
+    // connected nodes have data that is ".critical"; otherwise it is blue.
+    // This is computed by the binding converter function.
+    myDiagram.linkTemplate =
+      $(go.Link,
+        { toShortLength: 6, toEndSegmentLength: 20 },
+        $(go.Shape,
+          { strokeWidth: 4 },
+          new go.Binding("stroke", "", linkColorConverter)),
+        $(go.Shape,  // arrowhead
+          { toArrow: "Triangle", stroke: null, scale: 1.5 },
+          new go.Binding("fill", "", linkColorConverter))
+      );
+
+
+    console.log(ets)
+    // here's the data defining the graph
+    var nodeDataArray = [
+      { key: 0, text: "Start", length: 0, earlyStart: 0, lateFinish: 0, critical: true },
+    ];
+
+    for (let i = 0; i < ids.length; i++) {
+      nodeDataArray.push({ key: ids[i], text: nos[i], length: ets[i], earlyStart: 0, lateFinish: 0, critical: criticals[i] })
+    }
+
+    var linkDataArray = [];
+
+    for (let i = 0; i < ids.length; i++) {
+      let id = ids[i];
+      for (let k = 0; k < predecessors[i].length; k++) {
+        let predecessor = predecessors[i]
+        linkDataArray.push({ from: predecessor[k], to: id })
+      }
+    }
+
+    function calculateEarlyStartAndFinish(nodeDataArray, linkDataArray) {
+      // Topological sort of the nodes based on dependencies
+      var sortedNodes = topologicalSort(nodeDataArray, linkDataArray);
+
+      sortedNodes.forEach(function (node) {
+        var predecessors = linkDataArray.filter(function (link) {
+          return link.to === node.key;
+        }).map(function (link) {
+          return link.from;
+        });
+
+        if (predecessors.length > 0) {
+          var maxEarlyFinish = 0; // Initialize with the smallest possible value
+          predecessors.forEach(function (predKey) {
+            var predNode = nodeDataArray.find(function (n) {
+              return n.key === predKey;
+            });
+            if (predNode && predNode.earlyFinish !== undefined) { // Check if predNode has a valid earlyFinish
+              maxEarlyFinish = Math.max(maxEarlyFinish, predNode.earlyFinish);
+            }
+          });
+
           node.earlyStart = maxEarlyFinish; // Use the maxEarlyFinish of predecessors
           node.earlyFinish = maxEarlyFinish + node.length;
         } else {
-          // Handle case where maxEarlyFinish is not a finite number
           node.earlyStart = 0;
           node.earlyFinish = node.length;
         }
-      } else {
-        node.earlyStart = 0;
-        node.earlyFinish = node.length;
-      }
 
-      if (node.critical) {
-        node.lateStart = node.earlyStart; // Set late start to early start for critical nodes
-        node.slack = 0; // Set slack to 0 for critical nodes
-        node.lateFinish = node.earlyFinish; // Set late finish to early finish for critical nodes
-      }
-    });
-      
-
-      myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
-          // create an unbound Part that acts as a "legend" for the diagram
-          myDiagram.add(
-            $(go.Node, "Auto",
-              $(go.Shape, "Rectangle",  // the border
-                { fill: "#EEEEEE" }),
-              $(go.Panel, "Table",
-                $(go.RowColumnDefinition, { column: 1, separatorStroke: "black" }),
-                $(go.RowColumnDefinition, { column: 2, separatorStroke: "black" }),
-                $(go.RowColumnDefinition, { row: 1, separatorStroke: "black", background: "#EEEEEE", coversSeparators: true }),
-                $(go.RowColumnDefinition, { row: 2, separatorStroke: "black" }),
-                $(go.TextBlock, "Early Start",
-                  { row: 0, column: 0, margin: 5, textAlign: "center" }),
-                $(go.TextBlock, "Length",
-                  { row: 0, column: 1, margin: 5, textAlign: "center" }),
-                $(go.TextBlock, "Early Finish",
-                  { row: 0, column: 2, margin: 5, textAlign: "center" }),
-  
-                $(go.TextBlock, "Activity Name",
-                  {
-                    row: 1, column: 0, columnSpan: 3, margin: 5,
-                    textAlign: "center", font: "bold 14px sans-serif"
-                  }),
-  
-                $(go.TextBlock, "Late Start",
-                  { row: 2, column: 0, margin: 5, textAlign: "center" }),
-                $(go.TextBlock, "Slack",
-                  { row: 2, column: 1, margin: 5, textAlign: "center" }),
-                $(go.TextBlock, "Late Finish",
-                  { row: 2, column: 2, margin: 5, textAlign: "center" })
-              )  // end Table Panel
-            ));
+        if (node.critical) {
+          node.lateStart = node.earlyStart; // Set late start to early start for critical nodes
+          node.slack = 0; // Set slack to 0 for critical nodes
+          node.lateFinish = node.earlyFinish; // Set late finish to early finish for critical nodes
         }
-        
-    // window.addEventListener('DOMContentLoaded', init);
-  </script>
+      });
+    }
+
+    function topologicalSort(nodeDataArray, linkDataArray) {
+      var sorted = [];
+      var visited = {};
+
+      function visit(node) {
+        if (node && !visited[node.key]) {
+          visited[node.key] = true;
+          var predecessors = linkDataArray.filter(function (link) {
+            return link.to === node.key;
+          }).map(function (link) {
+            return link.from;
+          });
+          predecessors.forEach(function (predKey) {
+            var predNode = nodeDataArray.find(function (n) {
+              return n.key === predKey;
+            });
+            if (predNode) {
+              visit(predNode);
+            }
+          });
+          sorted.push(node);
+        }
+      }
+
+      nodeDataArray.forEach(function (node) {
+        visit(node);
+      });
+
+      return sorted;
+    }
+
+    // Call the function to calculate early start and finish times
+    calculateEarlyStartAndFinish(nodeDataArray, linkDataArray);
+
+
+
+    myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+    // create an unbound Part that acts as a "legend" for the diagram
+    myDiagram.add(
+      $(go.Node, "Auto",
+        $(go.Shape, "Rectangle",  // the border
+          { fill: "#EEEEEE" }),
+        $(go.Panel, "Table",
+          $(go.RowColumnDefinition, { column: 1, separatorStroke: "black" }),
+          $(go.RowColumnDefinition, { column: 2, separatorStroke: "black" }),
+          $(go.RowColumnDefinition, { row: 1, separatorStroke: "black", background: "#EEEEEE", coversSeparators: true }),
+          $(go.RowColumnDefinition, { row: 2, separatorStroke: "black" }),
+          $(go.TextBlock, "Early Start",
+            { row: 0, column: 0, margin: 5, textAlign: "center" }),
+          $(go.TextBlock, "Length",
+            { row: 0, column: 1, margin: 5, textAlign: "center" }),
+          $(go.TextBlock, "Early Finish",
+            { row: 0, column: 2, margin: 5, textAlign: "center" }),
+
+          $(go.TextBlock, "Activity Name",
+            {
+              row: 1, column: 0, columnSpan: 3, margin: 5,
+              textAlign: "center", font: "bold 14px sans-serif"
+            }),
+
+          $(go.TextBlock, "Late Start",
+            { row: 2, column: 0, margin: 5, textAlign: "center" }),
+          $(go.TextBlock, "Slack",
+            { row: 2, column: 1, margin: 5, textAlign: "center" }),
+          $(go.TextBlock, "Late Finish",
+            { row: 2, column: 2, margin: 5, textAlign: "center" })
+        )  // end Table Panel
+      ));
+  }
+
+  // window.addEventListener('DOMContentLoaded', init);
+</script>
 {{ end }}

@@ -142,7 +142,7 @@ let addSubAct = ($("#subactName").val()).trim()
         var subActFormat =
           `<div class="sub-activity-container-${k + 1}">
       <div class="table-content text-center text-break">
-      <div>${convertToRoman(i + 1)}. ${alphabet[j]}. ${convertToRoman(k + 1).toLowerCase()}.</div>
+      <div>${convertToRoman(i + 1)}. ${alphabet[j]}. ${k + 1}.</div>
       <div>${subActKey}</div>
       <div><input type="number" value="0" min="0" oninput="unexpectedTimeRow(this)"></div>
       <div><input type="number" value="0" min="0" oninput="unexpectedTimeRow(this)"></div>
@@ -154,7 +154,7 @@ let addSubAct = ($("#subactName").val()).trim()
       var subActFormat =
           `<div class="sub-activity-container-${k + 1}">
       <div class="d-none table-content text-center text-break">
-      <div>${convertToRoman(i + 1)}. ${alphabet[j]}. ${convertToRoman(k + 1).toLowerCase()}.</div>
+      <div>${convertToRoman(i + 1)}. ${alphabet[j]}. ${k + 1}.</div>
       <div>${subActKey}</div>
       <div><input type="number" value="0" min="0" oninput="unexpectedTimeRow(this)"></div>
       <div><input type="number" value="0" min="0" oninput="unexpectedTimeRow(this)"></div>

@@ -40,8 +40,9 @@
         <td class="fs-6">{{ .Name }}</td>
         <td class="p-0">
           <div class="dropdown w-100">
-            <button class="btn btn-secondary dropdown-toggle w-100 pt-4 pb-4" disabled type="button" data-et="{{ .ExpectedTime }}" data-num="{{ .No }}"
-              id="dropdownMenuButton-{{.ID}}" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-secondary dropdown-toggle w-100 pt-4 pb-4" disabled type="button"
+              data-et="{{ .ExpectedTime }}" data-num="{{ .No }}" id="dropdownMenuButton-{{.ID}}"
+              data-bs-toggle="dropdown" aria-expanded="false">
               {{ .NoPredecessorsList }}
             </button>
             <div class="dropdown-menu w-100 text-center" aria-labelledby="dropdownMenuButton-{{.ID}}">
@@ -51,7 +52,7 @@
               {{range $.AllSubActivities}}
               {{if ne .ID $subActivity.ID}}
               <a class="dropdown-item" href="#">
-                <input class="" type="checkbox" value="{{ .ID }}" class="predecessor-checkbox" data-no="{{ .No }}"> {{
+                <input class="d-none" type="checkbox" value="{{ .ID }}" class="predecessor-checkbox" data-no="{{ .No }}"> {{
                 .No }}
               </a>
               {{end}}
@@ -95,35 +96,35 @@
 <script>
   function completed(id) {
     fetch(`/api/complete-project?id=${id}`)
-    .then(resp => resp.json())
-    .then(resp => {
-      if (resp['status'] != "ok") {
-        Swal.fire({
+      .then(resp => resp.json())
+      .then(resp => {
+        if (resp['status'] != "ok") {
+          Swal.fire({
             title: "Project not found",
             text: resp.err_msg,
             icon: "error"
           });
-      } else {
-        Swal.fire({
+        } else {
+          Swal.fire({
             title: "Project set to complete",
             text: resp.response,
             icon: "success"
           });
-          setTimeout(function() {
+          setTimeout(function () {
             location.href = location.origin + "/user/completed-projects/"
           }, 3000);
-      }
-    })
+        }
+      })
   }
 </script>
 <script>
-  $(".close-btn").click(function() {
-    $(".myModal").css("display","none")
+  $(".close-btn").click(function () {
+    $(".myModal").css("display", "none")
   })
 </script>
 <script>
   $(document).ready(function () {
-    setTimeout(function(){$(".myModal").css("display","none")},1)
+    setTimeout(function () { $(".myModal").css("display", "none") }, 1)
     // Ensure event listeners are only added once
     $('.dropdown-item').off('click').on('click', function (e) {
       e.preventDefault();
@@ -161,7 +162,7 @@
         $('.save-changes').show();
         $this.text('Cancel');
       } else {
-        $(".for-load").load(location.href+" .for-load>*");
+        $(".for-load").load(location.href + " .for-load>*");
         // Revert back to "Edit Predecessors" only if there is no alert
         if (!$('.alert').length) {
           $('.dropdown-toggle').prop('disabled', true);
@@ -217,7 +218,7 @@
         idArr.push(subActivityId);
         predecessorArr.push(selectedValues);
       });
-      $('.critical-bool').each(function() {
+      $('.critical-bool').each(function () {
         criticalPath.push($(this).is(":checked"))
       })
       console.log(idArr);
@@ -271,13 +272,13 @@
       if ($(this).data("critical") == true) {
         $(this).attr("checked", true)
       }
-        // console.log($(this).data("critical"))
-      });
+      // console.log($(this).data("critical"))
+    });
   });
 </script>
 <script>
- $(document).ready(function () {
-  $('.view-pert').off('click').on('click', function (e) {
+  $(document).ready(function () {
+    $('.view-pert').off('click').on('click', function (e) {
       e.preventDefault();
       // Check if any dropdown has no value selected
       var allDropdownsHaveValues = true;
@@ -287,7 +288,7 @@
           return false; // Exit the loop early
         }
       });
-      
+
       // If any dropdown has no value selected, alert the user
       if (!allDropdownsHaveValues) {
         alert('All dropdowns should have at least one input.');
@@ -299,8 +300,8 @@
       let criticalPath = []
       let predecessorArr = []
       // Print the selected values (values associated with the names)
-      
-      $('.critical-bool').each(function() {
+
+      $('.critical-bool').each(function () {
         criticalPath.push($(this).is(":checked"))
       })
 
@@ -320,214 +321,248 @@
         etArr.push(subActivityEt)
         predecessorArr.push(selectedValues)
       });
-  
-      setTimeout(function() {
-            $(".myModal").css("display","flex")
-            $(".myModal").css("opacity", 1)
-            init(idArr, predecessorArr, noArr, etArr, criticalPath); // Call the init function after a delay
-        }, 1); // Adjust the del
+
+      setTimeout(function () {
+        $(".myModal").css("display", "flex")
+        $(".myModal").css("opacity", 1)
+        init(idArr, predecessorArr, noArr, etArr, criticalPath); // Call the init function after a delay
+      }, 1); // Adjust the del
     });
 
-})   
+  })   
 </script>
 <script id="code">
-  function init(ids,predecessors, nos, ets, criticals) {
-      // Since 2.2 you can also author concise templates with method chaining instead of GraphObject.make
-      // For details, see https://gojs.net/latest/intro/buildingObjects.html
-      const $ = go.GraphObject.make;  // for more concise visual tree definitions
-      if (this.myDiagram) {
-        this.myDiagram.div = null;
-      }
-      
-      // colors used, named for easier identification
-      var blue = "#0288D1";
-      var pink = "#B71C1C";
-      var pinkfill = "#F8BBD0";
-      var bluefill = "#B3E5FC";
-  
-      this.myDiagram =
-        new go.Diagram("myDiagramDiv",
-          {
-            initialAutoScale: go.Diagram.Uniform,
-            layout: $(go.LayeredDigraphLayout, { alignOption: go.LayeredDigraphLayout.AlignAll })
-          });
-  
-      // The node template shows the activity name in the middle as well as
-      // various statistics about the activity, all surrounded by a border.
-      // The border's color is determined by the node data's ".critical" property.
-      // Some information is not available as properties on the node data,
-      // but must be computed -- we use converter functions for that.
-      myDiagram.nodeTemplate =
-        $(go.Node, "Auto",
-          $(go.Shape, "Rectangle",  // the border
-            { fill: "white", strokeWidth: 2 },
-            new go.Binding("fill", "critical", b => b ? pinkfill : bluefill),
-            new go.Binding("stroke", "critical", b => b ? pink : blue)),
-          $(go.Panel, "Table",
-            { padding: 0.5 },
-            $(go.RowColumnDefinition, { column: 1, separatorStroke: "black" }),
-            $(go.RowColumnDefinition, { column: 2, separatorStroke: "black" }),
-            $(go.RowColumnDefinition, { row: 1, separatorStroke: "black", background: "white", coversSeparators: true }),
-            $(go.RowColumnDefinition, { row: 2, separatorStroke: "black" }),
-            $(go.TextBlock, // earlyStart
-              new go.Binding("text", "earlyStart"),
-              { row: 0, column: 0, margin: 5, textAlign: "center" }),
-            $(go.TextBlock,
-              new go.Binding("text", "length"),
-              { row: 0, column: 1, margin: 5, textAlign: "center" }),
-            $(go.TextBlock,  // earlyFinish
-              new go.Binding("text", "",
-                d => (d.earlyStart + d.length).toFixed(2)),
-              { row: 0, column: 2, margin: 5, textAlign: "center" }),
-  
-            $(go.TextBlock,
-              new go.Binding("text", "text"),
-              {
-                row: 1, column: 0, columnSpan: 3, margin: 5,
-                textAlign: "center", font: "bold 14px sans-serif"
-              }),
-  
-            $(go.TextBlock,  // lateStart
-              new go.Binding("text", "",
-                d => (d.lateFinish - d.length).toFixed(2)),
-              { row: 2, column: 0, margin: 5, textAlign: "center" }),
-            $(go.TextBlock,  // slack
-              new go.Binding("text", "",
-                d => (d.lateFinish - (d.earlyStart + d.length)).toFixed(2)),
-              { row: 2, column: 1, margin: 5, textAlign: "center" }),
-            $(go.TextBlock, // lateFinish
-              new go.Binding("text", "lateFinish"),
-              { row: 2, column: 2, margin: 5, textAlign: "center" })
-          )  // end Table Panel
-        );  // end Node
-  
-      // The link data object does not have direct access to both nodes
-      // (although it does have references to their keys: .from and .to).
-      // This conversion function gets the GraphObject that was data-bound as the second argument.
-      // From that we can get the containing Link, and then the Link.fromNode or .toNode,
-      // and then its node data, which has the ".critical" property we need.
-      //
-      // But note that if we were to dynamically change the ".critical" property on a node data,
-      // calling myDiagram.model.updateTargetBindings(nodedata) would only update the color
-      // of the nodes.  It would be insufficient to change the appearance of any Links.
-      function linkColorConverter(linkdata, elt) {
-        var link = elt.part;
-        if (!link) return blue;
-        var f = link.fromNode;
-        if (!f || !f.data || !f.data.critical) return blue;
-        var t = link.toNode;
-        if (!t || !t.data || !t.data.critical) return blue;
-        return pink;  // when both Link.fromNode.data.critical and Link.toNode.data.critical
-      }
-  
-      // The color of a link (including its arrowhead) is red only when both
-      // connected nodes have data that is ".critical"; otherwise it is blue.
-      // This is computed by the binding converter function.
-      myDiagram.linkTemplate =
-        $(go.Link,
-          { toShortLength: 6, toEndSegmentLength: 20 },
-          $(go.Shape,
-            { strokeWidth: 4 },
-            new go.Binding("stroke", "", linkColorConverter)),
-          $(go.Shape,  // arrowhead
-            { toArrow: "Triangle", stroke: null, scale: 1.5 },
-            new go.Binding("fill", "", linkColorConverter))
-        );
-  
+  function init(ids, predecessors, nos, ets, criticals) {
+    // Since 2.2 you can also author concise templates with method chaining instead of GraphObject.make
+    // For details, see https://gojs.net/latest/intro/buildingObjects.html
+    const $ = go.GraphObject.make;  // for more concise visual tree definitions
+    if (this.myDiagram) {
+      this.myDiagram.div = null;
+    }
 
-      console.log(ets)
-      // here's the data defining the graph
-      var nodeDataArray = [
-        { key: 0, text: "Start", length: 0, earlyStart: 0, lateFinish: 0, critical: true },
-      ];
-  
-      for (let i = 0; i < ids.length; i++) {
-        nodeDataArray.push({ key: ids[i], text: nos[i], length:ets[i], earlyStart: 0, lateFinish: 0, critical: criticals[i] })
-      }
-      
-      var linkDataArray = [];
-      
-      for (let i = 0; i < ids.length; i++) {
-        let id = ids[i];      
-        for (let k = 0; k < predecessors[i].length; k++) {
-          let predecessor = predecessors[i]
-          linkDataArray.push({ from: predecessor[k], to: id })
-        }
-      }
-      
-      nodeDataArray.forEach(function (node) {
-      var predecessors = linkDataArray.filter(function (link) {
-        return link.to === node.key;
-      }).map(function (link) {
-        return link.from;
-      });
+    // colors used, named for easier identification
+    var blue = "#0288D1";
+    var pink = "#B71C1C";
+    var pinkfill = "#F8BBD0";
+    var bluefill = "#B3E5FC";
 
-      if (predecessors.length > 0) {
-        var maxEarlyFinish = -Infinity; // Initialize with the smallest possible value
-        predecessors.forEach(function (predKey) {
-          var predNode = nodeDataArray.find(function (node) {
-            return node.key === predKey;
-          });
-          if (predNode && predNode.earlyFinish !== undefined) { // Check if predNode has a valid earlyFinish
-            maxEarlyFinish = Math.max(maxEarlyFinish, predNode.earlyFinish);
-          }
+    this.myDiagram =
+      new go.Diagram("myDiagramDiv",
+        {
+          initialAutoScale: go.Diagram.Uniform,
+          layout: $(go.LayeredDigraphLayout, { alignOption: go.LayeredDigraphLayout.AlignAll })
         });
-        if (isFinite(maxEarlyFinish)) { // Check if maxEarlyFinish is a finite number
+
+    // The node template shows the activity name in the middle as well as
+    // various statistics about the activity, all surrounded by a border.
+    // The border's color is determined by the node data's ".critical" property.
+    // Some information is not available as properties on the node data,
+    // but must be computed -- we use converter functions for that.
+    myDiagram.nodeTemplate =
+      $(go.Node, "Auto",
+        $(go.Shape, "Rectangle",  // the border
+          { fill: "white", strokeWidth: 2 },
+          new go.Binding("fill", "critical", b => b ? pinkfill : bluefill),
+          new go.Binding("stroke", "critical", b => b ? pink : blue)),
+        $(go.Panel, "Table",
+          { padding: 0.5 },
+          $(go.RowColumnDefinition, { column: 1, separatorStroke: "black" }),
+          $(go.RowColumnDefinition, { column: 2, separatorStroke: "black" }),
+          $(go.RowColumnDefinition, { row: 1, separatorStroke: "black", background: "white", coversSeparators: true }),
+          $(go.RowColumnDefinition, { row: 2, separatorStroke: "black" }),
+          $(go.TextBlock, // earlyStart
+            new go.Binding("text", "earlyStart"),
+            { row: 0, column: 0, margin: 5, textAlign: "center" }),
+          $(go.TextBlock,
+            new go.Binding("text", "length"),
+            { row: 0, column: 1, margin: 5, textAlign: "center" }),
+          $(go.TextBlock,  // earlyFinish
+            new go.Binding("text", "",
+              d => (d.earlyStart + d.length).toFixed(2)),
+            { row: 0, column: 2, margin: 5, textAlign: "center" }),
+
+          $(go.TextBlock,
+            new go.Binding("text", "text"),
+            {
+              row: 1, column: 0, columnSpan: 3, margin: 5,
+              textAlign: "center", font: "bold 14px sans-serif"
+            }),
+
+          $(go.TextBlock,  // lateStart
+            new go.Binding("text", "",
+              d => (d.lateFinish - d.length).toFixed(2)),
+            { row: 2, column: 0, margin: 5, textAlign: "center" }),
+          $(go.TextBlock,  // slack
+            new go.Binding("text", "",
+              d => (d.lateFinish - (d.earlyStart + d.length)).toFixed(2)),
+            { row: 2, column: 1, margin: 5, textAlign: "center" }),
+          $(go.TextBlock, // lateFinish
+            new go.Binding("text", "lateFinish"),
+            { row: 2, column: 2, margin: 5, textAlign: "center" })
+        )  // end Table Panel
+      );  // end Node
+
+    // The link data object does not have direct access to both nodes
+    // (although it does have references to their keys: .from and .to).
+    // This conversion function gets the GraphObject that was data-bound as the second argument.
+    // From that we can get the containing Link, and then the Link.fromNode or .toNode,
+    // and then its node data, which has the ".critical" property we need.
+    //
+    // But note that if we were to dynamically change the ".critical" property on a node data,
+    // calling myDiagram.model.updateTargetBindings(nodedata) would only update the color
+    // of the nodes.  It would be insufficient to change the appearance of any Links.
+    function linkColorConverter(linkdata, elt) {
+      var link = elt.part;
+      if (!link) return blue;
+      var f = link.fromNode;
+      if (!f || !f.data || !f.data.critical) return blue;
+      var t = link.toNode;
+      if (!t || !t.data || !t.data.critical) return blue;
+      return pink;  // when both Link.fromNode.data.critical and Link.toNode.data.critical
+    }
+
+    // The color of a link (including its arrowhead) is red only when both
+    // connected nodes have data that is ".critical"; otherwise it is blue.
+    // This is computed by the binding converter function.
+    myDiagram.linkTemplate =
+      $(go.Link,
+        { toShortLength: 6, toEndSegmentLength: 20 },
+        $(go.Shape,
+          { strokeWidth: 4 },
+          new go.Binding("stroke", "", linkColorConverter)),
+        $(go.Shape,  // arrowhead
+          { toArrow: "Triangle", stroke: null, scale: 1.5 },
+          new go.Binding("fill", "", linkColorConverter))
+      );
+
+
+    console.log(ets)
+    // here's the data defining the graph
+    var nodeDataArray = [
+      { key: 0, text: "Start", length: 0, earlyStart: 0, lateFinish: 0, critical: true },
+    ];
+
+    for (let i = 0; i < ids.length; i++) {
+      nodeDataArray.push({ key: ids[i], text: nos[i], length: ets[i], earlyStart: 0, lateFinish: 0, critical: criticals[i] })
+    }
+
+    var linkDataArray = [];
+
+    for (let i = 0; i < ids.length; i++) {
+      let id = ids[i];
+      for (let k = 0; k < predecessors[i].length; k++) {
+        let predecessor = predecessors[i]
+        linkDataArray.push({ from: predecessor[k], to: id })
+      }
+    }
+
+    function calculateEarlyStartAndFinish(nodeDataArray, linkDataArray) {
+      // Topological sort of the nodes based on dependencies
+      var sortedNodes = topologicalSort(nodeDataArray, linkDataArray);
+
+      sortedNodes.forEach(function (node) {
+        var predecessors = linkDataArray.filter(function (link) {
+          return link.to === node.key;
+        }).map(function (link) {
+          return link.from;
+        });
+
+        if (predecessors.length > 0) {
+          var maxEarlyFinish = 0; // Initialize with the smallest possible value
+          predecessors.forEach(function (predKey) {
+            var predNode = nodeDataArray.find(function (n) {
+              return n.key === predKey;
+            });
+            if (predNode && predNode.earlyFinish !== undefined) { // Check if predNode has a valid earlyFinish
+              maxEarlyFinish = Math.max(maxEarlyFinish, predNode.earlyFinish);
+            }
+          });
+
           node.earlyStart = maxEarlyFinish; // Use the maxEarlyFinish of predecessors
           node.earlyFinish = maxEarlyFinish + node.length;
         } else {
-          // Handle case where maxEarlyFinish is not a finite number
           node.earlyStart = 0;
           node.earlyFinish = node.length;
         }
-      } else {
-        node.earlyStart = 0;
-        node.earlyFinish = node.length;
-      }
 
-      if (node.critical) {
-        node.lateStart = node.earlyStart; // Set late start to early start for critical nodes
-        node.slack = 0; // Set slack to 0 for critical nodes
-        node.lateFinish = node.earlyFinish; // Set late finish to early finish for critical nodes
-      }
-    });
-      
-
-      myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
-          // create an unbound Part that acts as a "legend" for the diagram
-          myDiagram.add(
-            $(go.Node, "Auto",
-              $(go.Shape, "Rectangle",  // the border
-                { fill: "#EEEEEE" }),
-              $(go.Panel, "Table",
-                $(go.RowColumnDefinition, { column: 1, separatorStroke: "black" }),
-                $(go.RowColumnDefinition, { column: 2, separatorStroke: "black" }),
-                $(go.RowColumnDefinition, { row: 1, separatorStroke: "black", background: "#EEEEEE", coversSeparators: true }),
-                $(go.RowColumnDefinition, { row: 2, separatorStroke: "black" }),
-                $(go.TextBlock, "Early Start",
-                  { row: 0, column: 0, margin: 5, textAlign: "center" }),
-                $(go.TextBlock, "Length",
-                  { row: 0, column: 1, margin: 5, textAlign: "center" }),
-                $(go.TextBlock, "Early Finish",
-                  { row: 0, column: 2, margin: 5, textAlign: "center" }),
-  
-                $(go.TextBlock, "Activity Name",
-                  {
-                    row: 1, column: 0, columnSpan: 3, margin: 5,
-                    textAlign: "center", font: "bold 14px sans-serif"
-                  }),
-  
-                $(go.TextBlock, "Late Start",
-                  { row: 2, column: 0, margin: 5, textAlign: "center" }),
-                $(go.TextBlock, "Slack",
-                  { row: 2, column: 1, margin: 5, textAlign: "center" }),
-                $(go.TextBlock, "Late Finish",
-                  { row: 2, column: 2, margin: 5, textAlign: "center" })
-              )  // end Table Panel
-            ));
+        if (node.critical) {
+          node.lateStart = node.earlyStart; // Set late start to early start for critical nodes
+          node.slack = 0; // Set slack to 0 for critical nodes
+          node.lateFinish = node.earlyFinish; // Set late finish to early finish for critical nodes
         }
-        
-    // window.addEventListener('DOMContentLoaded', init);
-  </script>
+      });
+    }
+
+    function topologicalSort(nodeDataArray, linkDataArray) {
+      var sorted = [];
+      var visited = {};
+
+      function visit(node) {
+        if (node && !visited[node.key]) {
+          visited[node.key] = true;
+          var predecessors = linkDataArray.filter(function (link) {
+            return link.to === node.key;
+          }).map(function (link) {
+            return link.from;
+          });
+          predecessors.forEach(function (predKey) {
+            var predNode = nodeDataArray.find(function (n) {
+              return n.key === predKey;
+            });
+            if (predNode) {
+              visit(predNode);
+            }
+          });
+          sorted.push(node);
+        }
+      }
+
+      nodeDataArray.forEach(function (node) {
+        visit(node);
+      });
+
+      return sorted;
+    }
+
+    // Call the function to calculate early start and finish times
+    calculateEarlyStartAndFinish(nodeDataArray, linkDataArray);
+
+
+    myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+    // create an unbound Part that acts as a "legend" for the diagram
+    myDiagram.add(
+      $(go.Node, "Auto",
+        $(go.Shape, "Rectangle",  // the border
+          { fill: "#EEEEEE" }),
+        $(go.Panel, "Table",
+          $(go.RowColumnDefinition, { column: 1, separatorStroke: "black" }),
+          $(go.RowColumnDefinition, { column: 2, separatorStroke: "black" }),
+          $(go.RowColumnDefinition, { row: 1, separatorStroke: "black", background: "#EEEEEE", coversSeparators: true }),
+          $(go.RowColumnDefinition, { row: 2, separatorStroke: "black" }),
+          $(go.TextBlock, "Early Start",
+            { row: 0, column: 0, margin: 5, textAlign: "center" }),
+          $(go.TextBlock, "Length",
+            { row: 0, column: 1, margin: 5, textAlign: "center" }),
+          $(go.TextBlock, "Early Finish",
+            { row: 0, column: 2, margin: 5, textAlign: "center" }),
+
+          $(go.TextBlock, "Activity Name",
+            {
+              row: 1, column: 0, columnSpan: 3, margin: 5,
+              textAlign: "center", font: "bold 14px sans-serif"
+            }),
+
+          $(go.TextBlock, "Late Start",
+            { row: 2, column: 0, margin: 5, textAlign: "center" }),
+          $(go.TextBlock, "Slack",
+            { row: 2, column: 1, margin: 5, textAlign: "center" }),
+          $(go.TextBlock, "Late Finish",
+            { row: 2, column: 2, margin: 5, textAlign: "center" })
+        )  // end Table Panel
+      ));
+  }
+
+  // window.addEventListener('DOMContentLoaded', init);
+</script>
 
 {{ end }}

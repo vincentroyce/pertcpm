@@ -369,42 +369,76 @@
     }
 
     // Calculate early start and early finish for each node
-    nodeDataArray.forEach(function (node) {
-      var predecessors = linkDataArray.filter(function (link) {
-        return link.to === node.key;
-      }).map(function (link) {
-        return link.from;
-      });
+    function calculateEarlyStartAndFinish(nodeDataArray, linkDataArray) {
+      // Topological sort of the nodes based on dependencies
+      var sortedNodes = topologicalSort(nodeDataArray, linkDataArray);
 
-      if (predecessors.length > 0) {
-        var maxEarlyFinish = -Infinity; // Initialize with the smallest possible value
-        predecessors.forEach(function (predKey) {
-          var predNode = nodeDataArray.find(function (node) {
-            return node.key === predKey;
-          });
-          if (predNode && predNode.earlyFinish !== undefined) { // Check if predNode has a valid earlyFinish
-            maxEarlyFinish = Math.max(maxEarlyFinish, predNode.earlyFinish);
-          }
+      sortedNodes.forEach(function (node) {
+        var predecessors = linkDataArray.filter(function (link) {
+          return link.to === node.key;
+        }).map(function (link) {
+          return link.from;
         });
-        if (isFinite(maxEarlyFinish)) { // Check if maxEarlyFinish is a finite number
+
+        if (predecessors.length > 0) {
+          var maxEarlyFinish = 0; // Initialize with the smallest possible value
+          predecessors.forEach(function (predKey) {
+            var predNode = nodeDataArray.find(function (n) {
+              return n.key === predKey;
+            });
+            if (predNode && predNode.earlyFinish !== undefined) { // Check if predNode has a valid earlyFinish
+              maxEarlyFinish = Math.max(maxEarlyFinish, predNode.earlyFinish);
+            }
+          });
+
           node.earlyStart = maxEarlyFinish; // Use the maxEarlyFinish of predecessors
           node.earlyFinish = maxEarlyFinish + node.length;
         } else {
-          // Handle case where maxEarlyFinish is not a finite number
           node.earlyStart = 0;
           node.earlyFinish = node.length;
         }
-      } else {
-        node.earlyStart = 0;
-        node.earlyFinish = node.length;
+
+        if (node.critical) {
+          node.lateStart = node.earlyStart; // Set late start to early start for critical nodes
+          node.slack = 0; // Set slack to 0 for critical nodes
+          node.lateFinish = node.earlyFinish; // Set late finish to early finish for critical nodes
+        }
+      });
+    }
+
+    function topologicalSort(nodeDataArray, linkDataArray) {
+      var sorted = [];
+      var visited = {};
+
+      function visit(node) {
+        if (node && !visited[node.key]) {
+          visited[node.key] = true;
+          var predecessors = linkDataArray.filter(function (link) {
+            return link.to === node.key;
+          }).map(function (link) {
+            return link.from;
+          });
+          predecessors.forEach(function (predKey) {
+            var predNode = nodeDataArray.find(function (n) {
+              return n.key === predKey;
+            });
+            if (predNode) {
+              visit(predNode);
+            }
+          });
+          sorted.push(node);
+        }
       }
 
-      if (node.critical) {
-        node.lateStart = node.earlyStart; // Set late start to early start for critical nodes
-        node.slack = 0; // Set slack to 0 for critical nodes
-        node.lateFinish = node.earlyFinish; // Set late finish to early finish for critical nodes
-      }
-    });
+      nodeDataArray.forEach(function (node) {
+        visit(node);
+      });
+
+      return sorted;
+    }
+
+    // Call the function to calculate early start and finish times
+    calculateEarlyStartAndFinish(nodeDataArray, linkDataArray);
 
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
     // create an unbound Part that acts as a "legend" for the diagram

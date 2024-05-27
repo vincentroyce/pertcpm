@@ -22,15 +22,15 @@
           <div class="container">
             <div class="row">
               <div class="col-lg-10 col-xl-7 mx-auto">
-                <h3 class="display-4 mb-5 ">PertCPM Login</h3>
+                <h3 class="display-4 mb-3 ">PertCPM Login</h3>
                 <form class="login" action="" method="post">
-                  <div class="form-group mb-3">
-                    <label for="username" class="custom-control-label mb-2 fs-5 fw-bold">Email</label>
-                    <input id="username" name="username" type="text" placeholder="Email" class="form-control rounded-1 border-0 shadow-sm px-2">
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="username" placeholder="Email" name="username">
+                    <label for="username">Email</label>
                   </div>
-                  <div class="form-group mb-3">
-                    <label for="password" class="custom-control-label mb-2 fs-5 fw-bold">Password</label>
-                    <input id="password" name="password" type="password" placeholder="Password" class="form-control rounded-1 border-0 shadow-sm px-2">
+                  <div class="form-floating">
+                    <input type="password" class="form-control" id="password" placeholder="Password" name="password">
+                    <label for="password">Password</label>
                   </div>
                   <p class="text-danger">{{ .Invalid }}</p>
                   <input type="submit" class="w-100 btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">
