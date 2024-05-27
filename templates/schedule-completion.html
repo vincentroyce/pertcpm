@@ -16,7 +16,6 @@
         <th class="text-light" scope="col">Activity</th>
         <th class="text-light" scope="col">Immediate Predecessors</th>
         <th class="text-light" scope="col">Expected Time</th>
-        <th class="text-light" scope="col">Critical</th>
       </tr>
     </thead>
     <tbody class="text-center">
@@ -61,7 +60,6 @@
           </div>
         </td>
         <td class="fs-6">{{ .ExpectedTime }}</td>
-        <td class="fs-6"><input class="critical-bool" type="checkbox"></td>
       </tr>
       {{end}}
       {{end}}
@@ -146,7 +144,6 @@
       }
       let idArr = []
       let predecessorArr = []
-      let criticalPath = []
       // Print the selected values (values associated with the names)
       $('.dropdown-menu').each(function () {
         var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
@@ -160,9 +157,7 @@
         idArr.push(subActivityId)
         predecessorArr.push(selectedValues)
       });
-      $('.critical-bool').each(function () {
-        criticalPath.push($(this).is(":checked"))
-      })
+      
       // console.log(idArr)
       // console.log(predecessorArr)
       // console.log(criticalPath)
@@ -172,7 +167,6 @@
         data: {
           ids: JSON.stringify(idArr),
           predecessors: JSON.stringify(predecessorArr),
-          critical: JSON.stringify(criticalPath)
         },
         success: function (response) {
           console.log(response);
@@ -212,10 +206,8 @@
       let etArr = []
       let noArr = []
       let predecessorArr = []
-      let criticalPath = []
-      $('.critical-bool').each(function () {
-        criticalPath.push($(this).is(":checked"))
-      })
+
+  
       // Print the selected values (values associated with the names)
       $('.dropdown-menu').each(function () {
         var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
@@ -238,14 +230,14 @@
       setTimeout(function () {
         $(".myModal").css("display", "flex")
         $(".myModal").css("opacity", 1)
-        init(idArr, predecessorArr, noArr, etArr, criticalPath); // Call the init function after a delay
+        init(idArr, predecessorArr, noArr, etArr); // Call the init function after a delay
       }, 1); // Adjust the del
     });
 
   })   
 </script>
 <script id="code">
-  function init(ids, predecessors, nos, ets, criticals) {
+  function init(ids, predecessors, nos, ets) {
     // Since 2.2 you can also author concise templates with method chaining instead of GraphObject.make
     // For details, see https://gojs.net/latest/intro/buildingObjects.html
     const $ = go.GraphObject.make;  // for more concise visual tree definitions
@@ -354,7 +346,7 @@
 
     // Assuming ids, nos, ets, and criticals are arrays containing node properties
     for (let i = 0; i < ids.length; i++) {
-      nodeDataArray.push({ key: ids[i], text: nos[i], length: ets[i], earlyStart: 0, lateFinish: 0, critical: criticals[i] })
+      nodeDataArray.push({ key: ids[i], text: nos[i], length: ets[i], earlyStart: 0, lateFinish: 0})
     }
 
     var linkDataArray = [];
@@ -370,42 +362,82 @@
 
     // Calculate early start and early finish for each node
     function calculateEarlyStartAndFinish(nodeDataArray, linkDataArray) {
-      // Topological sort of the nodes based on dependencies
-      var sortedNodes = topologicalSort(nodeDataArray, linkDataArray);
+  // Topological sort of the nodes based on dependencies
+  var sortedNodes = topologicalSort(nodeDataArray, linkDataArray);
 
-      sortedNodes.forEach(function (node) {
-        var predecessors = linkDataArray.filter(function (link) {
-          return link.to === node.key;
-        }).map(function (link) {
-          return link.from;
+  sortedNodes.forEach(function (node) {
+    var predecessors = linkDataArray.filter(function (link) {
+      return link.to === node.key;
+    }).map(function (link) {
+      return link.from;
+    });
+
+    if (predecessors.length > 0) {
+      var maxEarlyFinish = 0; // Initialize with the smallest possible value
+      predecessors.forEach(function (predKey) {
+        var predNode = nodeDataArray.find(function (n) {
+          return n.key === predKey;
         });
-
-        if (predecessors.length > 0) {
-          var maxEarlyFinish = 0; // Initialize with the smallest possible value
-          predecessors.forEach(function (predKey) {
-            var predNode = nodeDataArray.find(function (n) {
-              return n.key === predKey;
-            });
-            if (predNode && predNode.earlyFinish !== undefined) { // Check if predNode has a valid earlyFinish
-              maxEarlyFinish = Math.max(maxEarlyFinish, predNode.earlyFinish);
-            }
-          });
-
-          node.earlyStart = maxEarlyFinish; // Use the maxEarlyFinish of predecessors
-          node.earlyFinish = maxEarlyFinish + node.length;
-        } else {
-          node.earlyStart = 0;
-          node.earlyFinish = node.length;
-        }
-
-        if (node.critical) {
-          node.lateStart = node.earlyStart; // Set late start to early start for critical nodes
-          node.slack = 0; // Set slack to 0 for critical nodes
-          node.lateFinish = node.earlyFinish; // Set late finish to early finish for critical nodes
+        if (predNode && predNode.earlyFinish !== undefined) { // Check if predNode has a valid earlyFinish
+          maxEarlyFinish = Math.max(maxEarlyFinish, predNode.earlyFinish);
         }
       });
+
+      node.earlyStart = maxEarlyFinish; // Use the maxEarlyFinish of predecessors
+      node.earlyFinish = maxEarlyFinish + node.length;
+    } else {
+      node.earlyStart = 0;
+      node.earlyFinish = node.length;
+      // Set late finish as early finish for nodes with no successors
+      node.lateFinish = node.earlyFinish;
     }
 
+    if (node.critical) {
+      node.lateStart = node.earlyStart; // Set late start to early start for critical nodes
+      node.slack = 0; // Set slack to 0 for critical nodes
+      node.lateFinish = node.earlyFinish; // Set late finish to early finish for critical nodes
+    }
+  });
+
+  function calculateLateStartAndFinish(sortedNodes, linkDataArray) {
+  sortedNodes.slice().reverse().forEach(function (node) {
+    var successors = linkDataArray.filter(function (link) {
+      return link.from === node.key;
+    }).map(function (link) {
+      return link.to;
+    });
+
+    if (successors.length === 0) {
+      node.lateFinish = node.earlyFinish;
+      node.lateStart = node.earlyStart;
+    } else {
+      var minLateStart = Infinity;
+      successors.forEach(function (succKey) {
+        var succNode = sortedNodes.find(function (n) {
+          return n.key === succKey;
+        });
+        if (succNode && succNode.lateStart !== undefined) { // Check if succNode has a valid lateStart
+          minLateStart = Math.min(minLateStart, succNode.lateStart);
+        }
+      });
+
+      node.lateFinish = minLateStart; // Use the minLateStart of successors
+      node.lateStart = minLateStart - node.length;
+    }
+
+    node.slack = node.lateStart - node.earlyStart; // Calculate slack
+
+    // Mark node as critical if slack is 0
+    if (node.slack === 0) {
+      node.critical = true;
+    } else {
+      node.critical = false;
+    }
+  });
+}
+  // Backward pass to calculate late start and late finish times
+  calculateLateStartAndFinish(sortedNodes, linkDataArray);
+}
     function topologicalSort(nodeDataArray, linkDataArray) {
       var sorted = [];
       var visited = {};

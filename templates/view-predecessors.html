@@ -16,7 +16,6 @@
         <th class="text-light" scope="col">Activity</th>
         <th class="text-light" scope="col">Immediate Predecessors</th>
         <th class="text-light" scope="col">Expected Time</th>
-        <th class="text-light" scope="col">Critical</th>
       </tr>
     </thead>
     <tbody class="for-load text-center">
@@ -61,7 +60,6 @@
           </div>
         </td>
         <td class="fs-6">{{ .ExpectedTime }}</td>
-        <td class="fs-6"><input data-critical="{{ .Critical }}" class="critical-bool" type="checkbox"></td>
       </tr>
       {{end}}
       {{end}}
@@ -149,9 +147,6 @@
 
     // Add event listener to the "Edit Predecessors" button
     $('.edit-predecessors').off('click').on('click', function () {
-      $('.critical-bool').each(function () {
-        $(this).attr("disabled", false)
-      })
       var $this = $(this);
       var buttonText = $this.text();
       if (buttonText === 'Edit Predecessors') {
@@ -204,7 +199,6 @@
       $('.edit-predecessors').text('Edit Predecessors');
       let idArr = [];
       let predecessorArr = [];
-      let criticalPath = []
       // Print the selected values (values associated with the names)
       $('.dropdown-menu').each(function () {
         var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
@@ -218,19 +212,14 @@
         idArr.push(subActivityId);
         predecessorArr.push(selectedValues);
       });
-      $('.critical-bool').each(function () {
-        criticalPath.push($(this).is(":checked"))
-      })
       console.log(idArr);
       console.log(predecessorArr);
-      console.log(criticalPath)
       $.ajax({
         method: 'POST',
         url: '/api/set-predecessor',
         data: {
           ids: JSON.stringify(idArr),
           predecessors: JSON.stringify(predecessorArr),
-          critical: JSON.stringify(criticalPath),
         },
         success: function (response) {
           console.log(response);
@@ -267,13 +256,6 @@
         })
       });
     });
-    $('.critical-bool').each(function () {
-      $(this).attr("disabled", true)
-      if ($(this).data("critical") == true) {
-        $(this).attr("checked", true)
-      }
-      // console.log($(this).data("critical"))
-    });
   });
 </script>
 <script>
@@ -297,13 +279,8 @@
       let idArr = []
       let etArr = []
       let noArr = []
-      let criticalPath = []
       let predecessorArr = []
       // Print the selected values (values associated with the names)
-
-      $('.critical-bool').each(function () {
-        criticalPath.push($(this).is(":checked"))
-      })
 
       $('.dropdown-menu').each(function () {
         var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
@@ -325,14 +302,14 @@
       setTimeout(function () {
         $(".myModal").css("display", "flex")
         $(".myModal").css("opacity", 1)
-        init(idArr, predecessorArr, noArr, etArr, criticalPath); // Call the init function after a delay
+        init(idArr, predecessorArr, noArr, etArr); // Call the init function after a delay
       }, 1); // Adjust the del
     });
 
   })   
 </script>
 <script id="code">
-  function init(ids, predecessors, nos, ets, criticals) {
+  function init(ids, predecessors, nos, ets) {
     // Since 2.2 you can also author concise templates with method chaining instead of GraphObject.make
     // For details, see https://gojs.net/latest/intro/buildingObjects.html
     const $ = go.GraphObject.make;  // for more concise visual tree definitions
@@ -443,7 +420,7 @@
     ];
 
     for (let i = 0; i < ids.length; i++) {
-      nodeDataArray.push({ key: ids[i], text: nos[i], length: ets[i], earlyStart: 0, lateFinish: 0, critical: criticals[i] })
+      nodeDataArray.push({ key: ids[i], text: nos[i], length: ets[i], earlyStart: 0, lateFinish: 0})
     }
 
     var linkDataArray = [];
@@ -456,7 +433,7 @@
       }
     }
 
-    function calculateEarlyStartAndFinish(nodeDataArray, linkDataArray) {
+  function calculateEarlyStartAndFinish(nodeDataArray, linkDataArray) {
   // Topological sort of the nodes based on dependencies
   var sortedNodes = topologicalSort(nodeDataArray, linkDataArray);
 

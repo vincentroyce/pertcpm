@@ -20,7 +20,6 @@ func SetPredecessorAPI(w http.ResponseWriter, r *http.Request) {
 
 	ids := r.FormValue("ids")
 	predecessors := r.FormValue("predecessors")
-	critical := r.FormValue("critical")
 
 	var idsArr []interface{}
 	err = json.Unmarshal([]byte(ids), &idsArr)
@@ -36,12 +35,6 @@ func SetPredecessorAPI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var criticalArr []interface{}
-	err = json.Unmarshal([]byte(critical), &criticalArr)
-	if err != nil {
-		handleError(w, r, "Failed to parse criticalArr."+err.Error())
-		return
-	}
 	// Batch database operations
 	var wg sync.WaitGroup
 	for i := range idsArr {
@@ -74,7 +67,6 @@ func SetPredecessorAPI(w http.ResponseWriter, r *http.Request) {
 
 			// Update subactivity
 			subActivity.PredecessorsList = strings.Join([]string(predecessors), ", ")
-			subActivity.Critical = criticalArr[i].(bool)
 			subActivity.Save()
 
 			// Update project

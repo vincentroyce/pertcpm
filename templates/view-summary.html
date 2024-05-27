@@ -132,7 +132,6 @@
             <th class="text-light" scope="col">Activity</th>
             <th class="text-light" scope="col">Immediate Predecessors</th>
             <th class="text-light" scope="col">Expected Time</th>
-            <th class="text-light" scope="col">Critical</th>
           </tr>
         </thead>
         <tbody class="for-load text-center">
@@ -178,7 +177,6 @@
               </div>
             </td>
             <td class="fs-6">{{ .ExpectedTime }}</td>
-            <td class="fs-6"><input data-critical="{{ .Critical }}" class="critical-bool" type="checkbox"></td>
           </tr>
           {{end}}
           {{end}}
@@ -232,13 +230,6 @@
         })
       });
     });
-    $('.critical-bool').each(function () {
-      $(this).attr("disabled", true)
-      if ($(this).data("critical") == true) {
-        $(this).attr("checked", true)
-      }
-      // console.log($(this).data("critical"))
-    });
   });
 </script>
 <script>
@@ -258,13 +249,8 @@
     let idArr = []
     let etArr = []
     let noArr = []
-    let criticalPath = []
     let predecessorArr = []
     // Print the selected values (values associated with the names)
-
-    $('.critical-bool').each(function () {
-      criticalPath.push($(this).is(":checked"))
-    })
 
     $('.dropdown-menu').each(function () {
       var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
@@ -283,7 +269,7 @@
       predecessorArr.push(selectedValues)
 
     });
-    init(idArr, predecessorArr, noArr, etArr, criticalPath);
+    init(idArr, predecessorArr, noArr, etArr);
   })
 </script>
 <script>
@@ -295,7 +281,7 @@
 </script>
 <script src="https://unpkg.com/gojs@2.3.16/release/go.js"></script>
 <script id="code">
-  function init(ids, predecessors, nos, ets, criticals) {
+  function init(ids, predecessors, nos, ets) {
     // Since 2.2 you can also author concise templates with method chaining instead of GraphObject.make
     // For details, see https://gojs.net/latest/intro/buildingObjects.html
     const $ = go.GraphObject.make;  // for more concise visual tree definitions
@@ -406,7 +392,7 @@
     ];
 
     for (let i = 0; i < ids.length; i++) {
-      nodeDataArray.push({ key: ids[i], text: nos[i], length: ets[i], earlyStart: 0, lateFinish: 0, critical: criticals[i] })
+      nodeDataArray.push({ key: ids[i], text: nos[i], length: ets[i], earlyStart: 0, lateFinish: 0})
     }
 
     var linkDataArray = [];
@@ -420,42 +406,82 @@
     }
 
     function calculateEarlyStartAndFinish(nodeDataArray, linkDataArray) {
-      // Topological sort of the nodes based on dependencies
-      var sortedNodes = topologicalSort(nodeDataArray, linkDataArray);
+  // Topological sort of the nodes based on dependencies
+  var sortedNodes = topologicalSort(nodeDataArray, linkDataArray);
 
-      sortedNodes.forEach(function (node) {
-        var predecessors = linkDataArray.filter(function (link) {
-          return link.to === node.key;
-        }).map(function (link) {
-          return link.from;
+  sortedNodes.forEach(function (node) {
+    var predecessors = linkDataArray.filter(function (link) {
+      return link.to === node.key;
+    }).map(function (link) {
+      return link.from;
+    });
+
+    if (predecessors.length > 0) {
+      var maxEarlyFinish = 0; // Initialize with the smallest possible value
+      predecessors.forEach(function (predKey) {
+        var predNode = nodeDataArray.find(function (n) {
+          return n.key === predKey;
         });
-
-        if (predecessors.length > 0) {
-          var maxEarlyFinish = 0; // Initialize with the smallest possible value
-          predecessors.forEach(function (predKey) {
-            var predNode = nodeDataArray.find(function (n) {
-              return n.key === predKey;
-            });
-            if (predNode && predNode.earlyFinish !== undefined) { // Check if predNode has a valid earlyFinish
-              maxEarlyFinish = Math.max(maxEarlyFinish, predNode.earlyFinish);
-            }
-          });
-
-          node.earlyStart = maxEarlyFinish; // Use the maxEarlyFinish of predecessors
-          node.earlyFinish = maxEarlyFinish + node.length;
-        } else {
-          node.earlyStart = 0;
-          node.earlyFinish = node.length;
-        }
-
-        if (node.critical) {
-          node.lateStart = node.earlyStart; // Set late start to early start for critical nodes
-          node.slack = 0; // Set slack to 0 for critical nodes
-          node.lateFinish = node.earlyFinish; // Set late finish to early finish for critical nodes
+        if (predNode && predNode.earlyFinish !== undefined) { // Check if predNode has a valid earlyFinish
+          maxEarlyFinish = Math.max(maxEarlyFinish, predNode.earlyFinish);
         }
       });
+
+      node.earlyStart = maxEarlyFinish; // Use the maxEarlyFinish of predecessors
+      node.earlyFinish = maxEarlyFinish + node.length;
+    } else {
+      node.earlyStart = 0;
+      node.earlyFinish = node.length;
+      // Set late finish as early finish for nodes with no successors
+      node.lateFinish = node.earlyFinish;
     }
 
+    if (node.critical) {
+      node.lateStart = node.earlyStart; // Set late start to early start for critical nodes
+      node.slack = 0; // Set slack to 0 for critical nodes
+      node.lateFinish = node.earlyFinish; // Set late finish to early finish for critical nodes
+    }
+  });
+
+  function calculateLateStartAndFinish(sortedNodes, linkDataArray) {
+  sortedNodes.slice().reverse().forEach(function (node) {
+    var successors = linkDataArray.filter(function (link) {
+      return link.from === node.key;
+    }).map(function (link) {
+      return link.to;
+    });
+
+    if (successors.length === 0) {
+      node.lateFinish = node.earlyFinish;
+      node.lateStart = node.earlyStart;
+    } else {
+      var minLateStart = Infinity;
+      successors.forEach(function (succKey) {
+        var succNode = sortedNodes.find(function (n) {
+          return n.key === succKey;
+        });
+        if (succNode && succNode.lateStart !== undefined) { // Check if succNode has a valid lateStart
+          minLateStart = Math.min(minLateStart, succNode.lateStart);
+        }
+      });
+
+      node.lateFinish = minLateStart; // Use the minLateStart of successors
+      node.lateStart = minLateStart - node.length;
+    }
+
+    node.slack = node.lateStart - node.earlyStart; // Calculate slack
+
+    // Mark node as critical if slack is 0
+    if (node.slack === 0) {
+      node.critical = true;
+    } else {
+      node.critical = false;
+    }
+  });
+}
+  // Backward pass to calculate late start and late finish times
+  calculateLateStartAndFinish(sortedNodes, linkDataArray);
+}
     function topologicalSort(nodeDataArray, linkDataArray) {
       var sorted = [];
       var visited = {};
