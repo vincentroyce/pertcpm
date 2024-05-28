@@ -113,6 +113,9 @@
     fetch("/pertcpm-admin/api/d/project/?$f=id,name,date_start,date_end,schedule_completed&completed=0&$order=-id&$limit=5")
     .then(resp => resp.json())
     .then(resp => {
+      if (resp.result == null) {
+        return
+      }
       resp.result.forEach(res => {
         console.log(convertDate(res.date_end))
         appendFormat = 
