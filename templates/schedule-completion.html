@@ -125,7 +125,7 @@
     });
 
     // Add event listener to the "Complete Schedule" button
-    
+
   });
 
 </script>
@@ -174,84 +174,83 @@
         $(".myModal").css("display", "flex")
         $(".myModal").css("opacity", 1)
         let last = init(idArr, predecessorArr, noArr, etArr); // Call the init function after a delay
-        console.log(last)
         $(".complete-schedule").attr("disabled", false)
         $('.complete-schedule').off('click').on('click', function (e) {
           e.preventDefault();
 
-      // Check if any dropdown has no value selected
-      var allDropdownsHaveValues = true;
-      $('.dropdown-menu').each(function () {
-        if ($(this).find('input:checked').length === 0) {
-          allDropdownsHaveValues = false;
-          return false; // Exit the loop early
-        }
-      });
+          // Check if any dropdown has no value selected
+          var allDropdownsHaveValues = true;
+          $('.dropdown-menu').each(function () {
+            if ($(this).find('input:checked').length === 0) {
+              allDropdownsHaveValues = false;
+              return false; // Exit the loop early
+            }
+          });
 
-      // If any dropdown has no value selected, alert the user
-      if (!allDropdownsHaveValues) {
-        alert('All dropdowns should have at least one input.');
-        $(".complete-schedule").attr("disabled", true)
-        return;
-      }
-      let idArr = []
-      let predecessorArr = []
-      // Print the selected values (values associated with the names)
-      $('.dropdown-menu').each(function () {
-        var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
-        var selectedValues = [];
-        $(this).find('input:checked').each(function () {
-          var name = $(this).data('no');
-          var value = $(this).val();
-          selectedValues.push(value);
-        });
-        // console.log('Selected values for Sub Activity ' + subActivityId + ':', String(selectedValues));
-        idArr.push(subActivityId)
-        predecessorArr.push(selectedValues)
-      });
-      $.ajax({
-        method: 'POST',
-        url: '/api/set-date-end',
-        data: {
-          id: `{{ .ProjectID}}`,
-          days: last,
-        },
-        success: function (response) {
-          console.log(response.response);
-        },
-        error: function (response) {
-          console.log(response.err_msg)
-        }
-      })
-      $.ajax({
-        method: 'POST',
-        url: '/api/set-predecessor',
-        data: {
-          ids: JSON.stringify(idArr),
-          predecessors: JSON.stringify(predecessorArr),
-        },
-        success: function (response) {
-          console.log(response);
-          Swal.fire({
-            title: "Predecessors have been set!",
-            text: response.response,
-            icon: "success"
-          });
-          window.setTimeout(function () {
-            window.location.href = window.location.origin + "/user/ongoing-projects/"
-          }, 3000);
-        },
-        error: function (response) {
-          Swal.fire({
-            title: "Error",
-            text: response.err_msg,
-            icon: "error"
-          });
-        }
-      })
-    });
-      }, 1); // Adjust the del
+          // If any dropdown has no value selected, alert the user
+          if (!allDropdownsHaveValues) {
+            alert('All dropdowns should have at least one input.');
+            $(".complete-schedule").attr("disabled", true)
+            return;
+          }
+          let idArr = []
+          let predecessorArr = []
+          // Print the selected values (values associated with the names)
+          $('.dropdown-menu').each(function () {
+            var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
+            var selectedValues = [];
+            $(this).find('input:checked').each(function () {
+              var name = $(this).data('no');
+              var value = $(this).val();
+              selectedValues.push(value);
+            });
       
+            idArr.push(subActivityId)
+            predecessorArr.push(selectedValues)
+          });
+          $.ajax({
+            method: 'POST',
+            url: '/api/set-date-end',
+            data: {
+              id: `{{ .ProjectID}}`,
+              days: last,
+            },
+            success: function (response) {
+              console.log(response.response);
+            },
+            error: function (response) {
+              console.log(response.err_msg)
+            }
+          })
+          $.ajax({
+            method: 'POST',
+            url: '/api/set-predecessor',
+            data: {
+              ids: JSON.stringify(idArr),
+              predecessors: JSON.stringify(predecessorArr),
+            },
+            success: function (response) {
+              console.log(response);
+              Swal.fire({
+                title: "Predecessors have been set!",
+                text: response.response,
+                icon: "success"
+              });
+              window.setTimeout(function () {
+                window.location.href = window.location.origin + "/user/ongoing-projects/"
+              }, 3000);
+            },
+            error: function (response) {
+              Swal.fire({
+                title: "Error",
+                text: response.err_msg,
+                icon: "error"
+              });
+            }
+          })
+        });
+      }, 1); // Adjust the del
+
     });
   })   
 </script>
@@ -411,17 +410,61 @@
           node.lateFinish = node.earlyFinish;
         }
 
-        if (node.critical) {
-          node.lateStart = node.earlyStart; // Set late start to early start for critical nodes
-          node.slack = 0; // Set slack to 0 for critical nodes
-          node.lateFinish = node.earlyFinish; // Set late finish to early finish for critical nodes
-        }
-      });
+        // if (node.critical) {
+        //   node.lateStart = node.earlyStart; // Set late start to early start for critical nodes
+        //   node.slack = 0; // Set slack to 0 for critical nodes
+        //   node.lateFinish = node.earlyFinish; // Set late finish to early finish for critical nodes
+        // }
+        var successors = linkDataArray.filter(function (link) {
+          return link.from === node.key;
+        }).map(function (link) {
+          return link.to;
+        });
 
+        if (successors.length === 0) {
+          // Set late finish as the largest late finish from all nodes with no subsequent nodes
+          var maxLateFinish = -Infinity;
+          sortedNodes.forEach(function (n) {
+            if (linkDataArray.every(function (link) { return link.from !== n.key; })) {
+              maxLateFinish = Math.max(maxLateFinish, n.lateFinish || 0);
+            }
+          });
+          node.lateFinish = maxLateFinish;
+        }
+
+        var predecessors = linkDataArray.filter(function (link) {
+          return link.to === node.key;
+        }).map(function (link) {
+          return link.from;
+        });
+      });
+     
 
       // Backward pass to calculate late start and late finish times
       function calculateLateStartAndFinish(sortedNodes, linkDataArray) {
+        var lastNodes = sortedNodes.filter(function (node) {
+          return linkDataArray.every(function (link) {
+            return link.from !== node.key;
+          });
+        });
+
+        // Find the maximum early finish among the last nodes
+        var maxEarlyFinish = -Infinity;
+        lastNodes.forEach(function (node) {
+          maxEarlyFinish = Math.max(maxEarlyFinish, node.earlyFinish);
+        });
+        // Set the late finish of all last nodes to the maximum early finish
+        lastNodes.forEach(function (node) {
+          if (node.key !== 0) {
+            node.lateFinish = maxEarlyFinish;
+
+          }
+        });
+
         sortedNodes.slice().reverse().forEach(function (node) {
+          if (node.key === 0) {
+            return;
+          }
           var successors = linkDataArray.filter(function (link) {
             return link.from === node.key;
           }).map(function (link) {
@@ -429,50 +472,47 @@
           });
 
           if (successors.length === 0) {
-            node.lateFinish = node.earlyFinish; // No successors, late finish is same as early finish
-            node.lateStart = node.earlyStart; // No successors, late start is same as early start
+              node.lateFinish = maxEarlyFinish;
+              node.lateStart = maxEarlyFinish-node.length;
           } else {
             var minLateStart = Infinity;
             successors.forEach(function (succKey) {
               var succNode = sortedNodes.find(function (n) {
                 return n.key === succKey;
               });
-              if (succNode && succNode.lateStart !== undefined) { // Check if succNode has a valid lateStart
+              if (succNode && succNode.lateStart !== undefined) {
                 minLateStart = Math.min(minLateStart, succNode.lateStart);
               }
             });
 
-            node.lateFinish = minLateStart; // Use the minLateStart of successors
+            node.lateFinish = minLateStart;
             node.lateStart = minLateStart - node.length;
+
+            // Update lateStart of successors
+            successors.forEach(function (succKey) {
+              var succNode = sortedNodes.find(function (n) {
+                return n.key === succKey;
+              });
+              if (succNode) {
+                succNode.lateStart = node.lateFinish;
+              }
+            });
+          // 
           }
+          node.slack = node.lateStart - node.earlyStart;
 
-          node.slack = node.lateStart - node.earlyStart; // Calculate slack
-
-          // Mark node as critical if slack is 0
           if (node.slack === 0) {
             node.critical = true;
           } else {
             node.critical = false;
           }
         });
-
-        // Find the last node(s) with the highest late finish time
-        var lastNodes = sortedNodes.filter(function (node) {
-          return linkDataArray.every(function (link) {
-            return link.from !== node.key;
-          });
-        });
-
-        var maxLateFinish = -Infinity;
-        lastNodes.forEach(function (node) {
-          maxLateFinish = Math.max(maxLateFinish, node.lateFinish);
-        });
-
-        return maxLateFinish; // Return the highest late finish time among last nodes
+        return maxEarlyFinish;
       }
-      // Backward pass to calculate late start and late finish times
+
+
       var lfOfLastNode = calculateLateStartAndFinish(sortedNodes, linkDataArray);
-      return lfOfLastNode
+      return lfOfLastNode;
     }
 
 

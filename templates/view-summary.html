@@ -384,108 +384,167 @@
           new go.Binding("fill", "", linkColorConverter))
       );
 
-
-    console.log(ets)
-    // here's the data defining the graph
     var nodeDataArray = [
       { key: 0, text: "Start", length: 0, earlyStart: 0, lateFinish: 0, critical: true },
     ];
 
+    // Assuming ids, nos, ets, and criticals are arrays containing node properties
     for (let i = 0; i < ids.length; i++) {
-      nodeDataArray.push({ key: ids[i], text: nos[i], length: ets[i], earlyStart: 0, lateFinish: 0})
+      nodeDataArray.push({ key: ids[i], text: nos[i], length: ets[i], earlyStart: 0, lateFinish: 0 })
     }
 
     var linkDataArray = [];
 
+    // Assuming predecessors is an array containing the predecessors for each node
     for (let i = 0; i < ids.length; i++) {
       let id = ids[i];
       for (let k = 0; k < predecessors[i].length; k++) {
-        let predecessor = predecessors[i]
-        linkDataArray.push({ from: predecessor[k], to: id })
+        let predecessor = predecessors[i];
+        linkDataArray.push({ from: predecessor[k], to: id });
       }
     }
 
+    // Calculate early start and early finish for each node
     function calculateEarlyStartAndFinish(nodeDataArray, linkDataArray) {
-  // Topological sort of the nodes based on dependencies
-  var sortedNodes = topologicalSort(nodeDataArray, linkDataArray);
+      // Topological sort of the nodes based on dependencies
+      var sortedNodes = topologicalSort(nodeDataArray, linkDataArray);
 
-  sortedNodes.forEach(function (node) {
-    var predecessors = linkDataArray.filter(function (link) {
-      return link.to === node.key;
-    }).map(function (link) {
-      return link.from;
-    });
-
-    if (predecessors.length > 0) {
-      var maxEarlyFinish = 0; // Initialize with the smallest possible value
-      predecessors.forEach(function (predKey) {
-        var predNode = nodeDataArray.find(function (n) {
-          return n.key === predKey;
+      sortedNodes.forEach(function (node) {
+        var predecessors = linkDataArray.filter(function (link) {
+          return link.to === node.key;
+        }).map(function (link) {
+          return link.from;
         });
-        if (predNode && predNode.earlyFinish !== undefined) { // Check if predNode has a valid earlyFinish
-          maxEarlyFinish = Math.max(maxEarlyFinish, predNode.earlyFinish);
+
+        if (predecessors.length > 0) {
+          var maxEarlyFinish = 0; // Initialize with the smallest possible value
+          predecessors.forEach(function (predKey) {
+            var predNode = nodeDataArray.find(function (n) {
+              return n.key === predKey;
+            });
+            if (predNode && predNode.earlyFinish !== undefined) { // Check if predNode has a valid earlyFinish
+              maxEarlyFinish = Math.max(maxEarlyFinish, predNode.earlyFinish);
+            }
+          });
+
+          node.earlyStart = maxEarlyFinish; // Use the maxEarlyFinish of predecessors
+          node.earlyFinish = maxEarlyFinish + node.length;
+        } else {
+          node.earlyStart = 0;
+          node.earlyFinish = node.length;
+          // Set late finish as early finish for nodes with no successors
+          node.lateFinish = node.earlyFinish;
         }
-      });
 
-      node.earlyStart = maxEarlyFinish; // Use the maxEarlyFinish of predecessors
-      node.earlyFinish = maxEarlyFinish + node.length;
-    } else {
-      node.earlyStart = 0;
-      node.earlyFinish = node.length;
-      // Set late finish as early finish for nodes with no successors
-      node.lateFinish = node.earlyFinish;
-    }
-
-    if (node.critical) {
-      node.lateStart = node.earlyStart; // Set late start to early start for critical nodes
-      node.slack = 0; // Set slack to 0 for critical nodes
-      node.lateFinish = node.earlyFinish; // Set late finish to early finish for critical nodes
-    }
-  });
-
-  function calculateLateStartAndFinish(sortedNodes, linkDataArray) {
-  sortedNodes.slice().reverse().forEach(function (node) {
-    var successors = linkDataArray.filter(function (link) {
-      return link.from === node.key;
-    }).map(function (link) {
-      return link.to;
-    });
-
-    if (successors.length === 0) {
-      node.lateFinish = node.earlyFinish;
-      node.lateStart = node.earlyStart;
-    } else {
-      var minLateStart = Infinity;
-      successors.forEach(function (succKey) {
-        var succNode = sortedNodes.find(function (n) {
-          return n.key === succKey;
+        // if (node.critical) {
+        //   node.lateStart = node.earlyStart; // Set late start to early start for critical nodes
+        //   node.slack = 0; // Set slack to 0 for critical nodes
+        //   node.lateFinish = node.earlyFinish; // Set late finish to early finish for critical nodes
+        // }
+        var successors = linkDataArray.filter(function (link) {
+          return link.from === node.key;
+        }).map(function (link) {
+          return link.to;
         });
-        if (succNode && succNode.lateStart !== undefined) { // Check if succNode has a valid lateStart
-          minLateStart = Math.min(minLateStart, succNode.lateStart);
+
+        if (successors.length === 0) {
+          // Set late finish as the largest late finish from all nodes with no subsequent nodes
+          var maxLateFinish = -Infinity;
+          sortedNodes.forEach(function (n) {
+            if (linkDataArray.every(function (link) { return link.from !== n.key; })) {
+              maxLateFinish = Math.max(maxLateFinish, n.lateFinish || 0);
+            }
+          });
+          node.lateFinish = maxLateFinish;
         }
+
+        var predecessors = linkDataArray.filter(function (link) {
+          return link.to === node.key;
+        }).map(function (link) {
+          return link.from;
+        });
       });
+     
 
-      node.lateFinish = minLateStart; // Use the minLateStart of successors
-      node.lateStart = minLateStart - node.length;
+      // Backward pass to calculate late start and late finish times
+      function calculateLateStartAndFinish(sortedNodes, linkDataArray) {
+        var lastNodes = sortedNodes.filter(function (node) {
+          return linkDataArray.every(function (link) {
+            return link.from !== node.key;
+          });
+        });
+
+        // Find the maximum early finish among the last nodes
+        var maxEarlyFinish = -Infinity;
+        lastNodes.forEach(function (node) {
+          maxEarlyFinish = Math.max(maxEarlyFinish, node.earlyFinish);
+        });
+        // Set the late finish of all last nodes to the maximum early finish
+        lastNodes.forEach(function (node) {
+          if (node.key !== 0) {
+            node.lateFinish = maxEarlyFinish;
+
+          }
+        });
+
+        sortedNodes.slice().reverse().forEach(function (node) {
+          if (node.key === 0) {
+            return;
+          }
+          var successors = linkDataArray.filter(function (link) {
+            return link.from === node.key;
+          }).map(function (link) {
+            return link.to;
+          });
+
+          if (successors.length === 0) {
+              node.lateFinish = maxEarlyFinish;
+              node.lateStart = maxEarlyFinish-node.length;
+          } else {
+            var minLateStart = Infinity;
+            successors.forEach(function (succKey) {
+              var succNode = sortedNodes.find(function (n) {
+                return n.key === succKey;
+              });
+              if (succNode && succNode.lateStart !== undefined) {
+                minLateStart = Math.min(minLateStart, succNode.lateStart);
+              }
+            });
+
+            node.lateFinish = minLateStart;
+            node.lateStart = minLateStart - node.length;
+
+            // Update lateStart of successors
+            successors.forEach(function (succKey) {
+              var succNode = sortedNodes.find(function (n) {
+                return n.key === succKey;
+              });
+              if (succNode) {
+                succNode.lateStart = node.lateFinish;
+              }
+            });
+          // 
+          }
+          node.slack = node.lateStart - node.earlyStart;
+
+          if (node.slack === 0) {
+            node.critical = true;
+          } else {
+            node.critical = false;
+          }
+        });
+        return maxEarlyFinish;
+      }
+
+
+      var lfOfLastNode = calculateLateStartAndFinish(sortedNodes, linkDataArray);
+      return lfOfLastNode;
     }
 
-    node.slack = node.lateStart - node.earlyStart; // Calculate slack
 
-    // Mark node as critical if slack is 0
-    if (node.slack === 0) {
-      node.critical = true;
-    } else {
-      node.critical = false;
-    }
-  });
-}
-  // Backward pass to calculate late start and late finish times
-  calculateLateStartAndFinish(sortedNodes, linkDataArray);
-}
     function topologicalSort(nodeDataArray, linkDataArray) {
       var sorted = [];
       var visited = {};
-
       function visit(node) {
         if (node && !visited[node.key]) {
           visited[node.key] = true;
@@ -505,18 +564,14 @@
           sorted.push(node);
         }
       }
-
       nodeDataArray.forEach(function (node) {
         visit(node);
       });
-
       return sorted;
     }
 
     // Call the function to calculate early start and finish times
-    calculateEarlyStartAndFinish(nodeDataArray, linkDataArray);
-
-
+    let lfOfLastNode = calculateEarlyStartAndFinish(nodeDataArray, linkDataArray);
 
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
     // create an unbound Part that acts as a "legend" for the diagram
@@ -550,8 +605,8 @@
             { row: 2, column: 2, margin: 5, textAlign: "center" })
         )  // end Table Panel
       ));
+    return lfOfLastNode
   }
-
   // window.addEventListener('DOMContentLoaded', init);
 </script>
 {{ end }}
