@@ -49,6 +49,7 @@ func EditPredecessorsHandler(w http.ResponseWriter, r *http.Request) map[string]
 	// Prepare the data to be sent to the template
 	return map[string]interface{}{
 		"Title":            "View Project",
+		"ProjectID":        project.ID,
 		"ProjectName":      project.Name,
 		"Project":          project,
 		"AllSubActivities": allSubActivities,

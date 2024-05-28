@@ -5,7 +5,6 @@ let alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
 
 $(".add-phase").click(function () {
   let addStart = ($("#dateStart").val()).trim()
-  let addEnd= ($("#dateEnd").val()).trim()
   let addDesc = ($("#projDesc").val()).trim()
   let addPhase = ($("#phaseName").val()).trim()
 let addProj = ($("#projName").val()).trim()
@@ -38,10 +37,7 @@ let addSubAct = ($("#subactName").val()).trim()
     alert("Please put a start time.");
     return
   }
-  if (addEnd == null || addEnd == "" || addEnd == undefined) {
-    alert("Please put a end time.");
-    return
-  }
+
 
   projectObj[addProj][addPhase] = { ...projectObj[addProj][addPhase] };
   projectObj[addProj][addPhase][addAct] = { ...projectObj[addProj][addPhase][addAct] };
@@ -389,15 +385,11 @@ function convertToRoman(num) {
 
 $(".save-plan").click(function () {
   let addStart = ($("#dateStart").val()).trim()
-  let addEnd= ($("#dateEnd").val()).trim()
   if (addStart == null || addStart == "" || addStart == undefined) {
     alert("Please put a start time.");
     return
   }
-  if (addEnd == null || addEnd == "" || addEnd == undefined) {
-    alert("Please put a end time.");
-    return
-  }
+
 
   let hasEmptyInput = false;
 

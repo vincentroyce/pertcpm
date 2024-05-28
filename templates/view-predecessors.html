@@ -67,7 +67,7 @@
     </tbody>
   </table>
   <button class="edit-predecessors btn btn-primary mt-2 mb-2" type="button">Edit Predecessors</button>
-  <button class="save-changes btn btn-success mt-2 mb-2" type="button" style="display: none;">Save Changes</button>
+  <button class="save-changes btn btn-success mt-2 mb-2" disabled type="button" style="display: none;">Save Changes</button>
   <button class="view-pert btn btn-info mt-2 mb-2" type="button">View Pert Diagram</button>
   <button onclick="completed( {{ .Project.ID }} )" class="btn btn-success mt-2 mb-2" type="button">Mark as Done</button>
 
@@ -170,70 +170,6 @@
         }
       }
     });
-
-    // Add event listener to the "Save Changes" button
-    $('.save-changes').off('click').on('click', function () {
-      // Disable all dropdown buttons
-
-
-      // Check if any dropdown has no value selected
-      var allDropdownsHaveValues = true;
-      $('.dropdown-menu').each(function () {
-        if ($(this).find('input:checked').length === 0) {
-          allDropdownsHaveValues = false;
-          return false; // Exit the loop early
-        }
-      });
-
-      // If any dropdown has no value selected, alert the user
-      if (!allDropdownsHaveValues) {
-        alert('All dropdowns should have at least one input.');
-        return;
-      }
-      $('.dropdown-toggle').prop('disabled', true);
-
-      // Hide the "Save Changes" button
-      $('.save-changes').hide();
-
-      // Revert "Edit Predecessors" button text
-      $('.edit-predecessors').text('Edit Predecessors');
-      let idArr = [];
-      let predecessorArr = [];
-      // Print the selected values (values associated with the names)
-      $('.dropdown-menu').each(function () {
-        var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
-        var selectedValues = [];
-        $(this).find('input:checked').each(function () {
-          var name = $(this).data('no');
-          var value = $(this).val();
-          selectedValues.push(value);
-        });
-        console.log('Selected values for Sub Activity ' + subActivityId + ':', String(selectedValues));
-        idArr.push(subActivityId);
-        predecessorArr.push(selectedValues);
-      });
-      console.log(idArr);
-      console.log(predecessorArr);
-      $.ajax({
-        method: 'POST',
-        url: '/api/set-predecessor',
-        data: {
-          ids: JSON.stringify(idArr),
-          predecessors: JSON.stringify(predecessorArr),
-        },
-        success: function (response) {
-          console.log(response);
-          Swal.fire({
-            title: "Changes have been saved",
-            text: response.response,
-            icon: "success"
-          });
-          window.setTimeout(function () {
-            window.location.reload()
-          }, 3000);
-        },
-      });
-    });
   });
 </script>
 <script>
@@ -261,6 +197,7 @@
 <script>
   $(document).ready(function () {
     $('.view-pert').off('click').on('click', function (e) {
+      $(".save-changes").attr("disabled", false)
       e.preventDefault();
       // Check if any dropdown has no value selected
       var allDropdownsHaveValues = true;
@@ -274,6 +211,7 @@
       // If any dropdown has no value selected, alert the user
       if (!allDropdownsHaveValues) {
         alert('All dropdowns should have at least one input.');
+        $(".save-changes").attr("disabled", true)
         return;
       }
       let idArr = []
@@ -302,7 +240,94 @@
       setTimeout(function () {
         $(".myModal").css("display", "flex")
         $(".myModal").css("opacity", 1)
-        init(idArr, predecessorArr, noArr, etArr); // Call the init function after a delay
+
+        
+
+
+        let last = init(idArr, predecessorArr, noArr, etArr); // Call the init function after a delay
+        console.log(last)
+
+
+
+
+
+
+        // Add event listener to the "Save Changes" button
+    $('.save-changes').off('click').on('click', function () {
+      // Disable all dropdown buttons
+      // Check if any dropdown has no value selected
+      var allDropdownsHaveValues = true;
+      $('.dropdown-menu').each(function () {
+        if ($(this).find('input:checked').length === 0) {
+          allDropdownsHaveValues = false;
+          return false; // Exit the loop early
+        }
+      });
+
+      // If any dropdown has no value selected, alert the user
+      if (!allDropdownsHaveValues) {
+        alert('All dropdowns should have at least one input.');
+        $(".save-changes").attr("disabled", true)
+        return;
+      }
+      $('.dropdown-toggle').prop('disabled', true);
+
+      // Hide the "Save Changes" button
+      $('.save-changes').hide();
+
+      // Revert "Edit Predecessors" button text
+      $('.edit-predecessors').text('Edit Predecessors');
+      let idArr = [];
+      let predecessorArr = [];
+      // Print the selected values (values associated with the names)
+      $('.dropdown-menu').each(function () {
+        var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
+        var selectedValues = [];
+        $(this).find('input:checked').each(function () {
+          var name = $(this).data('no');
+          var value = $(this).val();
+          selectedValues.push(value);
+        });
+        console.log('Selected values for Sub Activity ' + subActivityId + ':', String(selectedValues));
+        idArr.push(subActivityId);
+        predecessorArr.push(selectedValues);
+      });
+      console.log(idArr);
+      console.log(predecessorArr);
+      $.ajax({
+        method: 'POST',
+        url: '/api/set-date-end',
+        data: {
+          id: `{{ .ProjectID }}`,
+          days: last,
+        },
+        success: function (response) {
+          console.log(response);
+        },
+        error: function (response) {
+          console.log(response.err_msg)
+        }
+      })
+      $.ajax({
+        method: 'POST',
+        url: '/api/set-predecessor',
+        data: {
+          ids: JSON.stringify(idArr),
+          predecessors: JSON.stringify(predecessorArr),
+        },
+        success: function (response) {
+          console.log(response);
+          Swal.fire({
+            title: "Changes have been saved",
+            text: response.response,
+            icon: "success"
+          });
+          window.setTimeout(function () {
+            window.location.reload()
+          }, 3000);
+        },
+      });
+    }); 
       }, 1); // Adjust the del
     });
 
@@ -412,108 +437,126 @@
           new go.Binding("fill", "", linkColorConverter))
       );
 
-
-    console.log(ets)
-    // here's the data defining the graph
     var nodeDataArray = [
       { key: 0, text: "Start", length: 0, earlyStart: 0, lateFinish: 0, critical: true },
     ];
 
+    // Assuming ids, nos, ets, and criticals are arrays containing node properties
     for (let i = 0; i < ids.length; i++) {
-      nodeDataArray.push({ key: ids[i], text: nos[i], length: ets[i], earlyStart: 0, lateFinish: 0})
+      nodeDataArray.push({ key: ids[i], text: nos[i], length: ets[i], earlyStart: 0, lateFinish: 0 })
     }
 
     var linkDataArray = [];
 
+    // Assuming predecessors is an array containing the predecessors for each node
     for (let i = 0; i < ids.length; i++) {
       let id = ids[i];
       for (let k = 0; k < predecessors[i].length; k++) {
-        let predecessor = predecessors[i]
-        linkDataArray.push({ from: predecessor[k], to: id })
+        let predecessor = predecessors[i];
+        linkDataArray.push({ from: predecessor[k], to: id });
       }
     }
 
-  function calculateEarlyStartAndFinish(nodeDataArray, linkDataArray) {
-  // Topological sort of the nodes based on dependencies
-  var sortedNodes = topologicalSort(nodeDataArray, linkDataArray);
+    // Calculate early start and early finish for each node
+    function calculateEarlyStartAndFinish(nodeDataArray, linkDataArray) {
+      // Topological sort of the nodes based on dependencies
+      var sortedNodes = topologicalSort(nodeDataArray, linkDataArray);
 
-  sortedNodes.forEach(function (node) {
-    var predecessors = linkDataArray.filter(function (link) {
-      return link.to === node.key;
-    }).map(function (link) {
-      return link.from;
-    });
-
-    if (predecessors.length > 0) {
-      var maxEarlyFinish = 0; // Initialize with the smallest possible value
-      predecessors.forEach(function (predKey) {
-        var predNode = nodeDataArray.find(function (n) {
-          return n.key === predKey;
+      sortedNodes.forEach(function (node) {
+        var predecessors = linkDataArray.filter(function (link) {
+          return link.to === node.key;
+        }).map(function (link) {
+          return link.from;
         });
-        if (predNode && predNode.earlyFinish !== undefined) { // Check if predNode has a valid earlyFinish
-          maxEarlyFinish = Math.max(maxEarlyFinish, predNode.earlyFinish);
+
+        if (predecessors.length > 0) {
+          var maxEarlyFinish = 0; // Initialize with the smallest possible value
+          predecessors.forEach(function (predKey) {
+            var predNode = nodeDataArray.find(function (n) {
+              return n.key === predKey;
+            });
+            if (predNode && predNode.earlyFinish !== undefined) { // Check if predNode has a valid earlyFinish
+              maxEarlyFinish = Math.max(maxEarlyFinish, predNode.earlyFinish);
+            }
+          });
+
+          node.earlyStart = maxEarlyFinish; // Use the maxEarlyFinish of predecessors
+          node.earlyFinish = maxEarlyFinish + node.length;
+        } else {
+          node.earlyStart = 0;
+          node.earlyFinish = node.length;
+          // Set late finish as early finish for nodes with no successors
+          node.lateFinish = node.earlyFinish;
+        }
+
+        if (node.critical) {
+          node.lateStart = node.earlyStart; // Set late start to early start for critical nodes
+          node.slack = 0; // Set slack to 0 for critical nodes
+          node.lateFinish = node.earlyFinish; // Set late finish to early finish for critical nodes
         }
       });
 
-      node.earlyStart = maxEarlyFinish; // Use the maxEarlyFinish of predecessors
-      node.earlyFinish = maxEarlyFinish + node.length;
-    } else {
-      node.earlyStart = 0;
-      node.earlyFinish = node.length;
-      // Set late finish as early finish for nodes with no successors
-      node.lateFinish = node.earlyFinish;
-    }
 
-    if (node.critical) {
-      node.lateStart = node.earlyStart; // Set late start to early start for critical nodes
-      node.slack = 0; // Set slack to 0 for critical nodes
-      node.lateFinish = node.earlyFinish; // Set late finish to early finish for critical nodes
-    }
-  });
+      // Backward pass to calculate late start and late finish times
+      function calculateLateStartAndFinish(sortedNodes, linkDataArray) {
+        sortedNodes.slice().reverse().forEach(function (node) {
+          var successors = linkDataArray.filter(function (link) {
+            return link.from === node.key;
+          }).map(function (link) {
+            return link.to;
+          });
 
-  function calculateLateStartAndFinish(sortedNodes, linkDataArray) {
-  sortedNodes.slice().reverse().forEach(function (node) {
-    var successors = linkDataArray.filter(function (link) {
-      return link.from === node.key;
-    }).map(function (link) {
-      return link.to;
-    });
+          if (successors.length === 0) {
+            node.lateFinish = node.earlyFinish; // No successors, late finish is same as early finish
+            node.lateStart = node.earlyStart; // No successors, late start is same as early start
+          } else {
+            var minLateStart = Infinity;
+            successors.forEach(function (succKey) {
+              var succNode = sortedNodes.find(function (n) {
+                return n.key === succKey;
+              });
+              if (succNode && succNode.lateStart !== undefined) { // Check if succNode has a valid lateStart
+                minLateStart = Math.min(minLateStart, succNode.lateStart);
+              }
+            });
 
-    if (successors.length === 0) {
-      node.lateFinish = node.earlyFinish;
-      node.lateStart = node.earlyStart;
-    } else {
-      var minLateStart = Infinity;
-      successors.forEach(function (succKey) {
-        var succNode = sortedNodes.find(function (n) {
-          return n.key === succKey;
+            node.lateFinish = minLateStart; // Use the minLateStart of successors
+            node.lateStart = minLateStart - node.length;
+          }
+
+          node.slack = node.lateStart - node.earlyStart; // Calculate slack
+
+          // Mark node as critical if slack is 0
+          if (node.slack === 0) {
+            node.critical = true;
+          } else {
+            node.critical = false;
+          }
         });
-        if (succNode && succNode.lateStart !== undefined) { // Check if succNode has a valid lateStart
-          minLateStart = Math.min(minLateStart, succNode.lateStart);
-        }
-      });
 
-      node.lateFinish = minLateStart; // Use the minLateStart of successors
-      node.lateStart = minLateStart - node.length;
+        // Find the last node(s) with the highest late finish time
+        var lastNodes = sortedNodes.filter(function (node) {
+          return linkDataArray.every(function (link) {
+            return link.from !== node.key;
+          });
+        });
+
+        var maxLateFinish = -Infinity;
+        lastNodes.forEach(function (node) {
+          maxLateFinish = Math.max(maxLateFinish, node.lateFinish);
+        });
+
+        return maxLateFinish; // Return the highest late finish time among last nodes
+      }
+      // Backward pass to calculate late start and late finish times
+      var lfOfLastNode = calculateLateStartAndFinish(sortedNodes, linkDataArray);
+      return lfOfLastNode
     }
 
-    node.slack = node.lateStart - node.earlyStart; // Calculate slack
 
-    // Mark node as critical if slack is 0
-    if (node.slack === 0) {
-      node.critical = true;
-    } else {
-      node.critical = false;
-    }
-  });
-}
-  // Backward pass to calculate late start and late finish times
-  calculateLateStartAndFinish(sortedNodes, linkDataArray);
-}
     function topologicalSort(nodeDataArray, linkDataArray) {
       var sorted = [];
       var visited = {};
-
       function visit(node) {
         if (node && !visited[node.key]) {
           visited[node.key] = true;
@@ -533,17 +576,14 @@
           sorted.push(node);
         }
       }
-
       nodeDataArray.forEach(function (node) {
         visit(node);
       });
-
       return sorted;
     }
 
     // Call the function to calculate early start and finish times
-    calculateEarlyStartAndFinish(nodeDataArray, linkDataArray);
-
+    let lfOfLastNode = calculateEarlyStartAndFinish(nodeDataArray, linkDataArray);
 
     myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
     // create an unbound Part that acts as a "legend" for the diagram
@@ -577,9 +617,8 @@
             { row: 2, column: 2, margin: 5, textAlign: "center" })
         )  // end Table Panel
       ));
+    return lfOfLastNode
   }
-
   // window.addEventListener('DOMContentLoaded', init);
 </script>
-
 {{ end }}
