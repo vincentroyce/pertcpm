@@ -51,7 +51,8 @@
               {{range $.AllSubActivities}}
               {{if ne .ID $subActivity.ID}}
               <a class="dropdown-item" href="#">
-                <input class="d-none" type="checkbox" value="{{ .ID }}" class="predecessor-checkbox" data-no="{{ .No }}"> {{
+                <input class="d-none" type="checkbox" value="{{ .ID }}" class="predecessor-checkbox"
+                  data-no="{{ .No }}"> {{
                 .No }}
               </a>
               {{end}}
@@ -67,7 +68,8 @@
     </tbody>
   </table>
   <button class="edit-predecessors btn btn-primary mt-2 mb-2" type="button">Edit Predecessors</button>
-  <button class="save-changes btn btn-success mt-2 mb-2" disabled type="button" style="display: none;">Save Changes</button>
+  <button class="save-changes btn btn-success mt-2 mb-2" disabled type="button" style="display: none;">Save
+    Changes</button>
   <button class="view-pert btn btn-info mt-2 mb-2" type="button">View Pert Diagram</button>
   <button onclick="completed( {{ .Project.ID }} )" class="btn btn-success mt-2 mb-2" type="button">Mark as Done</button>
 
@@ -131,7 +133,7 @@
       var selectedPredecessors = [];
 
       $(".save-changes").attr("disabled", true)
-      
+
       // Toggle checkbox state
       checkbox.prop('checked', !checkbox.prop('checked'));
 
@@ -142,7 +144,7 @@
           value: $(this).val()
         });
       });
-      
+
       var buttonText = selectedPredecessors.length > 0 ? selectedPredecessors.map(item => item.name).join(', ') : 'Select Predecessors';
       $('#dropdownMenuButton-' + subActivityId).text(buttonText);
     });
@@ -244,94 +246,84 @@
       setTimeout(function () {
         $(".myModal").css("display", "flex")
         $(".myModal").css("opacity", 1)
-
-        
-
-
         let last = init(idArr, predecessorArr, noArr, etArr); // Call the init function after a delay
-        console.log(last)
-
-
-
-
-
-
         // Add event listener to the "Save Changes" button
-    $('.save-changes').off('click').on('click', function () {
-      // Disable all dropdown buttons
-      // Check if any dropdown has no value selected
-      var allDropdownsHaveValues = true;
-      $('.dropdown-menu').each(function () {
-        if ($(this).find('input:checked').length === 0) {
-          allDropdownsHaveValues = false;
-          return false; // Exit the loop early
-        }
-      });
-
-      // If any dropdown has no value selected, alert the user
-      if (!allDropdownsHaveValues) {
-        alert('All dropdowns should have at least one input.');
-        $(".save-changes").attr("disabled", true)
-        return;
-      }
-      $('.dropdown-toggle').prop('disabled', true);
-
-      // Hide the "Save Changes" button
-      $('.save-changes').hide();
-
-      // Revert "Edit Predecessors" button text
-      $('.edit-predecessors').text('Edit Predecessors');
-      let idArr = [];
-      let predecessorArr = [];
-      // Print the selected values (values associated with the names)
-      $('.dropdown-menu').each(function () {
-        var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
-        var selectedValues = [];
-        $(this).find('input:checked').each(function () {
-          var name = $(this).data('no');
-          var value = $(this).val();
-          selectedValues.push(value);
-        });
-        console.log('Selected values for Sub Activity ' + subActivityId + ':', String(selectedValues));
-        idArr.push(subActivityId);
-        predecessorArr.push(selectedValues);
-      });
-      console.log(idArr);
-      console.log(predecessorArr);
-      $.ajax({
-        method: 'POST',
-        url: '/api/set-date-end',
-        data: {
-          id: `{{ .ProjectID }}`,
-          days: last,
-        },
-        success: function (response) {
-          console.log(response);
-        },
-        error: function (response) {
-          console.log(response.err_msg)
-        }
-      })
-      $.ajax({
-        method: 'POST',
-        url: '/api/set-predecessor',
-        data: {
-          ids: JSON.stringify(idArr),
-          predecessors: JSON.stringify(predecessorArr),
-        },
-        success: function (response) {
-          console.log(response);
-          Swal.fire({
-            title: "Changes have been saved",
-            text: response.response,
-            icon: "success"
+        $('.save-changes').off('click').on('click', function () {
+          let daystoAdd = last;
+          // Disable all dropdown buttons
+          // Check if any dropdown has no value selected
+          var allDropdownsHaveValues = true;
+          $('.dropdown-menu').each(function () {
+            if ($(this).find('input:checked').length === 0) {
+              allDropdownsHaveValues = false;
+              return false; // Exit the loop early
+            }
           });
-          window.setTimeout(function () {
-            window.location.reload()
-          }, 3000);
-        },
-      });
-    }); 
+
+          // If any dropdown has no value selected, alert the user
+          if (!allDropdownsHaveValues) {
+            alert('All dropdowns should have at least one input.');
+            $(".save-changes").attr("disabled", true)
+            return;
+          }
+          $('.dropdown-toggle').prop('disabled', true);
+
+          // Hide the "Save Changes" button
+          $('.save-changes').hide();
+
+          // Revert "Edit Predecessors" button text
+          $('.edit-predecessors').text('Edit Predecessors');
+          let idArr = [];
+          let predecessorArr = [];
+          // Print the selected values (values associated with the names)
+          $('.dropdown-menu').each(function () {
+            var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
+            var selectedValues = [];
+            $(this).find('input:checked').each(function () {
+              var name = $(this).data('no');
+              var value = $(this).val();
+              selectedValues.push(value);
+            });
+            console.log('Selected values for Sub Activity ' + subActivityId + ':', String(selectedValues));
+            idArr.push(subActivityId);
+            predecessorArr.push(selectedValues);
+          });
+          console.log(idArr);
+          console.log(predecessorArr);
+          $.ajax({
+            method: 'POST',
+            url: '/api/set-date-end',
+            data: {
+              id: `{{ .ProjectID }}`,
+              days: daystoAdd,
+            },
+            success: function (response) {
+              console.log(response);
+            },
+            error: function (response) {
+              console.log(response.err_msg)
+            }
+          })
+          $.ajax({
+            method: 'POST',
+            url: '/api/set-predecessor',
+            data: {
+              ids: JSON.stringify(idArr),
+              predecessors: JSON.stringify(predecessorArr),
+            },
+            success: function (response) {
+              console.log(response);
+              Swal.fire({
+                title: "Changes have been saved",
+                text: response.response,
+                icon: "success"
+              });
+              window.setTimeout(function () {
+                window.location.reload()
+              }, 3000);
+            },
+          });
+        });
       }, 1); // Adjust the del
     });
 
@@ -521,7 +513,7 @@
           return link.from;
         });
       });
-     
+
 
       // Backward pass to calculate late start and late finish times
       function calculateLateStartAndFinish(sortedNodes, linkDataArray) {
@@ -555,8 +547,8 @@
           });
 
           if (successors.length === 0) {
-              node.lateFinish = maxEarlyFinish;
-              node.lateStart = maxEarlyFinish-node.length;
+            node.lateFinish = maxEarlyFinish;
+            node.lateStart = maxEarlyFinish - node.length;
           } else {
             var minLateStart = Infinity;
             successors.forEach(function (succKey) {
@@ -580,7 +572,7 @@
                 succNode.lateStart = node.lateFinish;
               }
             });
-          // 
+            // 
           }
           node.slack = node.lateStart - node.earlyStart;
 

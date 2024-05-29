@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -20,7 +21,9 @@ func SetDateEndAPI(w http.ResponseWriter, r *http.Request) {
 
 	id := r.FormValue("id")
 	days := r.FormValue("days")
-
+	fmt.Println(id)
+	fmt.Println(days)
+	
 	project := models.Project{}
 	err = uadmin.Get(&project, "id = ?", id)
 	if err != nil {

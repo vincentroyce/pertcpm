@@ -109,6 +109,7 @@
       var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
       var selectedPredecessors = [];
 
+      $(".complete-schedule").attr("disabled", true)
       // Toggle checkbox state
       checkbox.prop('checked', !checkbox.prop('checked'));
 
@@ -174,10 +175,11 @@
         $(".myModal").css("display", "flex")
         $(".myModal").css("opacity", 1)
         let last = init(idArr, predecessorArr, noArr, etArr); // Call the init function after a delay
+        console.log(last)
         $(".complete-schedule").attr("disabled", false)
         $('.complete-schedule').off('click').on('click', function (e) {
+          let daystoAdd = last;
           e.preventDefault();
-
           // Check if any dropdown has no value selected
           var allDropdownsHaveValues = true;
           $('.dropdown-menu').each(function () {
@@ -213,7 +215,7 @@
             url: '/api/set-date-end',
             data: {
               id: `{{ .ProjectID}}`,
-              days: last,
+              days: daystoAdd,
             },
             success: function (response) {
               console.log(response.response);
