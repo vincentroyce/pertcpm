@@ -9,9 +9,9 @@ type Worker struct {
 	Phase     Phase
 	PhaseID   uint
 	Name      string
-	Rate      int
+	Rate      int `uadmin:"money"`
 	Quantity  int
-	Total     int
+	Total     int `uadmin:"money"`
 }
 
 func (w Worker) String() string {

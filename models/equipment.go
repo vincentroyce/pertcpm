@@ -9,9 +9,9 @@ type Equipment struct {
 	Phase     Phase
 	PhaseID   uint
 	Name      string
-	Cost      int
+	Cost      int `uadmin:"money"`
 	Quantity  int
-	Total     int
+	Total     int `uadmin:"money"`
 }
 
 func (e Equipment) String() string {
