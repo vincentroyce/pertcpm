@@ -309,14 +309,14 @@
             },
             success: function (response) {
               console.log(response);
-              // Swal.fire({
-              //   title: "Changes have been saved",
-              //   text: response.response,
-              //   icon: "success"
-              // });
-              // window.setTimeout(function () {
-              //   window.location.reload()
-              // }, 3000);
+              Swal.fire({
+                title: "Changes have been saved",
+                text: response.response,
+                icon: "success"
+              });
+              window.setTimeout(function () {
+                window.location.reload()
+              }, 3000);
             },
           });
         });
