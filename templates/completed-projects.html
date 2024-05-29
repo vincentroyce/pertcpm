@@ -10,12 +10,12 @@
     <div class="container card card-container">
       <img src="/static/media/440921056_3780621792183800_4943365504590121414_n-removebg-preview.png" class="card-img-top" alt="...">
       <div class="card-body justify-content-between d-flex flex-column">
-        <h5 class="card-title">Project Name: {{ $project.Name }}</h5>
-        <p class="card-text">Description: {{ $project.Description }}</p>
-        <p class="card-text">Cost: {{ $project.Cost }}</p>
-        <p class="card-text start-{{ $index }}">Date Start: {{ $project.DateStart }}</p>
-        <p class="card-text end-{{ $index }}">Date End: {{ $project.DateEnd }}</p>
-        <p class="card-text completed-{{ $index }}">Completed At: {{ $project.CompletedAt }}</p>
+        <h5 class="card-title"><strong>Project Name: </strong>{{ $project.Name }}</h5>
+        <p class="card-text"><strong>Description: </strong>{{ $project.Description }}</p>
+        <p class="card-text"><strong>Cost: </strong>₱{{ $project.Cost }}</p>
+        <p class="card-text start-{{ $index }}"><strong>Date Start: </strong>{{ $project.DateStart }}</p>
+        <p class="card-text end-{{ $index }}"><strong>Date End: </strong>{{ $project.DateEnd }}</p>
+        <p class="card-text completed-{{ $index }}"><strong>Completed At: </strong>{{ $project.CompletedAt }}</p>
         <a href="/user/view-summary/?id={{ $project.ID }}" class="btn btn-primary mt-2">View Project</a>
       </div>
     </div>
@@ -41,9 +41,9 @@
       var formattedCompleteDate = dateCompleteObject.toLocaleDateString('en-US', options);
       
       // Display the formatted date
-      project.querySelector(`.start-${index}`).innerText = "Date Start: " + formattedStartDate;
-      project.querySelector(`.end-${index}`).innerText = "Date End: " + formattedEndDate;
-      project.querySelector(`.completed-${index}`).innerText = "Completed At: " + formattedCompleteDate;
+      project.querySelector(`.start-${index}`).innerHTML = "<strong>Date Start: </strong>" + formattedStartDate;
+      project.querySelector(`.end-${index}`).innerHTML = "<strong>Date End: </strong>" + formattedEndDate;
+      project.querySelector(`.completed-${index}`).innerHTML = "<strong>Completed At: </strong>" + formattedCompleteDate;
     });
   });
 </script>

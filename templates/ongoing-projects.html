@@ -12,11 +12,11 @@
       <img src="/static/media/440921056_3780621792183800_4943365504590121414_n-removebg-preview.png" class="card-img-top" alt="...">
       <div class="card-body justify-content-between d-flex flex-column">
         <h5 class="card-title">Project Name: {{ $project.Name }}</h5>
-        <p class="card-text">Description: {{ $project.Description }}</p>
-        <p class="card-text">Cost: {{ $project.Cost }}</p>
-        <p class="card-text schedule-completed">Schedule Completed: {{ $project.ScheduleCompleted }}</p>
-        <p class="card-text start-{{ $index }}">Date Start: {{ $project.DateStart }}</p>
-        <p class="card-text end-{{ $index }}">Date End: {{ $project.DateEnd }}</p>
+        <p class="card-text"><strong>Description: </strong>{{ $project.Description }}</p>
+        <p class="card-text"><strong>Cost: </strong>₱{{ $project.Cost }}</p>
+        <p class="card-text schedule-completed"><strong>Schedule Completed: </strong>{{ $project.ScheduleCompleted }}</p>
+        <p class="card-text start-{{ $index }}"><strong>Date Start: </strong>{{ $project.DateStart }}</p>
+        <p class="card-text end-{{ $index }}"><strong>Date End: </strong>{{ $project.DateEnd }}</p>
         <div class="row">
           {{ if $project.ScheduleCompleted }}
           <a href="/user/view-predecessors/?id={{ $project.ID }}" class="btn btn-success mt-2">View Predecessors</a>
@@ -48,8 +48,8 @@
         formattedEndDate = "--"
       }
       // Display the formatted date
-      project.querySelector(`.start-${index}`).innerText = "Date Start: " + formattedStartDate;
-      project.querySelector(`.end-${index}`).innerText = "Date End: " + formattedEndDate;
+      project.querySelector(`.start-${index}`).innerHTML = "<strong>Date Start: </strong>" + formattedStartDate;
+      project.querySelector(`.end-${index}`).innerHTML = "<strong>Date End: </strong>" + formattedEndDate;
     });
   });
 </script>
