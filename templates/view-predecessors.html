@@ -290,18 +290,14 @@
           });
           console.log(idArr);
           console.log(predecessorArr);
-          $.ajax({
-            method: 'POST',
-            url: '/api/set-date-end',
-            data: {
-              id: `{{ .ProjectID }}`,
-              days: daystoAdd,
-            },
-            success: function (response) {
-              console.log(response);
-            },
-            error: function (response) {
-              console.log(response.err_msg)
+          console.log(daystoAdd)
+          fetch(`/api/set-date-end?id=${`{{ .ProjectID }}`}&days=${daystoAdd}`)
+          .then(resp => resp.json())
+          .then(resp => {
+            if (resp.status != "ok") {
+              console.log(resp.err_msg)
+            } else {
+              console.log(resp.response);
             }
           })
           $.ajax({
@@ -313,14 +309,14 @@
             },
             success: function (response) {
               console.log(response);
-              Swal.fire({
-                title: "Changes have been saved",
-                text: response.response,
-                icon: "success"
-              });
-              window.setTimeout(function () {
-                window.location.reload()
-              }, 3000);
+              // Swal.fire({
+              //   title: "Changes have been saved",
+              //   text: response.response,
+              //   icon: "success"
+              // });
+              // window.setTimeout(function () {
+              //   window.location.reload()
+              // }, 3000);
             },
           });
         });
