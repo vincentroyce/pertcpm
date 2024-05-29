@@ -74,6 +74,9 @@
       var options = { year: 'numeric', month: 'long', day: 'numeric' };
       var dateEndObject = new Date(isodate);
       var formattedEndDate = dateEndObject.toLocaleDateString('en-US', options);
+      if (formattedEndDate == "January 1, 1970") {
+        formattedEndDate = "--"
+      }
       return formattedEndDate
     }
     fetch("/pertcpm-admin/api/d/project/?$f=id__count,completed&$groupby=completed")

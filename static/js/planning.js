@@ -1,4 +1,3 @@
-
 let expectedTime = (a, m, b) => Math.floor((a + (4 * m) + b) / 6);
 let projectObj = {};
 let alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
@@ -318,10 +317,10 @@ function unexpectedTimeRow(element) {
 
 function calculateTotal(input) {
   const row = input.closest('tr');
-  const quantity = row.querySelector('input[name="quantity[]"]').value;
-  const rate = row.querySelector('input[name="rate[]"]').value;
+  const quantity = parseFloat(row.querySelector('input[name="quantity[]"]').value);
+  const rate = parseFloat(row.querySelector('input[name="rate[]"]').value);
   const total = quantity * rate;
-  row.querySelector('.total').textContent = total;
+  row.querySelector('.total').textContent = isNaN(total) ? 0 : total;
   calculateGrandTotal();
 }
 
@@ -479,7 +478,8 @@ $(".save-plan").click(function () {
   }
   dateStart = new Date(($("#dateStart").val()).trim())
   // console.log(completeSchedObj)
-
+  let cost = Number($("#totalAmount").text());
+  console.log(cost)
   $.ajax({
     url:"/api/add-project",
     method:"POST",
@@ -487,20 +487,20 @@ $(".save-plan").click(function () {
     data: JSON.stringify({
       projectName: ($("#projName").val()).trim(),
       description: ($("#projDesc").val()).trim(),
-      cost: Number($("#totalAmount").text()),
+      cost: cost,
       obj: completeSchedObj,
       dateStart: dateStart.toISOString(),
     }),
     success: function(resp) { 
       console.log(resp["response"])
-      Swal.fire({
-        title: "Project Added",
-        text: "You will be redirected to ongoing projects",
-        icon: "success"
-      });
-      window.setTimeout(function() {
-        window.location.href = window.location.origin + "/user/ongoing-projects/"
-      }, 3000)
+      // Swal.fire({
+      //   title: "Project Added",
+      //   text: "You will be redirected to ongoing projects",
+      //   icon: "success"
+      // });
+      // window.setTimeout(function() {
+      //   window.location.href = window.location.origin + "/user/ongoing-projects/"
+      // }, 3000)
 
       // location.href = location.origin + "/user/schedule-completion"
     },

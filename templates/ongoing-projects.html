@@ -45,7 +45,7 @@
       var formattedStartDate = dateStartObject.toLocaleDateString('en-US', options);
       var formattedEndDate = dateEndObject.toLocaleDateString('en-US', options);
       if (formattedEndDate == "Invalid Date") {
-        formattedEndDate = "---"
+        formattedEndDate = "--"
       }
       // Display the formatted date
       project.querySelector(`.start-${index}`).innerText = "Date Start: " + formattedStartDate;
