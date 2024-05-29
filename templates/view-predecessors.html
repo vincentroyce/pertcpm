@@ -130,6 +130,8 @@
       var subActivityId = $(this).closest('.dropdown').find('.dropdown-toggle').attr('id').split('-')[1];
       var selectedPredecessors = [];
 
+      $(".save-changes").attr("disabled", true)
+      
       // Toggle checkbox state
       checkbox.prop('checked', !checkbox.prop('checked'));
 
@@ -140,7 +142,7 @@
           value: $(this).val()
         });
       });
-
+      
       var buttonText = selectedPredecessors.length > 0 ? selectedPredecessors.map(item => item.name).join(', ') : 'Select Predecessors';
       $('#dropdownMenuButton-' + subActivityId).text(buttonText);
     });
@@ -197,7 +199,9 @@
 <script>
   $(document).ready(function () {
     $('.view-pert').off('click').on('click', function (e) {
-      $(".save-changes").attr("disabled", false)
+      if ($(".edit-predecessors").text() != "Edit Predecessors") {
+        $(".save-changes").attr("disabled", false)
+      }
       e.preventDefault();
       // Check if any dropdown has no value selected
       var allDropdownsHaveValues = true;
