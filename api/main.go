@@ -22,6 +22,8 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		CompleteProjectAPI(w, r)
 	case strings.HasPrefix(r.URL.Path, "/set-date-end"):
 		SetDateEndAPI(w, r)
+	case strings.HasPrefix(r.URL.Path, "/predict"):
+		PredictWeatherAPI(w, r)
 	default:
 		w.WriteHeader(http.StatusNotFound)
 		uadmin.ReturnJSON(w, r, map[string]any{

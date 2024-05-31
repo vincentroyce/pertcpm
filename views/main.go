@@ -34,7 +34,8 @@ func Main(w http.ResponseWriter, r *http.Request) {
 		context = EditPredecessorsHandler(w, r)
 	case "view-summary":
 		context = ViewSummaryHandler(w, r)
-
+	case "predict-weather":
+		context = WeatherPredictionHandler(w, r)
 	default:
 		page = "dashboard"
 	}

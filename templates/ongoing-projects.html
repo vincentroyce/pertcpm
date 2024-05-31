@@ -23,7 +23,7 @@
           {{ else }}
           <a href="/user/schedule-completion/?id={{ $project.ID }}" class="btn btn-primary mt-2">Complete Schedule</a>
           {{ end }}
-          <input onclick="deleteProject({{ $project.ID }})" class="btn btn-danger mt-2" type="button" value="Delete Project">
+          <input onclick="deleteProject('{{ $project.ID }}')" class="btn btn-danger mt-2" type="button" value="Delete Project">
         </div>
       </div>
     </div>
