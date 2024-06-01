@@ -19,6 +19,7 @@ func main() {
 		models.Phase{},
 		models.Activity{},
 		models.SubActivity{},
+		models.Weather{},
 	)
 
 	uadmin.RegisterInlines(

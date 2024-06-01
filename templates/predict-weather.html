@@ -2,11 +2,12 @@
 <title>{{ .Title }}</title>
 {{ end }}
 {{ define "content"}}
+<link rel="stylesheet" href="/static/css/predict.css">
 <link rel="stylesheet" href="/static/css/view-summary.css">
 <div class="container mt-4">
   <h1 class="roboto-medium">Predict Weather</h1>
   <hr class="mb-4 mt-1 line">
-  <button class="btn btn-primary float-end">Predict Weather</button>
+  <button class="btn btn-primary float-end predict-weather">Predict Weather</button>
   <table class="table">
     <thead class="table-dark">
       <tr>
@@ -15,14 +16,46 @@
         <th>Status</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody class="prediction-table">
+      {{ range .Prediction }}
       <tr>
-        <td>Date</td>
-        <td>Temperature</td>
-        <td>Status</td>
+        <td>{{ .Date }}</td>
+        <td>{{ .Temperature }}</td>
+        <td>{{ .Status }}</td>
       </tr>
+      {{ end }}
     </tbody>
   </table>
 </div>
 
+<div class="myModal">
+    <div id="loader"></div>
+</div>
+<script>
+  var myVar;
+
+function loaderFunction() {
+  myVar = setTimeout(showPage, 3000);
+}
+
+function showPage() {
+  document.getElementById("loader").style.display = "none";
+  document.getElementById("loaderDIV").style.display = "block";
+}
+$(".predict-weather").click(function() {
+  $('.myModal').css("display", "flex")
+  $.ajax({
+    method: "GET",
+    url: "/api/predict",
+    success: function(response) {
+      console.log(response)
+      $(".prediction-table").load(location.href + " .prediction-table > *", "")
+      $('.myModal').css("display", "none")
+    },
+    error: function(response) {
+      console.log(response)
+    }
+  })
+})
+</script>
 {{ end }}
