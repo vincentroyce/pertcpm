@@ -13,6 +13,10 @@ type Weather struct {
 	Status      string // > 28 sunny else possiblity of rain
 }
 
+func (w Weather) String() string {
+	return w.Status
+}
+
 func (w *Weather) Save() {
 	if w.Temperature > 28.0 {
 		w.Status = "Sunny"
