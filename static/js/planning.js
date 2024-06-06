@@ -41,46 +41,7 @@ let addSubAct = ($("#subactName").val()).trim()
   projectObj[addProj][addPhase] = { ...projectObj[addProj][addPhase] };
   projectObj[addProj][addPhase][addAct] = { ...projectObj[addProj][addPhase][addAct] };
   projectObj[addProj][addPhase][addAct][addSubAct] = addSubAct;
-  // projectObj[addProj][addPhase] = { ...projectObj[addProj][addPhase] };
-  // if (addAct == null || addAct == "" || addAct == undefined) {
-  //   if (addSubAct != null && addSubAct != "" && addSubAct != undefined) {
-  //     projectObj[addProj][addPhase][addSubAct] = addSubAct
-  //   }
-  // }
-  // else {
-  //   projectObj[addProj][addPhase][addAct] = { ...projectObj[addProj][addPhase][addAct] };
-  //   if (addSubAct != null && addSubAct != "" && addSubAct != undefined) {
-  //     projectObj[addProj][addPhase][addAct][addSubAct] = addSubAct;
-  //   }
-  // }
-  // Done
-  console.log(projectObj)
-  // projectObj = {
-  //   "Project 1": {
-  //     "Phase 1": {
-  //       "Act 1": {
-  //         "Sub Act 1": "Sub Act 1"
-  //       },
-  //       "Act 2": {
-  //         "Sub Act 1": "Sub Act 1",
-  //         "Sub Act 2": "Sub Act 2",
-  //         "Sub Act 3": "Sub Act 3"
-  //       },
-  //     },
-  //     "Phase 2": {
-  //       "Act 1": {
-  //         "Sub Act 1": "Sub Act 1",
-  //         "Sub Act 2": "Sub Act 2",
-  //         "Sub Act 3": "Sub Act 3"
-  //       },
-  //       "Act 2": {
-  //         "Sub Act 1": "Sub Act 1",
-  //         "Sub Act 2": "Sub Act 2"
-  //       }
-  //     }
-  //   }
-  // }
-  // Table Creator (Under Construction) (DONE?)
+
   $(".table-body").empty();
   $(".content-from-table").empty();
   $(".totalPricing").remove();
