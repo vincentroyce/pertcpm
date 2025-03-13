@@ -17,6 +17,7 @@ type Project struct {
 	CompletedAt       *time.Time
 	ScheduleCompleted bool
 	Completed         bool
+	Reply             string `uadmin:"link"`
 }
 
 func (p Project) String() string {
@@ -24,5 +25,6 @@ func (p Project) String() string {
 }
 
 func (p *Project) Save() {
+	p.Reply = "https://www.google.com"
 	uadmin.Save(p)
 }

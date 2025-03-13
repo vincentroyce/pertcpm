@@ -9,20 +9,20 @@ import (
 
 func Main(w http.ResponseWriter, r *http.Request) {
 	r.URL.Path = strings.TrimSuffix(r.URL.Path, "/")
-	r.URL.Path = strings.TrimPrefix(r.URL.Path, "/api")
+	r.URL.Path = strings.TrimPrefix(r.URL.Path, "/api/")
 
 	switch {
-	case strings.HasPrefix(r.URL.Path, "/add-project"):
+	case strings.HasPrefix(r.URL.Path, "add-project"):
 		AddProject(w, r)
-	case strings.HasPrefix(r.URL.Path, "/delete-project"):
+	case strings.HasPrefix(r.URL.Path, "delete-project"):
 		DeleteProjectAPI(w, r)
-	case strings.HasPrefix(r.URL.Path, "/set-predecessor"):
+	case strings.HasPrefix(r.URL.Path, "set-predecessor"):
 		SetPredecessorAPI(w, r)
-	case strings.HasPrefix(r.URL.Path, "/complete-project"):
+	case strings.HasPrefix(r.URL.Path, "complete-project"):
 		CompleteProjectAPI(w, r)
-	case strings.HasPrefix(r.URL.Path, "/set-date-end"):
+	case strings.HasPrefix(r.URL.Path, "set-date-end"):
 		SetDateEndAPI(w, r)
-	case strings.HasPrefix(r.URL.Path, "/predict"):
+	case strings.HasPrefix(r.URL.Path, "predict"):
 		PredictWeatherAPI(w, r)
 	default:
 		w.WriteHeader(http.StatusNotFound)
